@@ -76,4 +76,4 @@ Please add them to the [Issue Tracker][issues] with as much info as possible, es
 
 CrossEngine is released under the [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
-[issues]: https://github.com/Reisor/CrossEngine/issues
+[issues]: https://github.com/feserr/CrossEngine/issues
