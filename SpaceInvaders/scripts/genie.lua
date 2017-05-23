@@ -72,6 +72,7 @@ solution "spaceinvaders"
 
 MODULE_DIR = path.getabsolute("../")
 BGFX_DIR   = path.getabsolute("../../bgfx")
+BIMG_DIR   = path.getabsolute(path.join(BGFX_DIR, "../bimg"))
 BX_DIR     = os.getenv("BX_DIR")
 CROSSENGINE_DIR = path.getabsolute("../../CrossEngine")
 
@@ -86,10 +87,6 @@ if not os.isdir(BX_DIR) then
 	print("For more info see: https://bkaradzic.github.io/bgfx/build.html")
 	os.exit()
 end
-
-defines {
-	"BX_CONFIG_ENABLE_MSVC_LEVEL4_WARNINGS=1"
-}
 
 dofile (path.join(BX_DIR, "scripts/toolchain.lua"))
 if not toolchain(BGFX_BUILD_DIR, BGFX_THIRD_PARTY_DIR) then
@@ -115,26 +112,27 @@ if _OPTIONS["with-profiler"] then
 	}
 end
 
-dofile "bgfx.lua"
+dofile(path.join(BGFX_DIR, "scripts/bgfx.lua"))
 
 group "libs"
 bgfxProject("", "StaticLib", {})
 
 dofile(path.join(BX_DIR, "scripts/bx.lua"))
 
-dofile(path.join(MODULE_DIR, "scripts/crossengine.lua"))
+dofile(path.join(BIMG_DIR, "scripts/bimg.lua"))
+dofile(path.join(BIMG_DIR, "scripts/bimg_decode.lua"))
 
+dofile(path.join(CROSSENGINE_DIR, "scripts/crossengine.lua"))
+
+if _OPTIONS["with-tools"] then
+    group "tools"
+    dofile(path.join(BIMG_DIR, "scripts/bimg_encode.lua"))
+end
+
+group "SpaceInvaders"
 dofile(path.join(MODULE_DIR, "scripts/spaceinvaders.lua"))
 
 if _OPTIONS["with-shared-lib"] then
 	group "libs"
 	bgfxProject("-shared-lib", "SharedLib", {})
-end
-
-if _OPTIONS["with-tools"] then
-	group "tools"
-	dofile "shaderc.lua"
-	dofile "texturec.lua"
-	dofile "texturev.lua"
-	dofile "geometryc.lua"
 end

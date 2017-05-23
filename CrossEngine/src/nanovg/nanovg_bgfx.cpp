@@ -72,6 +72,14 @@ namespace
 		int flags;
 	};
 
+	struct GLNVGblend
+	{
+		uint64_t srcRGB;
+		uint64_t dstRGB;
+		uint64_t srcAlpha;
+		uint64_t dstAlpha;
+	};
+
 	enum GLNVGcallType
 	{
 		GLNVG_FILL,
@@ -89,6 +97,7 @@ namespace
 		int vertexOffset;
 		int vertexCount;
 		int uniformOffset;
+		GLNVGblend blendFunc;
 	};
 
 	struct GLNVGpath
@@ -354,6 +363,9 @@ namespace
 		uint32_t bytesPerPixel = NVG_TEXTURE_RGBA == tex->type ? 4 : 1;
 		uint32_t pitch = tex->width * bytesPerPixel;
 
+		const bgfx::Memory* mem = bgfx::alloc(w * h * bytesPerPixel);
+		bx::gather(mem->data, data + y * pitch + x * bytesPerPixel, w * bytesPerPixel, h, pitch);
+
 		bgfx::updateTexture2D(
 			  tex->id
 			, 0
@@ -362,8 +374,8 @@ namespace
 			, y
 			, w
 			, h
-			, bgfx::copy(data + y*pitch + x*bytesPerPixel, h*pitch)
-			, pitch
+			, mem
+			, UINT16_MAX
 			);
 
 		return 1;
@@ -374,7 +386,8 @@ namespace
 		struct GLNVGcontext* gl = (struct GLNVGcontext*)_userPtr;
 		struct GLNVGtexture* tex = glnvg__findTexture(gl, image);
 
-		if (!bgfx::isValid(tex->id) )
+		if (NULL == tex
+		|| !bgfx::isValid(tex->id) )
 		{
 			return 0;
 		}
@@ -574,7 +587,7 @@ namespace
 					| BGFX_STENCIL_OP_FAIL_Z_KEEP
 					| BGFX_STENCIL_OP_PASS_Z_DECR
 					);
-				bgfx::setVertexBuffer(&gl->tvb);
+				bgfx::setVertexBuffer(0, &gl->tvb);
 				bgfx::setTexture(0, gl->s_tex, gl->th);
 				fan(paths[i].fillOffset, paths[i].fillCount);
 				bgfx::submit(gl->m_viewId, gl->prog);
@@ -599,7 +612,7 @@ namespace
 					| BGFX_STENCIL_OP_FAIL_Z_KEEP
 					| BGFX_STENCIL_OP_PASS_Z_KEEP
 					);
-				bgfx::setVertexBuffer(&gl->tvb, paths[i].strokeOffset, paths[i].strokeCount);
+				bgfx::setVertexBuffer(0, &gl->tvb, paths[i].strokeOffset, paths[i].strokeCount);
 				bgfx::setTexture(0, gl->s_tex, gl->th);
 				bgfx::submit(gl->m_viewId, gl->prog);
 			}
@@ -607,7 +620,7 @@ namespace
 
 		// Draw fill
 		bgfx::setState(gl->state);
-		bgfx::setVertexBuffer(&gl->tvb, call->vertexOffset, call->vertexCount);
+		bgfx::setVertexBuffer(0, &gl->tvb, call->vertexOffset, call->vertexCount);
 		bgfx::setTexture(0, gl->s_tex, gl->th);
 		bgfx::setStencil(0
 				| BGFX_STENCIL_TEST_NOTEQUAL
@@ -630,7 +643,7 @@ namespace
 		{
 			if (paths[i].fillCount == 0) continue;
 			bgfx::setState(gl->state);
-			bgfx::setVertexBuffer(&gl->tvb);
+			bgfx::setVertexBuffer(0, &gl->tvb);
 			bgfx::setTexture(0, gl->s_tex, gl->th);
 			fan(paths[i].fillOffset, paths[i].fillCount);
 			bgfx::submit(gl->m_viewId, gl->prog);
@@ -644,7 +657,7 @@ namespace
 				bgfx::setState(gl->state
 					| BGFX_STATE_PT_TRISTRIP
 					);
-				bgfx::setVertexBuffer(&gl->tvb, paths[i].strokeOffset, paths[i].strokeCount);
+				bgfx::setVertexBuffer(0, &gl->tvb, paths[i].strokeOffset, paths[i].strokeCount);
 				bgfx::setTexture(0, gl->s_tex, gl->th);
 				bgfx::submit(gl->m_viewId, gl->prog);
 			}
@@ -664,7 +677,7 @@ namespace
 			bgfx::setState(gl->state
 				| BGFX_STATE_PT_TRISTRIP
 				);
-			bgfx::setVertexBuffer(&gl->tvb, paths[i].strokeOffset, paths[i].strokeCount);
+			bgfx::setVertexBuffer(0, &gl->tvb, paths[i].strokeOffset, paths[i].strokeCount);
 			bgfx::setTexture(0, gl->s_tex, gl->th);
 			bgfx::submit(gl->m_viewId, gl->prog);
 		}
@@ -677,7 +690,7 @@ namespace
 			nvgRenderSetUniforms(gl, call->uniformOffset, call->image);
 
 			bgfx::setState(gl->state);
-			bgfx::setVertexBuffer(&gl->tvb, call->vertexOffset, call->vertexCount);
+			bgfx::setVertexBuffer(0, &gl->tvb, call->vertexOffset, call->vertexCount);
 			bgfx::setTexture(0, gl->s_tex, gl->th);
 			bgfx::submit(gl->m_viewId, gl->prog);
 		}
@@ -705,16 +718,24 @@ namespace
 		return s_blend[idx];
 	}
 
-	static uint64_t glnvg__blendCompositeOperation(NVGcompositeOperationState op)
+	static GLNVGblend glnvg__blendCompositeOperation(NVGcompositeOperationState op)
 	{
-		return BGFX_STATE_BLEND_FUNC_SEPARATE(
-				glnvg_convertBlendFuncFactor(op.srcRGB),
-				glnvg_convertBlendFuncFactor(op.dstRGB),
-				glnvg_convertBlendFuncFactor(op.srcAlpha),
-				glnvg_convertBlendFuncFactor(op.dstAlpha));
+		GLNVGblend blend;
+		blend.srcRGB = glnvg_convertBlendFuncFactor(op.srcRGB);
+		blend.dstRGB = glnvg_convertBlendFuncFactor(op.dstRGB);
+		blend.srcAlpha = glnvg_convertBlendFuncFactor(op.srcAlpha);
+		blend.dstAlpha = glnvg_convertBlendFuncFactor(op.dstAlpha);
+		if (blend.srcRGB == BGFX_STATE_NONE || blend.dstRGB == BGFX_STATE_NONE || blend.srcAlpha == BGFX_STATE_NONE || blend.dstAlpha == BGFX_STATE_NONE)
+		{
+			blend.srcRGB = BGFX_STATE_BLEND_ONE;
+			blend.dstRGB = BGFX_STATE_BLEND_INV_SRC_ALPHA;
+			blend.srcAlpha = BGFX_STATE_BLEND_ONE;
+			blend.dstAlpha = BGFX_STATE_BLEND_INV_SRC_ALPHA;
+		}
+		return blend;
 	}
 
-	static void nvgRenderFlush(void* _userPtr, NVGcompositeOperationState compositeOperation)
+	static void nvgRenderFlush(void* _userPtr)
 	{
 		struct GLNVGcontext* gl = (struct GLNVGcontext*)_userPtr;
 
@@ -732,16 +753,16 @@ namespace
 
 			bx::memCopy(gl->tvb.data, gl->verts, gl->nverts * sizeof(struct NVGvertex) );
 
-			gl->state = glnvg__blendCompositeOperation(compositeOperation)
-				| BGFX_STATE_RGB_WRITE
-				| BGFX_STATE_ALPHA_WRITE
-				;
-
 			bgfx::setUniform(gl->u_viewSize, gl->view);
 
 			for (uint32_t ii = 0, num = gl->ncalls; ii < num; ++ii)
 			{
 				struct GLNVGcall* call = &gl->calls[ii];
+				const GLNVGblend* blend = &call->blendFunc;
+				gl->state = BGFX_STATE_BLEND_FUNC_SEPARATE(blend->srcRGB, blend->dstRGB, blend->srcAlpha, blend->dstAlpha)
+					| BGFX_STATE_RGB_WRITE
+					| BGFX_STATE_ALPHA_WRITE
+					;
 				switch (call->type)
 				{
 				case GLNVG_FILL:
@@ -850,8 +871,8 @@ namespace
 		vtx->v = v;
 	}
 
-	static void nvgRenderFill(void* _userPtr, struct NVGpaint* paint, struct NVGscissor* scissor, float fringe,
-								  const float* bounds, const struct NVGpath* paths, int npaths)
+	static void nvgRenderFill(void* _userPtr, NVGpaint* paint, NVGcompositeOperationState compositeOperation, NVGscissor* scissor,
+								  float fringe, const float* bounds, const NVGpath* paths, int npaths)
 	{
 		struct GLNVGcontext* gl = (struct GLNVGcontext*)_userPtr;
 
@@ -864,6 +885,7 @@ namespace
 		call->pathOffset = glnvg__allocPaths(gl, npaths);
 		call->pathCount = npaths;
 		call->image = paint->image;
+		call->blendFunc = glnvg__blendCompositeOperation(compositeOperation);
 
 		if (npaths == 1 && paths[0].convex)
 		{
@@ -927,7 +949,7 @@ namespace
 		}
 	}
 
-	static void nvgRenderStroke(void* _userPtr, struct NVGpaint* paint, struct NVGscissor* scissor, float fringe,
+	static void nvgRenderStroke(void* _userPtr, struct NVGpaint* paint, NVGcompositeOperationState compositeOperation, struct NVGscissor* scissor, float fringe,
 									float strokeWidth, const struct NVGpath* paths, int npaths)
 	{
 		struct GLNVGcontext* gl = (struct GLNVGcontext*)_userPtr;
@@ -939,6 +961,7 @@ namespace
 		call->pathOffset = glnvg__allocPaths(gl, npaths);
 		call->pathCount = npaths;
 		call->image = paint->image;
+		call->blendFunc = glnvg__blendCompositeOperation(compositeOperation);
 
 		// Allocate vertices for all the paths.
 		maxverts = glnvg__maxVertCount(paths, npaths);
@@ -963,7 +986,7 @@ namespace
 		glnvg__convertPaint(gl, nvg__fragUniformPtr(gl, call->uniformOffset), paint, scissor, strokeWidth, fringe);
 	}
 
-	static void nvgRenderTriangles(void* _userPtr, struct NVGpaint* paint, struct NVGscissor* scissor,
+	static void nvgRenderTriangles(void* _userPtr, struct NVGpaint* paint, NVGcompositeOperationState compositeOperation, struct NVGscissor* scissor,
 									   const struct NVGvertex* verts, int nverts)
 	{
 		struct GLNVGcontext* gl = (struct GLNVGcontext*)_userPtr;
@@ -972,6 +995,7 @@ namespace
 
 		call->type = GLNVG_TRIANGLES;
 		call->image = paint->image;
+		call->blendFunc = glnvg__blendCompositeOperation(compositeOperation);
 
 		// Allocate vertices for all the paths.
 		call->vertexOffset = glnvg__allocVerts(gl, nverts);
@@ -1114,13 +1138,24 @@ bgfx::TextureHandle nvglImageHandle(NVGcontext* ctx, int image)
 	return tex->id;
 }
 
-NVGLUframebuffer* nvgluCreateFramebuffer(NVGcontext* ctx, int width,
-																				 int height, int imageFlags) {
+NVGLUframebuffer* nvgluCreateFramebuffer(NVGcontext* ctx, int width, int height, int imageFlags, uint8_t viewId)
+{
+  NVGLUframebuffer* framebuffer = nvgluCreateFramebuffer(ctx, width, height, imageFlags);
+	if (framebuffer != NULL)
+	{
+		nvgluSetViewFramebuffer(viewId, framebuffer);
+	}
+	return framebuffer;
+}
+
+NVGLUframebuffer* nvgluCreateFramebuffer(NVGcontext* ctx, int width, int height, int imageFlags)
+{
 	NVGLUframebuffer* framebuffer = new NVGLUframebuffer;
 	framebuffer->ctx = ctx;
 	framebuffer->image = nvgCreateImageRGBA(ctx, width, height, imageFlags | NVG_IMAGE_PREMULTIPLIED, NULL);
 	bgfx::TextureHandle texture = nvglImageHandle(ctx, framebuffer->image);
-	if (!bgfx::isValid(texture)) {
+	if (!bgfx::isValid(texture))
+	{
 		nvgluDeleteFramebuffer(framebuffer);
 		return NULL;
 	}
@@ -1130,17 +1165,15 @@ NVGLUframebuffer* nvgluCreateFramebuffer(NVGcontext* ctx, int width,
 		nvgluDeleteFramebuffer(framebuffer);
 		return NULL;
 	}
-	static uint8_t s_ViewId = 1;  // may have a better way to assign new view id
-	framebuffer->viewId = s_ViewId++;
-	bgfx::setViewFrameBuffer(framebuffer->viewId, framebuffer->handle);
-	bgfx::setViewSeq(framebuffer->viewId, true);
 	return framebuffer;
 }
 
-void nvgluBindFramebuffer(NVGLUframebuffer* framebuffer) {
+void nvgluBindFramebuffer(NVGLUframebuffer* framebuffer)
+{
 	static NVGcontext* s_prevCtx = NULL;
 	static uint8_t s_prevViewId;
-	if (framebuffer != NULL) {
+	if (framebuffer != NULL)
+	{
 		s_prevCtx = framebuffer->ctx;
 		s_prevViewId = nvgViewId(framebuffer->ctx);
 		nvgViewId(framebuffer->ctx, framebuffer->viewId);
@@ -1149,12 +1182,24 @@ void nvgluBindFramebuffer(NVGLUframebuffer* framebuffer) {
 	}
 }
 
-void nvgluDeleteFramebuffer(NVGLUframebuffer* framebuffer) {
+void nvgluDeleteFramebuffer(NVGLUframebuffer* framebuffer)
+{
 	if (framebuffer == NULL)
 		return;
 	if (bgfx::isValid(framebuffer->handle))
+	{
 		bgfx::destroyFrameBuffer(framebuffer->handle);
+	}
 	if (framebuffer->image > 0)
+	{
 		nvgDeleteImage(framebuffer->ctx, framebuffer->image);
+	}
 	delete framebuffer;
+}
+
+void nvgluSetViewFramebuffer(uint8_t viewId, NVGLUframebuffer* framebuffer)
+{
+	framebuffer->viewId = viewId;
+	bgfx::setViewFrameBuffer(viewId, framebuffer->handle);
+	bgfx::setViewSeq(viewId, true);
 }

@@ -99,6 +99,8 @@ void  imguiFree(void* _ptr, void*);
 BX_PRAGMA_DIAGNOSTIC_IGNORED_MSVC(4505); // error C4505: '' : unreferenced local function has been removed
 BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wunused-function"); // warning: ‘int rect_width_compare(const void*, const void*)’ defined but not used
 BX_PRAGMA_DIAGNOSTIC_PUSH();
+BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG("-Wunknown-pragmas")
+BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wunused-but-set-variable"); // warning: variable ‘L1’ set but not used
 BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wtype-limits"); // warning: comparison is always true due to limited range of data type
 #define STBTT_malloc(_size, _userData) imguiMalloc(_size, _userData)
 #define STBTT_free(_ptr, _userData) imguiFree(_ptr, _userData)
@@ -1885,7 +1887,7 @@ struct Imgui
 
 			bgfx::setTransform(mtx);
 			bgfx::setTexture(0, s_texColor, _cubemap);
-			bgfx::setVertexBuffer(&tvb);
+			bgfx::setVertexBuffer(0, &tvb);
 			bgfx::setIndexBuffer(&tib);
 			bgfx::setState(BGFX_STATE_RGB_WRITE
 						  |BGFX_STATE_ALPHA_WRITE
@@ -2394,7 +2396,7 @@ struct Imgui
 				++vertex;
 			}
 
-			bgfx::setVertexBuffer(&tvb);
+			bgfx::setVertexBuffer(0, &tvb);
 			bgfx::setState(0
 				| BGFX_STATE_RGB_WRITE
 				| BGFX_STATE_ALPHA_WRITE
@@ -2699,7 +2701,7 @@ struct Imgui
 			}
 
 			bgfx::setTexture(0, s_texColor, m_fonts[m_currentFontIdx].m_texture);
-			bgfx::setVertexBuffer(&tvb);
+			bgfx::setVertexBuffer(0, &tvb);
 			bgfx::setState(0
 				| BGFX_STATE_RGB_WRITE
 				| BGFX_STATE_ALPHA_WRITE
@@ -2764,7 +2766,7 @@ struct Imgui
 			vertex[5].m_u = minu;
 			vertex[5].m_v = minv;
 
-			bgfx::setVertexBuffer(&vb);
+			bgfx::setVertexBuffer(0, &vb);
 
 			return true;
 		}

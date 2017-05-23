@@ -5,10 +5,11 @@ project ("spaceinvaders")
 
 configuration {}
 
-debugdir (path.join(BGFX_DIR, "examples/runtime"))
+debugdir (path.join(MODULE_DIR, "runtime"))
 
 includedirs {
     path.join(BX_DIR,   "include"),
+    path.join(BIMG_DIR, "include"),
     path.join(BGFX_DIR, "include"),
     path.join(BGFX_DIR, "3rdparty"),
     path.join(CROSSENGINE_DIR, "src"),
@@ -24,9 +25,20 @@ removefiles {
     path.join(MODULE_DIR, "**.bin.h"),
 }
 
+flags {
+--    "FatalWarnings",
+}
+
+removeflags {
+    "NoExceptions",
+}
+
 links {
+    "SDL2_mixer",
     "crossengine",
     "bgfx",
+    "bimg_decode",
+    "bimg",
     "bx",
 }
 
@@ -221,13 +233,13 @@ configuration { "ios* or tvos*" }
 configuration { "xcode4", "ios" }
     kind "WindowedApp"
     files {
-        path.join(BGFX_DIR, "examples/runtime/iOS-Info.plist"),
+        path.join(MODULE_DIR, "/runtime/iOS-Info.plist"),
     }
 
 configuration { "xcode4", "tvos" }
     kind "WindowedApp"
     files {
-        path.join(BGFX_DIR, "examples/runtime/tvOS-Info.plist"),
+        path.join(MODULE_DIR, "/runtime/tvOS-Info.plist"),
     }
 
 configuration { "qnx*" }

@@ -1,16 +1,14 @@
---
--- Copyright 2010-2017 Branimir Karadzic. All rights reserved.
--- License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
---
-
 project ("crossengine")
 	uuid ("C618B9EA-E27B-40FB-B97F-2E737BD35A8C")
 	kind "StaticLib"
 
 	includedirs {
 		path.join(BX_DIR, "include"),
+        path.join(BIMG_DIR, "include"),
 		path.join(BGFX_DIR, "include"),
 		path.join(BGFX_DIR, "3rdparty"),
+        path.join(CROSSENGINE_DIR, "src/include"),
+        path.join(CROSSENGINE_DIR, "deps/include"),
 	}
 
 	files {
@@ -18,9 +16,14 @@ project ("crossengine")
 		path.join(BGFX_DIR, "3rdparty/ib-compress/**.h"),
 		path.join(BGFX_DIR, "3rdparty/ocornut-imgui/**.cpp"),
 		path.join(BGFX_DIR, "3rdparty/ocornut-imgui/**.h"),
-		path.join(MODULE_DIR, "src/**.cpp"),
-		path.join(MODULE_DIR, "src/**.inl"),
-		path.join(MODULE_DIR, "src/**.h"),
+		path.join(CROSSENGINE_DIR, "src/**.cpp"),
+		path.join(CROSSENGINE_DIR, "src/**.mm"),
+		path.join(CROSSENGINE_DIR, "src/**.inl"),
+		path.join(CROSSENGINE_DIR, "src/**.h"),
+	}
+
+	removeflags {
+    	"NoExceptions",
 	}
 
 	if _OPTIONS["with-scintilla"] then
@@ -69,12 +72,12 @@ project ("crossengine")
 
 	configuration { "osx or ios* or tvos*" }
 		files {
-			path.join(MODULE_DIR, "src/**.mm"),
+			path.join(CROSSENGINE, "src/**.mm"),
 		}
 
 	configuration { "winphone8* or winstore8* or durango"}
 		files {
-			path.join(MODULE_DIR, "src/**.cx"),
+			path.join(CROSSENGINE, "src/**.cx"),
 		}
 		linkoptions {
 			"/ignore:4264" -- LNK4264: archiving object file compiled with /ZW into a static library; note that when authoring Windows Runtime types it is not recommended to link with a static library that contains Windows Runtime metadata
