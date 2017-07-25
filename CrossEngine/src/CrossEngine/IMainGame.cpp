@@ -19,6 +19,7 @@
 #include "CrossEngine/IGameScreen.h"
 #include "CrossEngine/CppUtils.h"
 
+#include "../common.h"
 #include "../bgfx_utils.h"
 
 namespace CrossEngine {
@@ -30,7 +31,7 @@ namespace CrossEngine {
         // Empty
     }
 
-    bool IMainGame::update() BX_OVERRIDE {
+    bool IMainGame::update() {
         if (!entry::processEvents(m_width, m_height, m_debug, m_reset) ) {
             m_limiter.Begin();
 
@@ -52,7 +53,7 @@ namespace CrossEngine {
         return false;
     }
 
-    int IMainGame::shutdown() BX_OVERRIDE {
+    int IMainGame::shutdown() {
         m_currentScreen->OnExit();
         if (m_screenList) {
             m_screenList->Destroy();
@@ -91,7 +92,7 @@ namespace CrossEngine {
         }
     }
 
-    void IMainGame::init(int _argc, char** _argv) BX_OVERRIDE {
+    void IMainGame::init(int _argc, char** _argv) {
         CrossEngine::Init();
 
         if (!InitSystems(_argc, _argv)) return;

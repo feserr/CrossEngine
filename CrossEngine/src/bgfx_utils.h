@@ -23,7 +23,7 @@ bgfx::ShaderHandle loadShader(const char* _name);
 bgfx::ProgramHandle loadProgram(const char* _vsName, const char* _fsName);
 
 ///
-bgfx::TextureHandle loadTexture(const char* _name, uint32_t _flags = BGFX_TEXTURE_NONE, uint8_t _skip = 0, bgfx::TextureInfo* _info = NULL);
+bgfx::TextureHandle loadTexture(const char* _name, uint32_t _flags = BGFX_TEXTURE_NONE, uint8_t _skip = 0, bgfx::TextureInfo* _info = NULL, bimg::Orientation::Enum* _orientation = NULL);
 
 ///
 bimg::ImageContainer* imageLoad(const char* _filePath, bgfx::TextureFormat::Enum _dstFormat);
@@ -101,7 +101,7 @@ void meshSubmit(const Mesh* _mesh, const MeshState*const* _state, uint8_t _numPa
 ///
 struct Args
 {
-	Args(int _argc, char** _argv);
+	Args(int _argc, const char* const* _argv);
 
 	bgfx::RendererType::Enum m_type;
 	uint16_t m_pciId;

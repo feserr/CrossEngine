@@ -22,8 +22,6 @@
 #include "InputManager.h"
 #include "Timing.h"
 
-#include "../../common.h"
-
 #include <memory>
 
 namespace CrossEngine {
@@ -31,7 +29,7 @@ class ScreenList;
 class IGameScreen;
 
 /// Main game interface.
-class IMainGame : public entry::AppI {
+class IMainGame {
  public:
     /// Default constructor.
     IMainGame();
