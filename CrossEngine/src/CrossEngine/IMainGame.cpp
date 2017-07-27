@@ -22,9 +22,15 @@
 #include "../common.h"
 #include "../bgfx_utils.h"
 
+#include <memory>
+
 namespace CrossEngine {
     IMainGame::IMainGame() {
+#if __cplusplus > 199711L
         m_screenList = CrossEngine::make_unique<ScreenList>(this);
+#else
+        m_screenList = std::make_unique<ScreenList>(this);
+#endif
     }
 
     IMainGame::~IMainGame() {

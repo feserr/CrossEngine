@@ -5,7 +5,7 @@ project ("spaceinvaders")
 
 configuration {}
 
-debugdir (path.join(MODULE_DIR, "runtime"))
+debugdir (path.join(BGFX_DIR, "examples/runtime"))
 
 includedirs {
     path.join(BX_DIR,   "include"),
@@ -34,7 +34,6 @@ removeflags {
 }
 
 links {
-    "SDL2_mixer",
     "crossengine",
     "bgfx",
     "bimg_decode",
@@ -44,10 +43,11 @@ links {
 
 if _OPTIONS["with-sdl"] then
     defines { "ENTRY_CONFIG_USE_SDL=1" }
-    links   { "SDL2" }
+    links   { "SDL2",
+        "SDL2_mixer" }
 
     configuration { "osx" }
-        libdirs { "$(SDL2_DIR)/lib" }
+        libdirs { path.join(CROSSENGINE_DIR, "deps/lib/SDL") }
 
     configuration {}
 end

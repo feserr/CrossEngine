@@ -7,7 +7,6 @@ project ("crossengine")
         path.join(BIMG_DIR, "include"),
 		path.join(BGFX_DIR, "include"),
 		path.join(BGFX_DIR, "3rdparty"),
-        path.join(CROSSENGINE_DIR, "src/include"),
         path.join(CROSSENGINE_DIR, "deps/include"),
 	}
 
@@ -55,7 +54,7 @@ project ("crossengine")
 			"ENTRY_CONFIG_USE_SDL=1",
 		}
 		includedirs {
-			"$(SDL2_DIR)/include",
+			path.join(CROSSENGINE_DIR, "deps/lib/SDL"),
 		}
 	end
 
