@@ -19,6 +19,11 @@
 #include <CrossEngine/ScreenList.h>
 #include <CrossEngine/CppUtils.h>
 
+#if __cplusplus > 199711L
+#else
+#include <memory>
+#endif
+
 App::App() {
 }
 
@@ -32,12 +37,16 @@ void App::OnInit() {
 
 void App::AddScreens() {
     //m_mainMenuScreen = std::make_unique<MainMenuScreen>(&m_window);
-    //m_gameplayScreen = CrossEngine::make_unique<GameplayScreen>(&m_window);
+#if __cplusplus > 199711L
+    m_gameplayScreen = CrossEngine::make_unique<GameplayScreen>(&m_window);
+#else
+    m_gameplayScreen = std::make_unique<GameplayScreen>(&m_window);
+#endif
 
     //m_screenList->AddScreen(m_mainMenuScreen.get());
-    //m_screenList->AddScreen(m_gameplayScreen.get());
+    m_screenList->AddScreen(m_gameplayScreen.get());
 
-    //m_screenList->SetScreen(m_gameplayScreen->GetScreenIndex());
+    m_screenList->SetScreen(m_gameplayScreen->GetScreenIndex());
 }
 
 void App::OnExit() {

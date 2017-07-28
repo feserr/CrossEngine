@@ -19,12 +19,13 @@
 
 #include "CrossTexture.h"
 
+#include "../../bgfx_utils.h"
 #include <glm/glm.hpp>
 
 namespace CrossEngine {
 class TileSheet {
  public:
-    void Init(const GLTexture& texture, const glm::ivec2& tileDims) {
+    void Init(const bgfx::TextureHandle& texture, const glm::ivec2& tileDims) {
         this->texture = texture;
         this->dims = tileDims;
     }
@@ -42,7 +43,7 @@ class TileSheet {
         return uvs;
     }
 
-    GLTexture texture;
+    bgfx::TextureHandle texture;
     glm::ivec2 dims;
 };
 }  // namespace CrossEngine
