@@ -37,9 +37,19 @@ namespace CrossEngine {
         // Empty
     }
 
-    bool IMainGame::update() {
+    bool IMainGame::Run(int _argc, char** _argv) {
+        if (!Init(_argc, _argv)) return false;
+
+        FpsLimiter limiter;
+        limiter.SetMaxFPS(60.0f);
+
+        // Game loop
+        m_isRunning = true;
+
         if (!entry::processEvents(m_width, m_height, m_debug, m_reset) ) {
-            m_limiter.Begin();
+            limiter.Begin();
+
+            bgfx::touch(0);
 
             inputManager.Update();
             // Call the custom update and draw method
@@ -47,7 +57,7 @@ namespace CrossEngine {
             if (m_isRunning) {
                 Draw();
 
-                m_fps = m_limiter.End();
+                m_fps = limiter.End();
                 // Advance to next frame. Rendering thread will be kicked to
                 // process submitted rendering primitives.
                 bgfx::frame();
@@ -59,8 +69,11 @@ namespace CrossEngine {
         return false;
     }
 
-    int IMainGame::shutdown() {
-        m_currentScreen->OnExit();
+    int IMainGame::ExitGame() {
+        if (m_currentScreen) {
+            m_currentScreen->OnExit();
+        }
+
         if (m_screenList) {
             m_screenList->Destroy();
             m_screenList.reset();
@@ -76,7 +89,7 @@ namespace CrossEngine {
     void IMainGame::OnSDLEvent(const SDL_Event& evnt) {
         switch (evnt.type) {
             case SDL_QUIT:
-                shutdown();
+                ExitGame();
                 break;
             case SDL_MOUSEMOTION:
                 inputManager.SetMouseCoords(
@@ -98,22 +111,24 @@ namespace CrossEngine {
         }
     }
 
-    void IMainGame::init(int _argc, char** _argv) {
+    bool IMainGame::Init(int _argc, char** _argv) {
         CrossEngine::Init();
 
-        if (!InitSystems(_argc, _argv)) return;
+        if (!InitSystems(_argc, _argv)) return false;
 
         OnInit();
         AddScreens();
 
         m_currentScreen = m_screenList->GetCurrent();
-        m_currentScreen->OnEntry();
-        m_currentScreen->SetRunning();
-
-        m_limiter.SetMaxFPS(60.0f);
+        if (m_currentScreen) {
+            m_currentScreen->OnEntry();
+            m_currentScreen->SetRunning();
+        }
 
         // Game loop
         m_isRunning = true;
+
+        return true;
     }
 
     bool IMainGame::InitSystems(int _argc, char** _argv) {
@@ -164,23 +179,19 @@ namespace CrossEngine {
                     }
                     break;
                 case ScreenState::EXIT_APPLICATION:
-                    shutdown();
+                    ExitGame();
                     break;
                 default:
                     break;
             }
         } else {
-            shutdown();
+            ExitGame();
         }
     }
 
     void IMainGame::Draw() {
-        // Set view 0 default viewport.
-        bgfx::setViewRect(0, 0, 0, uint16_t(m_width), uint16_t(m_height) );
+        bgfx::setViewRect(0, 0, 0, uint16_t(640), uint16_t(480));
 
-        // This dummy draw call is here to make sure that view 0 is cleared
-        // if no other draw calls are submitted to view 0.
-        bgfx::touch(0);
         if (m_currentScreen && m_currentScreen->GetState() ==
             ScreenState::RUNNING) {
             m_currentScreen->Draw();

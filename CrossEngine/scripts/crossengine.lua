@@ -54,7 +54,7 @@ project ("crossengine")
 			"ENTRY_CONFIG_USE_SDL=1",
 		}
 		includedirs {
-			path.join(CROSSENGINE_DIR, "deps/lib/SDL"),
+			path.join(CROSSENGINE_DIR, "deps/include/SDL"),
 		}
 	end
 

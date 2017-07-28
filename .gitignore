@@ -1,6 +1,7 @@
 ## Library folders
 bgfx/*
 bx/*
+bimg/*
 
 ## Library files
 pkgconfig/

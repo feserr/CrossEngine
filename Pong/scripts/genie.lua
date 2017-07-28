@@ -48,7 +48,7 @@ newoption {
 	description = "Enable building examples.",
 }
 
-solution "spaceinvaders"
+solution "pong"
 	configurations {
 		"Debug",
 		"Release",
@@ -68,7 +68,7 @@ solution "spaceinvaders"
 	end
 
 	language "C++"
-	startproject "spaceinvaders"
+	startproject "pong"
 
 MODULE_DIR = path.getabsolute("../")
 BGFX_DIR   = path.getabsolute("../../bgfx")
@@ -129,8 +129,8 @@ if _OPTIONS["with-tools"] then
     dofile(path.join(BIMG_DIR, "scripts/bimg_encode.lua"))
 end
 
-group "SpaceInvaders"
-dofile(path.join(MODULE_DIR, "scripts/spaceinvaders.lua"))
+group "pong"
+dofile(path.join(MODULE_DIR, "scripts/pong.lua"))
 
 if _OPTIONS["with-shared-lib"] then
 	group "libs"

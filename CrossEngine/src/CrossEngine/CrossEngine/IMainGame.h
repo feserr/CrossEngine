@@ -38,9 +38,9 @@ class IMainGame {
     virtual ~IMainGame();
 
     /// Runs and initializes the game.
-    bool update();
+    bool Run(int _argc, char** _argv);
     /// Exits the game.
-    virtual int shutdown();
+    virtual int ExitGame();
 
     /// Called on initialization.
     virtual void OnInit() = 0;
@@ -77,7 +77,7 @@ class IMainGame {
      *
      * \return     
      */
-    void init(int _argc, char** _argv);
+    bool Init(int _argc, char** _argv);
     bool InitSystems(int _argc, char** _argv);
 
     std::unique_ptr<ScreenList> m_screenList;
@@ -86,8 +86,6 @@ class IMainGame {
     float m_fps = 0.0f;
 
  private:
-    FpsLimiter m_limiter;
-
     uint32_t m_width;
     uint32_t m_height;
     uint32_t m_debug;

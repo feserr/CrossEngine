@@ -1,5 +1,5 @@
 
-project ("spaceinvaders")
+project ("pong")
     uuid (os.uuid("spaceinvaers"))
     kind "WindowedApp"
 
@@ -12,7 +12,9 @@ includedirs {
     path.join(BIMG_DIR, "include"),
     path.join(BGFX_DIR, "include"),
     path.join(BGFX_DIR, "3rdparty"),
+    path.join(CROSSENGINE_DIR, "deps/include"),
     path.join(CROSSENGINE_DIR, "src"),
+    path.join(CROSSENGINE_DIR, "src/CrossEngine"),
 }
 
 files {
@@ -39,12 +41,17 @@ links {
     "bimg_decode",
     "bimg",
     "bx",
+    "SDL2",
+    "SDL2main",
+    "SDL2_ttf",
+    "SDL2_mixer",
 }
+
+libdirs { path.join(CROSSENGINE_DIR, "deps/lib/SDL") }
 
 if _OPTIONS["with-sdl"] then
     defines { "ENTRY_CONFIG_USE_SDL=1" }
-    links   { "SDL2",
-        "SDL2_mixer" }
+    links   { "SDL2", "SDL2_ttf", "SDL2_mixer" }
 
     configuration { "osx" }
         libdirs { path.join(CROSSENGINE_DIR, "deps/lib/SDL") }
