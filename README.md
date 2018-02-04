@@ -16,16 +16,16 @@ CrossEngine
 - [License](#license)
 
 <a name="about"></a>
-# CrossEngine 0.0.0.1
+# CrossEngine 0.0.0.2
 
 CrossEngine is an open source cross-platform game framework.
 
-Version: 0.0.0.1 - Released: 28th Febreary 2017
+Version: 0.0.0.2 - Released: 4th Febreary 2018
 
 <a name="whats-new"></a>
-## What's new in 0.0.0.1?
+## What's new in 0.0.0.2?
 
-* Initial commit.
+* Migrate all the code in GangerEngine to be functional under BGFX.
 
 <a name="how-to-build"></a>
 ## How to Build
