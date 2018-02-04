@@ -18,6 +18,7 @@
 #define _SPRITEBATCH_H_
 
 #include "Vertex.h"
+#include "CrossTexture.h"
 
 #include "../../bgfx_utils.h"
 
@@ -125,6 +126,11 @@ class SpriteBatch {
     std::vector<Glyph*> m_glyphPointers;  ///< This is for sorting
     std::vector<Glyph> m_glyphs;  ///< These are the actual glyphs
     std::vector<CrossEngine::RenderBatch> m_renderBatches;
+
+    bgfx::ProgramHandle m_program;
+    bgfx::UniformHandle m_texColor;
+    bgfx::IndexBufferHandle m_ibh;
+    bgfx::VertexBufferHandle m_vbh;
 };
 }  // namespace CrossEngine
 

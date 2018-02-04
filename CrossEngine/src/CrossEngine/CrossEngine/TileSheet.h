@@ -25,7 +25,7 @@
 namespace CrossEngine {
 class TileSheet {
  public:
-    void Init(const bgfx::TextureHandle& texture, const glm::ivec2& tileDims) {
+    void Init(const CrossTexture& texture, const glm::ivec2& tileDims) {
         this->texture = texture;
         this->dims = tileDims;
     }
@@ -33,17 +33,19 @@ class TileSheet {
     glm::vec4 GetUVs(int index) {
         int xTile = index % dims.x;
         int yTile = index / dims.x;
+        float wTile = (1.0f / dims.x) * 2;
+        float hTile = (1.0f / dims.y) * 2;
 
         glm::vec4 uvs;
-        uvs.x = xTile / static_cast<float>(dims.x);
-        uvs.y = yTile / static_cast<float>(dims.y);
-        uvs.z = 1.0f / dims.x;
-        uvs.w = 1.0f / dims.y;
+        uvs.x = -1 + ((xTile) * wTile);
+        uvs.y = -1 + ((yTile) * hTile);
+        uvs.z = wTile;
+        uvs.w = hTile;
 
         return uvs;
     }
 
-    bgfx::TextureHandle texture;
+    CrossTexture texture;
     glm::ivec2 dims;
 };
 }  // namespace CrossEngine

@@ -17,6 +17,8 @@
 #ifndef _INPUTMANAGER_H_
 #define _INPUTMANAGER_H_
 
+#include "../../common.h"
+
 #include <glm/glm.hpp>
 #include <unordered_map>
 
@@ -38,6 +40,7 @@ class InputManager {
 
     /// Returns true if the key is held down
     bool IsKeyDown(unsigned int keyID);
+    bool IsKeyDown(entry::Key::Enum keyID);
 
     /// Returns true if the key was just pressed
     bool IsKeyPressed(unsigned int keyID);

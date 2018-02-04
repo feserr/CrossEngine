@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -41,7 +41,7 @@ void calcTangents(void* _vertices, uint16_t _numVertices, bgfx::VertexDecl _decl
 inline bool checkAvailTransientBuffers(uint32_t _numVertices, const bgfx::VertexDecl& _decl, uint32_t _numIndices)
 {
 	return _numVertices == bgfx::getAvailTransientVertexBuffer(_numVertices, _decl)
-		&& _numIndices  == bgfx::getAvailTransientIndexBuffer(_numIndices)
+		&& (0 == _numIndices || _numIndices == bgfx::getAvailTransientIndexBuffer(_numIndices) )
 		;
 }
 
@@ -75,7 +75,7 @@ struct MeshState
 	uint64_t            m_state;
 	bgfx::ProgramHandle m_program;
 	uint8_t             m_numTextures;
-	uint8_t             m_viewId;
+	bgfx::ViewId        m_viewId;
 };
 
 struct Mesh;
@@ -93,7 +93,7 @@ MeshState* meshStateCreate();
 void meshStateDestroy(MeshState* _meshState);
 
 ///
-void meshSubmit(const Mesh* _mesh, uint8_t _id, bgfx::ProgramHandle _program, const float* _mtx, uint64_t _state = BGFX_STATE_MASK);
+void meshSubmit(const Mesh* _mesh, bgfx::ViewId _id, bgfx::ProgramHandle _program, const float* _mtx, uint64_t _state = BGFX_STATE_MASK);
 
 ///
 void meshSubmit(const Mesh* _mesh, const MeshState*const* _state, uint8_t _numPasses, const float* _mtx, uint16_t _numMatrices = 1);

@@ -16,6 +16,8 @@
 
 #include "CrossEngine/InputManager.h"
 
+#include "../entry/input.h"
+
 namespace CrossEngine {
     InputManager::InputManager() : m_mouseCoords(0.0f) {
     }
@@ -59,6 +61,10 @@ namespace CrossEngine {
             // Didn't find the key
             return false;
         }
+    }
+
+    bool InputManager::IsKeyDown(entry::Key::Enum keyID) {
+        return inputGetKeyState(keyID);
     }
 
     bool InputManager::IsKeyPressed(unsigned int keyID) {

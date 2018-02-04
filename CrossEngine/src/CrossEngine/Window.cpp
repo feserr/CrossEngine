@@ -92,6 +92,6 @@ namespace CrossEngine {
     void Window::SetWindowSize(int width, int height) {
         m_screenWidth = width;
         m_screenHeight = height;
-        SDL_SetWindowSize(m_sdlWindow, m_screenWidth, m_screenHeight);
+        //SDL_SetWindowSize(m_sdlWindow, m_screenWidth, m_screenHeight);
     }
 }  // namespace CrossEngine

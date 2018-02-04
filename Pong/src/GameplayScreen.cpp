@@ -49,6 +49,14 @@ void GameplayScreen::Build() {
 }
 
 void GameplayScreen::Destroy() {
+    // Cleanup.
+    if (bgfx::isValid(m_program) ) {
+        bgfx::destroy(m_program);
+    }
+
+    bgfx::destroy(m_ibh);
+    bgfx::destroy(m_vbh);
+    bgfx::destroy(s_texColor);
 }
 
 void GameplayScreen::OnEntry() {
@@ -62,7 +70,8 @@ void GameplayScreen::OnEntry() {
     m_camera.SetScale(1.0f);
 
     // Init players
-    glm::vec2 position(32.0f, m_window->GetScreenHeight() / 2);
+    //glm::vec2 position(32.0f, m_window->GetScreenHeight() / 2);
+    glm::vec2 position(1.9f, 1.0f);
     glm::vec2 drawDims(32.0f, 32.0f);
     glm::vec2 collisionDims(32.0f, 48.0f);
     m_playerOne.Init(position, drawDims, collisionDims,
@@ -76,7 +85,7 @@ void GameplayScreen::OnExit() {
 }
 
 void GameplayScreen::Update() {
-    checkInput();
+    //checkInput();
 
     // Calculate the frameTime in milliseconds
     static Uint32 previousTicks = SDL_GetTicks();
@@ -94,7 +103,8 @@ void GameplayScreen::Update() {
         float deltaTime = std::min(totalDeltaTime, MAX_DELTA_TIME);
         // Update all physics here and pass in deltaTime
 
-        int t_goal = m_ball.Update(deltaTime, m_windowSize);
+        int t_goal = 0;
+        //int t_goal = m_ball.Update(deltaTime, m_windowSize);
         m_playerOne.Update(deltaTime, m_game->inputManager, m_windowSize);
 
         // Since we just took a step that is length deltaTime, subtract from
@@ -120,7 +130,30 @@ void GameplayScreen::Update() {
 }
 
 void GameplayScreen::Draw() {
+    float at[3] = { 0.0f, 0.0f, 0.0f };
+    float eye[3] = { 0.0f, 0.0f, -5.0f };
 
+    float view[16];
+    float proj[16];
+    bx::mtxLookAt(view, eye, at);
+
+    // Set view and projection matrix for view 1.
+    const float aspectRatio = float(m_window->GetScreenHeight()) /
+        float(m_window->GetScreenWidth());
+    const float size = 100.0f;
+    const bgfx::Caps* caps = bgfx::getCaps();
+    bx::mtxOrtho(proj, -size, size, size*aspectRatio, -size*aspectRatio, 0.0f,
+         1000.0f, 0.0f, caps->homogeneousDepth);
+
+    // Set view and projection matrix for view 0.
+    bgfx::setViewTransform(0, view, proj);
+
+    m_spriteBatch.Begin();
+
+    m_playerOne.Draw(m_spriteBatch);
+
+    m_spriteBatch.End();
+    m_spriteBatch.RenderBatch();
 }
 
 void GameplayScreen::initUI() {
@@ -129,7 +162,7 @@ void GameplayScreen::initUI() {
 
 void GameplayScreen::checkInput() {
     SDL_Event evnt;
-    while (SDL_PollEvent(&evnt)) {
+    while (SDL_WaitEvent(&evnt)) {
         m_game->OnSDLEvent(evnt);
         switch (evnt.type) {
             case SDL_QUIT:

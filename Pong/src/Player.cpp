@@ -20,20 +20,23 @@
 #include <SDL/SDL.h>
 #include <iostream>
 
+#include <common.h>
+#include <bgfx_utils.h>
+#include <entry/entry.h>
+#include <entry/input.h>
+
 const float MAX_VELOCITY = 5.0f;
 
 void Player::Init(const glm::vec2& position, const glm::vec2& drawDims,
     glm::vec2& collisionDims, CrossEngine::ColorRGBA8 color,
     PlayerType playerType) {
-    CrossEngine::GLTexture texture =
-        CrossEngine::ResourceManager::GetTexture(
-        "Assets/Pong/Sprites/Pong.png");
     m_color = color;
     m_drawDims = drawDims;
     m_collisionDims = collisionDims;
     m_position = position;
     m_velocity = glm::vec2(0.0f);
-    m_texture.Init(texture, glm::ivec2(8, 1));
+    m_texture.Init(CrossEngine::ResourceManager::GetTexture("images/Pong.png"),
+        glm::ivec2(8, 1));
     m_playerType = playerType;
 }
 
@@ -72,38 +75,31 @@ void Player::Draw(CrossEngine::SpriteBatch& spriteBatch) {
     glm::vec4 uvRectTop = m_texture.GetUVs(tileIndex+2);
 
     // Draw the sprite
-    spriteBatch.Draw(destRect, uvRect, m_texture.texture.id, 0.0f, m_color);
+    //m_sprite.Draw(&m_texture);
+    // Draw the sprite
+    spriteBatch.Draw(destRect, uvRect, m_texture.texture.texture, 0.0f,
+        m_color);
     destRect.y = m_position.y + m_drawDims.y / 2;
-    spriteBatch.Draw(destRect, uvRectBottom, m_texture.texture.id, 0.0f, 
+    spriteBatch.Draw(destRect, uvRectBottom, m_texture.texture.texture, 0.0f,
         m_color);
     destRect.y = m_position.y - m_drawDims.y * 1.5;
-    spriteBatch.Draw(destRect, uvRectTop, m_texture.texture.id, 0.0f, m_color);
-}
-
-void Player::DrawDebug(CrossEngine::DebugRenderer& debugRenderer) {
-    CrossEngine::ColorRGBA8 color(255, 255, 0, 255);
-    // Draw box
-    glm::vec4 destRect;
-    destRect.x = m_position.x - m_drawDims.x / 2.0f;
-    destRect.y = m_position.y - m_drawDims.y / 2.0f;
-    destRect.z = m_drawDims.x;
-    destRect.w = m_drawDims.y;
-    debugRenderer.DrawBox(destRect, color, 0.0f);
+    spriteBatch.Draw(destRect, uvRectTop, m_texture.texture.texture, 0.0f,
+        m_color);
 }
 
 void Player::Update(float deltaTime, CrossEngine::InputManager& inputManager,
     const glm::vec2 &windowSize) {
     // Check inputs and update the player stats
-    if (inputManager.IsKeyDown(SDLK_w) &&
+    if (inputManager.IsKeyDown(entry::Key::KeyW) &&
         m_playerType == PlayerType::PLAYERONE) {
         m_velocity.y = MAX_VELOCITY;
-    } else if (inputManager.IsKeyDown(SDLK_s) &&
+    } else if (inputManager.IsKeyDown(entry::Key::KeyS) &&
         m_playerType == PlayerType::PLAYERONE) {
         m_velocity.y = -MAX_VELOCITY;
-    } else if (inputManager.IsKeyDown(SDLK_UP) &&
+    } else if (inputManager.IsKeyDown(entry::Key::Up) &&
         m_playerType == PlayerType::PLAYERTWO) {
         m_velocity.y = MAX_VELOCITY;
-    } else if (inputManager.IsKeyDown(SDLK_DOWN) &&
+    } else if (inputManager.IsKeyDown(entry::Key::Down) &&
         m_playerType == PlayerType::PLAYERTWO) {
         m_velocity.y = -MAX_VELOCITY;
     }

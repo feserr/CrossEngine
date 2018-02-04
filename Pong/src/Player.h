@@ -18,8 +18,10 @@
 #define _PLAYER_H_
 
 #include <CrossEngine/InputManager.h>
-#include <CrossEngine/SpriteBatch.h>
+#include <CrossEngine/Sprite.h>
+#include <CrossEngine/Vertex.h>
 #include <CrossEngine/TileSheet.h>
+#include <CrossEngine/SpriteBatch.h>
 
 enum class PlayerMoveState {STANDING, MOVING};
 enum class PlayerType { PLAYERONE, PLAYERTWO, BOT};

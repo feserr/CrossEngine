@@ -5,7 +5,7 @@ project ("pong")
 
 configuration {}
 
-debugdir (path.join(BGFX_DIR, "examples/runtime"))
+debugdir (path.join(MODULE_DIR, "runtime"))
 
 includedirs {
     path.join(BX_DIR,   "include"),
@@ -240,13 +240,13 @@ configuration { "ios* or tvos*" }
 configuration { "xcode4", "ios" }
     kind "WindowedApp"
     files {
-        path.join(MODULE_DIR, "/runtime/iOS-Info.plist"),
+        path.join(MODULE_DIR, "runtime/iOS-Info.plist"),
     }
 
 configuration { "xcode4", "tvos" }
     kind "WindowedApp"
     files {
-        path.join(MODULE_DIR, "/runtime/tvOS-Info.plist"),
+        path.join(MODULE_DIR, "runtime/tvOS-Info.plist"),
     }
 
 configuration { "qnx*" }

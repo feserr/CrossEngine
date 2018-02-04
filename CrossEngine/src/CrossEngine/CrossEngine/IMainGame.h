@@ -38,7 +38,7 @@ class IMainGame {
     virtual ~IMainGame();
 
     /// Runs and initializes the game.
-    bool Run(int _argc, char** _argv);
+    void Run(int _argc, char** _argv);
     /// Exits the game.
     virtual int ExitGame();
 

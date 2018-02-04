@@ -18,117 +18,99 @@
 #include "CrossEngine/Vertex.h"
 #include "CrossEngine/ResourceManager.h"
 
+#include "../bgfx_utils.h"
+
 #include <string>
 #include <cstddef>
 
 namespace CrossEngine {
-    Sprite::Sprite() {
-        m_vboID = 0;
+
+static PosTexcoordVertex m_cubeVertices[4] =
+{
+    {-1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  0.0f },
+    { 1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  0.0f },
+    {-1.0f, -1.0f,  1.0f, -1.0f, -1.0f,  0.0f },
+    { 1.0f, -1.0f,  1.0f, -1.0f, -1.0f,  0.0f },
+};
+
+static const uint16_t m_cubeIndices[6] =
+{
+    0,  1,  2, // 0
+    1,  3,  2,
+};
+
+Sprite::Sprite() : m_x(0.0f), m_y(0.0f), m_width(0.0f), m_height(0.0f),
+    m_texture(CrossTexture()){
+}
+
+Sprite::~Sprite() {
+    if (bgfx::isValid(m_texture.texture)) {
+        bgfx::destroy(m_texture.texture);
     }
-
-
-    Sprite::~Sprite() {
-        // Always remember to delete your buffers when
-        // you are done!
-        if (m_vboID != 0) {
-            //glDeleteBuffers(1, &m_vboID);
-        }
+    bgfx::destroy(m_ibh);
+    bgfx::destroy(m_vbh);
+    if (bgfx::isValid(m_program) )
+    {
+        bgfx::destroy(m_program);
     }
+    bgfx::destroy(m_texColor);
+}
 
-    // Initializes the sprite VBO. x, y, width, and height are
-    // in the normalized device coordinate space. so, [-1, 1]
-    void Sprite::Init(float x, float y, float width, float height,
-        std::string texturePath) {
-        // Set up our private vars
-        m_x = x;
-        m_y = y;
-        m_width = width;
-        m_height = height;
+void Sprite::SetPosition(float x, float y) {
+    m_x = x;
+    m_y = y;
+}
 
-        m_texture = ResourceManager::GetTexture(texturePath);
+void Sprite::SetDimensions(float width, float height) {
+    m_width = width;
+    m_height = height;
+}
 
-        // Generate the buffer if it hasn't already been generated
-        if (m_vboID == 0) {
-            //glGenBuffers(1, &m_vboID);
-        }
+void Sprite::Init(float x, float y, float width, float height,
+    CrossEngine::CrossTexture* texture) {
+    // Set up our private vars
+    m_x = x;
+    m_y = y;
+    m_width = width;
+    m_height = height;
 
-        // This array will hold our vertex data.
-        // We need 6 vertices, and each vertex has 2
-        // floats for X and Y
-        Vertex vertexData[6];
+    m_texture = *texture;
 
-        // First Triangle
-        vertexData[0].SetPosition(x + width, y + height);
-        vertexData[0].SetUV(1.0f, 1.0f);
+    // Create vertex stream declaration.
+    PosTexcoordVertex::init();
 
-        vertexData[1].SetPosition(x, y + height);
-        vertexData[1].SetUV(0.0f, 1.0f);
-
-        vertexData[2].SetPosition(x, y);
-        vertexData[2].SetUV(0.0f, 0.0f);
-
-        // Second Triangle
-        vertexData[3].SetPosition(x, y);
-        vertexData[3].SetUV(0.0f, 0.0f);
-
-        vertexData[4].SetPosition(x + width, y);
-        vertexData[4].SetUV(1.0f, 0.0f);
-
-        vertexData[5].SetPosition(x + width, y + height);
-        vertexData[5].SetUV(1.0f, 1.0f);
-
-        // Set all vertex colors to magenta
-        for (int i = 0; i < 6; i++) {
-            vertexData[4].SetColor(255, 0, 255, 255);
-        }
-
-        vertexData[4].SetColor(0, 0, 255, 255);
-
-        vertexData[4].SetColor(0, 255, 0, 255);
+    // Create static vertex buffer.
+    m_vbh = bgfx::createVertexBuffer(bgfx::makeRef(m_cubeVertices, sizeof(m_cubeVertices) ), PosTexcoordVertex::ms_decl);
 
 
-        // Tell opengl to bind our vertex buffer object
-        /*glBindBuffer(GL_ARRAY_BUFFER, m_vboID);
-        // Upload the data to the GPU
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertexData), vertexData,
-            GL_STATIC_DRAW);
+    // Create static index buffer.
+    m_ibh = bgfx::createIndexBuffer(bgfx::makeRef(m_cubeIndices, sizeof(m_cubeIndices) ) );
 
-        // Unbind the buffer (optional)
-        glBindBuffer(GL_ARRAY_BUFFER, 0);*/
-    }
+    // Create program from shaders.
+    m_program = loadProgram("vs_update", "fs_update_cmp");
 
-    // Draws the sprite to the screen
-    void Sprite::Draw() {
-        /*glBindTexture(GL_TEXTURE_2D, m_texture.id);
+    m_texColor = bgfx::createUniform("s_texColor", bgfx::UniformType::Int1);
+}
 
-        // Bind the buffer object
-        glBindBuffer(GL_ARRAY_BUFFER, m_vboID);
+// Draws the sprite to the screen
+void Sprite::Draw() {
+    float mtx[16];
+    bx::mtxTranslate(mtx, m_x, m_y, 0.0f);
 
-        // Tell opengl what attribute arrays we need
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
+    // Set model matrix for rendering.
+    bgfx::setTransform(mtx);
 
-        // This is the position attribute pointer
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-            reinterpret_cast<void*>(offsetof(Vertex, position)));
-        // This is the UV attribute pointer
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-            reinterpret_cast<void*>(offsetof(Vertex, uv)));
-        // This is the color attribute pointer
-        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
-            reinterpret_cast<void*>(offsetof(Vertex, color)));
+    // Set vertex and index buffer.
+    bgfx::setVertexBuffer(0, m_vbh);
+    bgfx::setIndexBuffer(m_ibh);
 
+    // Bind texture.
+    bgfx::setTexture(0, m_texColor, m_texture.texture);
 
-        // Draw the 6 vertices to the screen
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+    // Set render states.
+    bgfx::setState(BGFX_STATE_DEFAULT);
 
-        // Disable the vertex attrib arrays. This is not optional.
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
-
-        // Unbind the VBO
-        glBindBuffer(GL_ARRAY_BUFFER, 0);*/
-    }
-}  // namespace CrossEngine
+    // Submit primitive for rendering to view 1.
+    bgfx::submit(0, m_program);
+}
+}

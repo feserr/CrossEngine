@@ -21,6 +21,23 @@
 #include <cstdio>
 
 namespace CrossEngine {
+    bgfx::VertexDecl PosTexcoordVertex::ms_decl;
+
+    static PosTexcoordVertex m_cubeVertices[4] =
+    {
+        {-1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  0.0f },
+        { 1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  0.0f },
+        {-1.0f, -1.0f,  1.0f, -1.0f, -1.0f,  0.0f },
+        { 1.0f, -1.0f,  1.0f, -1.0f, -1.0f,  0.0f },
+    };
+
+    static const uint16_t m_cubeIndices[6] =
+    {
+        0,  1,  2, // 0
+        1,  3,  2,
+    };
+
+
     Glyph::Glyph(const glm::vec4& destRect, const glm::vec4& uvRect,
         bgfx::TextureHandle Texture, float Depth, const ColorRGBA8& color) :
         texture(Texture), depth(Depth) {
@@ -86,6 +103,13 @@ namespace CrossEngine {
     }
 
     SpriteBatch::~SpriteBatch() {
+        bgfx::destroy(m_ibh);
+        bgfx::destroy(m_vbh);
+        if (bgfx::isValid(m_program) )
+        {
+            bgfx::destroy(m_program);
+        }
+        bgfx::destroy(m_texColor);
     }
 
     void SpriteBatch::Init() {
@@ -146,18 +170,46 @@ namespace CrossEngine {
     }
 
     void SpriteBatch::RenderBatch() {
-        // Bind our VAO. This sets up the opengl state we need, including the
-        // vertex attribute pointers and it binds the VBO
-        //glBindVertexArray(m_vao);
+        float mtx[16];
+        for (size_t i = 0; i < m_glyphs.size(); i++) {
+            bx::mtxTranslate(mtx,
+                m_glyphs[i].bottomLeft.position.x,
+                m_glyphs[i].bottomLeft.position.y,
+                0.0f);
 
-        for (size_t i = 0; i < m_renderBatches.size(); i++) {
-            //glBindTexture(GL_TEXTURE_2D, m_renderBatches[i].texture);
+            // Set model matrix for rendering.
+            bgfx::setTransform(mtx);
 
-            //glDrawArrays(GL_TRIANGLES, m_renderBatches[i].offset,
-            //    m_renderBatches[i].numVertices);
+            m_cubeVertices[0] = {
+                m_glyphs[i].topLeft.position.x, m_glyphs[i].topLeft.position.y,
+                1.0f,
+                m_glyphs[i].topLeft.uv.u, m_glyphs[i].topLeft.uv.v, 0.0f };
+            m_cubeVertices[1] = {
+                m_glyphs[i].topRight.position.x, m_glyphs[i].topRight.position.y,
+                1.0f,
+                m_glyphs[i].topRight.uv.u, m_glyphs[i].topRight.uv.v, 0.0f };
+            m_cubeVertices[2] = {
+                m_glyphs[i].bottomLeft.position.x, m_glyphs[i].bottomLeft.position.y,
+                1.0f,
+                m_glyphs[i].bottomLeft.uv.u, m_glyphs[i].bottomLeft.uv.v, 0.0f };
+            m_cubeVertices[3] = {
+                m_glyphs[i].bottomRight.position.x, m_glyphs[i].bottomRight.position.y,
+                1.0f,
+                m_glyphs[i].bottomRight.uv.u, m_glyphs[i].bottomRight.uv.v, 0.0f };
+
+            // Set vertex and index buffer.
+            bgfx::setVertexBuffer(0, m_vbh);
+            bgfx::setIndexBuffer(m_ibh);
+
+            // Bind texture.
+            bgfx::setTexture(0, m_texColor, m_glyphs[i].texture);
+
+            // Set render states.
+            bgfx::setState(BGFX_STATE_DEFAULT);
+
+            // Submit primitive for rendering to view 1.
+            bgfx::submit(0, m_program);
         }
-
-        //glBindVertexArray(0);
     }
 
     void SpriteBatch::CreateRenderBatches() {
@@ -204,54 +256,22 @@ namespace CrossEngine {
             vertices[cv++] = m_glyphPointers[cg]->topLeft;
             offset += 6;
         }
-
-        /*
-        // Bind our VBO
-        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-        // Orphan the buffer (for speed)
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), nullptr,
-            GL_DYNAMIC_DRAW);
-        // Upload the data
-        glBufferSubData(GL_ARRAY_BUFFER, 0, vertices.size() * sizeof(Vertex),
-            vertices.data());
-
-        // Unbind the VBO
-        glBindBuffer(GL_ARRAY_BUFFER, 0);*/
     }
 
     void SpriteBatch::CreateVertexArray() {
-        /*
-        // Generate the VAO if it isn't already generated
-        if (m_vao == 0) {
-            glGenVertexArrays(1, &m_vao);
-        }
+        // Create vertex stream declaration.
+        PosTexcoordVertex::init();
 
-        // Bind the VAO. All subsequent opengl calls will modify it's state.
-        glBindVertexArray(m_vao);
+        // Create static vertex buffer.
+        m_vbh = bgfx::createVertexBuffer(bgfx::makeRef(m_cubeVertices, sizeof(m_cubeVertices) ), PosTexcoordVertex::ms_decl);
 
-        // Generate the VBO if it isn't already generated
-        if (m_vbo == 0) {
-            glGenBuffers(1, &m_vbo);
-        }
-        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+        // Create static index buffer.
+        m_ibh = bgfx::createIndexBuffer(bgfx::makeRef(m_cubeIndices, sizeof(m_cubeIndices) ) );
 
-        // Tell opengl what attribute arrays we need
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
+        // Create program from shaders.
+        m_program = loadProgram("vs_update", "fs_update_cmp");
 
-        // This is the position attribute pointer
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-            reinterpret_cast<void*>(offsetof(Vertex, position)));
-        // This is the UV attribute pointer
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
-            reinterpret_cast<void*>(offsetof(Vertex, uv)));
-        // This is the color attribute pointer
-        glVertexAttribPointer(2, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex),
-            reinterpret_cast<void*>(offsetof(Vertex, color)));
-
-        glBindVertexArray(0);
-        */
+        m_texColor = bgfx::createUniform("s_texColor", bgfx::UniformType::Int1);
     }
 
     void SpriteBatch::SortGlyphs() {

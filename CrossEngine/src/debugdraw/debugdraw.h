@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -21,9 +21,16 @@ struct Axis
 	};
 };
 
-struct SpriteHandle { uint16_t idx; };
+struct DdVertex
+{
+	float x, y, z;
+};
 
+struct SpriteHandle { uint16_t idx; };
 inline bool isValid(SpriteHandle _handle) { return _handle.idx != UINT16_MAX; }
+
+struct GeometryHandle { uint16_t idx; };
+inline bool isValid(GeometryHandle _handle) { return _handle.idx != UINT16_MAX; }
 
 ///
 void ddInit(bool _depthTestLess = true, bx::AllocatorI* _allocator = NULL);
@@ -38,7 +45,13 @@ SpriteHandle ddCreateSprite(uint16_t _width, uint16_t _height, const void* _data
 void ddDestroy(SpriteHandle _handle);
 
 ///
-void ddBegin(uint8_t _viewId);
+GeometryHandle ddCreateGeometry(uint32_t _numVertices, const DdVertex* _vertices, uint32_t _numIndices = 0, const uint16_t* _indices = NULL);
+
+///
+void ddDestroy(GeometryHandle _handle);
+
+///
+void ddBegin(uint16_t _viewId);
 
 ///
 void ddEnd();
@@ -92,7 +105,10 @@ void ddClose();
 void ddDraw(const Aabb& _aabb);
 
 ///
-void ddDraw(const Cylinder& _cylinder, bool _capsule = false);
+void ddDraw(const Cylinder& _cylinder);
+
+///
+void ddDraw(const Capsule& _capsule);
 
 ///
 void ddDraw(const Disk& _disk);
@@ -102,6 +118,18 @@ void ddDraw(const Obb& _obb);
 
 ///
 void ddDraw(const Sphere& _sphere);
+
+///
+void ddDraw(const Cone& _cone);
+
+///
+void ddDraw(GeometryHandle _handle);
+
+///
+void ddDrawLineList(uint32_t _numVertices, const DdVertex* _vertices, uint32_t _numIndices = 0, const uint16_t* _indices = NULL);
+
+///
+void ddDrawTriList(uint32_t _numVertices, const DdVertex* _vertices, uint32_t _numIndices = 0, const uint16_t* _indices = NULL);
 
 ///
 void ddDrawFrustum(const void* _viewProj);
@@ -128,7 +156,7 @@ void ddDrawQuad(bgfx::TextureHandle _handle, const float* _normal, const float* 
 void ddDrawCone(const void* _from, const void* _to, float _radius);
 
 ///
-void ddDrawCylinder(const void* _from, const void* _to, float _radius, bool _capsule = false);
+void ddDrawCylinder(const void* _from, const void* _to, float _radius);
 
 ///
 void ddDrawCapsule(const void* _from, const void* _to, float _radius);

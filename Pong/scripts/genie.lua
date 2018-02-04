@@ -1,7 +1,3 @@
---
--- Copyright 2010-2017 Branimir Karadzic. All rights reserved.
--- License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
---
 
 newoption {
 	trigger = "with-amalgamated",

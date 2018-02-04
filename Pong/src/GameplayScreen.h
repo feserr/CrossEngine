@@ -26,6 +26,9 @@
 #include <CrossEngine/Window.h>
 #include <vector>
 
+static const uint16_t textureside   = 512;
+static const uint32_t texture2dSize = 256;
+
 // Our custom gameplay screen that inherits from the IGameScreen
 class GameplayScreen : public CrossEngine::IGameScreen {
 public:
@@ -54,17 +57,21 @@ private:
 
     bool onExitClicked();
 
+    bgfx::ProgramHandle m_program;
+    bgfx::UniformHandle s_texColor;
+    bgfx::TextureHandle m_textures[9];
+    bgfx::IndexBufferHandle m_ibh;
+    bgfx::VertexBufferHandle m_vbh;
+
     CrossEngine::SpriteBatch m_spriteBatch;
     CrossEngine::Camera2D m_camera;
     CrossEngine::CrossTexture m_texture;
     CrossEngine::Window* m_window;
 
-    bool m_renderDebug = false;
-
     Player m_playerOne;
     Player m_playerTwo;
-    Ball m_ball;
-    std::vector<Environment> m_enviroment;
+    //Ball m_ball;
+    //std::vector<Environment> m_enviroment;
 
     int m_iScorePlayerOne = 0, m_iScorePlayerTwo = 0;
 

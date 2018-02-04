@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -66,19 +66,22 @@ namespace entry
 		int m_argc;
 		const char* const* m_argv;
 
-		static int32_t threadFunc(void* _userData)
+		static int32_t threadFunc(bx::Thread* _thread, void* _userData)
 		{
+			BX_UNUSED(_thread);
+
 			CFBundleRef mainBundle = CFBundleGetMainBundle();
-			if ( mainBundle != nil )
+			if (mainBundle != nil)
 			{
 				CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
-				if ( resourcesURL != nil )
+				if (resourcesURL != nil)
 				{
 					char path[PATH_MAX];
-					if (CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX) )
+					if (CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8*)path, PATH_MAX) )
 					{
 						chdir(path);
 					}
+
 					CFRelease(resourcesURL);
 				}
 			}
@@ -100,7 +103,7 @@ namespace entry
 			, m_fullscreen(false)
 		{
 			s_translateKey[27]             = Key::Esc;
-			s_translateKey[uint8_t('\n')]  = Key::Return;
+			s_translateKey[uint8_t('\r')]  = Key::Return;
 			s_translateKey[uint8_t('\t')]  = Key::Tab;
 			s_translateKey[127]            = Key::Backspace;
 			s_translateKey[uint8_t(' ')]   = Key::Space;
@@ -224,7 +227,7 @@ namespace entry
 			*_pressedChar = (uint8_t)keyChar;
 
 			int keyCode = keyChar;
-			*specialKeys = translateModifiers([event modifierFlags]);
+			*specialKeys = translateModifiers(int([event modifierFlags]));
 
 			// if this is a unhandled key just return None
 			if (keyCode < 256)
@@ -469,7 +472,10 @@ namespace entry
 			thread.init(mte.threadFunc, &mte);
 
 			WindowHandle handle = { 0 };
-			m_eventQueue.postSizeEvent(handle, ENTRY_DEFAULT_WIDTH, ENTRY_DEFAULT_HEIGHT);
+			NSRect contentRect = [window contentRectForFrameRect: m_windowFrame];
+			uint32_t width = uint32_t(contentRect.size.width);
+			uint32_t height = uint32_t(contentRect.size.height);
+			m_eventQueue.postSizeEvent(handle, width, height);
 
 			while (!(m_exit = [dg applicationHasTerminated]) )
 			{
@@ -590,16 +596,9 @@ namespace entry
 		}
 	}
 
-	void toggleWindowFrame(WindowHandle _handle)
+	void setWindowFlags(WindowHandle _handle, uint32_t _flags, bool _enabled)
 	{
-		if (s_ctx.isValid(_handle) )
-		{
-			s_ctx.m_style ^= NSTitledWindowMask;
-			dispatch_async(dispatch_get_main_queue()
-			, ^{
-				[s_ctx.m_window[_handle.idx] setStyleMask: s_ctx.m_style];
-			});
-		}
+		BX_UNUSED(_handle, _flags, _enabled);
 	}
 
 	void toggleFullscreen(WindowHandle _handle)

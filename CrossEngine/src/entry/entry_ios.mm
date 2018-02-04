@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -29,7 +29,7 @@ namespace entry
 		int m_argc;
 		const char* const* m_argv;
 
-		static int32_t threadFunc(void* _userData);
+		static int32_t threadFunc(bx::Thread* _thread, void* _userData);
 	};
 
 	static WindowHandle s_defaultWindow = { 0 };
@@ -63,19 +63,22 @@ namespace entry
 
 	static Context* s_ctx;
 
-	int32_t MainThreadEntry::threadFunc(void* _userData)
+	int32_t MainThreadEntry::threadFunc(bx::Thread* _thread, void* _userData)
 	{
+		BX_UNUSED(_thread);
+
 		CFBundleRef mainBundle = CFBundleGetMainBundle();
-		if ( mainBundle != nil )
+		if (mainBundle != nil)
 		{
 			CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(mainBundle);
-			if ( resourcesURL != nil )
+			if (resourcesURL != nil)
 			{
 				char path[PATH_MAX];
-				if (CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8 *)path, PATH_MAX) )
+				if (CFURLGetFileSystemRepresentation(resourcesURL, TRUE, (UInt8*)path, PATH_MAX) )
 				{
 					chdir(path);
 				}
+
 				CFRelease(resourcesURL);
 			}
 		}
@@ -127,9 +130,9 @@ namespace entry
 		BX_UNUSED(_handle, _title);
 	}
 
-	void toggleWindowFrame(WindowHandle _handle)
+	void setWindowFlags(WindowHandle _handle, uint32_t _flags, bool _enabled)
 	{
-		BX_UNUSED(_handle);
+		BX_UNUSED(_handle, _flags, _enabled);
 	}
 
 	void toggleFullscreen(WindowHandle _handle)
@@ -374,7 +377,7 @@ static	void* m_device = NULL;
 int main(int _argc, const char* const* _argv)
 {
 	NSAutoreleasePool* pool = [ [NSAutoreleasePool alloc] init];
-	int exitCode = UIApplicationMain(_argc, _argv, @"UIApplication", NSStringFromClass([AppDelegate class]) );
+	int exitCode = UIApplicationMain(_argc, (char**)_argv, @"UIApplication", NSStringFromClass([AppDelegate class]) );
 	[pool release];
 	return exitCode;
 }

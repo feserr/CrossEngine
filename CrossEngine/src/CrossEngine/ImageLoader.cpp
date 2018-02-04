@@ -30,16 +30,18 @@ namespace CrossEngine {
         // Create a GLTexture and initialize all its fields to 0
         CrossTexture crossTexture = {};
 
-        unsigned long width = 0, height = 0;
+        bgfx::TextureInfo info = bgfx::TextureInfo();
 
         // Decode the .png format into an array of pixels
-        crossTexture.texture = loadTexture(filePath.data());
-        /*if (crossTexture.texture.idx != BGFX_INVALID_HANDLE) {
+        crossTexture.texture = loadTexture(filePath.data(),
+            BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
+            0, &info);
+        if (!bgfx::isValid(crossTexture.texture)) {
             FatalError("Failed to load texture: " + filePath);
-        }*/
+        }
 
-        crossTexture.width = static_cast<int>(width);
-        crossTexture.height = static_cast<int>(height);
+        crossTexture.width = info.width;
+        crossTexture.height = info.height;
         crossTexture.filePath = filePath;
 
         // Return a copy of the texture data

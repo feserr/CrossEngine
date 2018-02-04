@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2017 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -249,7 +249,7 @@ namespace entry
 		int m_argc;
 		char** m_argv;
 
-		static int32_t threadFunc(void* _userData);
+		static int32_t threadFunc(bx::Thread* _thread, void* _userData);
 	};
 
 	///
@@ -281,6 +281,7 @@ namespace entry
 			, m_width(0)
 			, m_height(0)
 			, m_flags(0)
+			, m_flagsEnabled(false)
 		{
 		}
 
@@ -290,6 +291,7 @@ namespace entry
 		uint32_t m_height;
 		uint32_t m_flags;
 		tinystl::string m_title;
+		bool m_flagsEnabled;
 	};
 
 	static uint32_t s_userEventStart;
@@ -299,6 +301,7 @@ namespace entry
 		SDL_USER_WINDOW_CREATE,
 		SDL_USER_WINDOW_DESTROY,
 		SDL_USER_WINDOW_SET_TITLE,
+		SDL_USER_WINDOW_SET_FLAGS,
 		SDL_USER_WINDOW_SET_POS,
 		SDL_USER_WINDOW_SET_SIZE,
 		SDL_USER_WINDOW_TOGGLE_FRAME,
@@ -485,6 +488,8 @@ namespace entry
 			WindowHandle defaultWindow = { 0 };
 			setWindowSize(defaultWindow, m_width, m_height, true);
 
+			SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+
 			bx::FileReaderI* reader = NULL;
 			while (NULL == reader)
 			{
@@ -496,11 +501,14 @@ namespace entry
 			{
 				bx::AllocatorI* allocator = getAllocator();
 				uint32_t size = (uint32_t)bx::getSize(reader);
-				void* data = BX_ALLOC(allocator, size);
+				void* data = BX_ALLOC(allocator, size + 1);
 				bx::read(reader, data, size);
 				bx::close(reader);
+				((char*)data)[size] = '\0';
 
-				SDL_GameControllerAddMapping( (char*)data);
+				if (SDL_GameControllerAddMapping( (char*)data) < 0) {
+					DBG("SDL game controller add mapping failed: %s", SDL_GetError());
+				}
 
 				BX_FREE(allocator, data);
 			}
@@ -800,6 +808,18 @@ namespace entry
 						}
 						break;
 
+					case SDL_DROPFILE:
+						{
+							const SDL_DropEvent& dev = event.drop;
+							WindowHandle handle = defaultWindow; //findHandle(dev.windowID);
+							if (isValid(handle) )
+							{
+								m_eventQueue.postDropFileEvent(handle, dev.file);
+								SDL_free(dev.file);
+							}
+						}
+						break;
+
 					default:
 						{
 							const SDL_UserEvent& uev = event.user;
@@ -811,13 +831,13 @@ namespace entry
 									Msg* msg = (Msg*)uev.data2;
 
 									m_window[handle.idx] = SDL_CreateWindow(msg->m_title.c_str()
-																, msg->m_x
-																, msg->m_y
-																, msg->m_width
-																, msg->m_height
-																, SDL_WINDOW_SHOWN
-																| SDL_WINDOW_RESIZABLE
-																);
+										, msg->m_x
+										, msg->m_y
+										, msg->m_width
+										, msg->m_height
+										, SDL_WINDOW_SHOWN
+										| SDL_WINDOW_RESIZABLE
+										);
 
 									m_flags[handle.idx] = msg->m_flags;
 
@@ -852,6 +872,24 @@ namespace entry
 									{
 										SDL_SetWindowTitle(m_window[handle.idx], msg->m_title.c_str() );
 									}
+									delete msg;
+								}
+								break;
+
+							case SDL_USER_WINDOW_SET_FLAGS:
+								{
+									WindowHandle handle = getWindowHandle(uev);
+									Msg* msg = (Msg*)uev.data2;
+
+									if (msg->m_flagsEnabled)
+									{
+										m_flags[handle.idx] |= msg->m_flags;
+									}
+									else
+									{
+										m_flags[handle.idx] &= ~msg->m_flags;
+									}
+
 									delete msg;
 								}
 								break;
@@ -1072,9 +1110,12 @@ namespace entry
 		sdlPostEvent(SDL_USER_WINDOW_SET_TITLE, _handle, msg);
 	}
 
-	void toggleWindowFrame(WindowHandle _handle)
+	void setWindowFlags(WindowHandle _handle, uint32_t _flags, bool _enabled)
 	{
-		sdlPostEvent(SDL_USER_WINDOW_TOGGLE_FRAME, _handle);
+		Msg* msg = new Msg;
+		msg->m_flags = _flags;
+		msg->m_flagsEnabled = _enabled;
+		sdlPostEvent(SDL_USER_WINDOW_SET_FLAGS, _handle, msg);
 	}
 
 	void toggleFullscreen(WindowHandle _handle)
@@ -1087,8 +1128,10 @@ namespace entry
 		sdlPostEvent(SDL_USER_WINDOW_MOUSE_LOCK, _handle, NULL, _lock);
 	}
 
-	int32_t MainThreadEntry::threadFunc(void* _userData)
+	int32_t MainThreadEntry::threadFunc(bx::Thread* _thread, void* _userData)
 	{
+		BX_UNUSED(_thread);
+
 		MainThreadEntry* self = (MainThreadEntry*)_userData;
 		int32_t result = main(self->m_argc, self->m_argv);
 

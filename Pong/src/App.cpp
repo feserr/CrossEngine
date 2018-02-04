@@ -31,8 +31,8 @@ App::~App() {
 }
 
 void App::OnInit() {
-    //m_window.SetWindowName("Pong");
-    //m_window.SetWindowSize(640, 480);
+    m_window.SetWindowName("Pong");
+    m_window.SetWindowSize(640, 480);
 }
 
 void App::AddScreens() {

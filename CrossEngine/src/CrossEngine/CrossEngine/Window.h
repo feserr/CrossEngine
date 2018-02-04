@@ -36,8 +36,8 @@ class Window {
     int GetScreenWidth() { return m_screenWidth; }
     int GetScreenHeight() { return m_screenHeight; }
 
-    void SetWindowName(const char *name) { SDL_SetWindowTitle(m_sdlWindow,
-        name); }
+    void SetWindowName(const char *name) { /*SDL_SetWindowTitle(m_sdlWindow,
+        name);*/ }
     void SetWindowSize(int width, int height);
 
  private:

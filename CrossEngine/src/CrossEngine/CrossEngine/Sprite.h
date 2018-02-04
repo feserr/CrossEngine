@@ -18,18 +18,25 @@
 #define _SPRITE_H_
 
 #include "CrossTexture.h"
+#include "TileSheet.h"
 
 #include <string>
 
 namespace CrossEngine {
+
 /// A 2D quad that can be rendered to the screen
 class Sprite {
  public:
     Sprite();
     ~Sprite();
 
+    void SetPosition(float x, float y);
+    void SetDimensions(float width, float height);
+
+    // Initializes the sprite VBO. x, y, width, and height are
+    // in the normalized device coordinate space. so, [-1, 1]
     void Init(float x, float y, float width, float height,
-        std::string texturePath);
+        CrossEngine::CrossTexture* texture);
 
     void Draw();
 
@@ -38,8 +45,12 @@ class Sprite {
     float m_y;
     float m_width;
     float m_height;
-    unsigned int m_vboID;
     CrossTexture m_texture;
+
+    bgfx::ProgramHandle m_program;
+    bgfx::UniformHandle m_texColor;
+    bgfx::IndexBufferHandle m_ibh;
+    bgfx::VertexBufferHandle m_vbh;
 };
 }  // namespace CrossEngine
 

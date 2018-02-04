@@ -29,6 +29,25 @@ struct CrossTexture {
     int width;  ///< The width
     int height;  ///< The height
 };
+
+struct PosTexcoordVertex {
+    float m_x;
+    float m_y;
+    float m_z;
+    float m_u;
+    float m_v;
+    float m_w;
+
+    static void init() {
+        ms_decl
+        .begin()
+        .add(bgfx::Attrib::Position,  3, bgfx::AttribType::Float)
+        .add(bgfx::Attrib::TexCoord0, 3, bgfx::AttribType::Float)
+        .end();
+    };
+
+    static bgfx::VertexDecl ms_decl;
+};
 }  // namespace CrossEngine
 
 #endif  // _TEXTURE_H_
