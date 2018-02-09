@@ -46,6 +46,15 @@ struct PosTexcoordVertex {
         .end();
     };
 
+    void set(float x, float y, float z, float u, float v, float w) {
+        m_x = x;
+        m_y = y;
+        m_z = z;
+        m_u = u;
+        m_v = v;
+        m_w = w;
+    }
+
     static bgfx::VertexDecl ms_decl;
 };
 }  // namespace CrossEngine

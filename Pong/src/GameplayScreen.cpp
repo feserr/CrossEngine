@@ -140,7 +140,7 @@ void GameplayScreen::Draw() {
     // Set view and projection matrix for view 1.
     const float aspectRatio = float(m_window->GetScreenHeight()) /
         float(m_window->GetScreenWidth());
-    const float size = 100.0f;
+    const float size = 1000.0f;
     const bgfx::Caps* caps = bgfx::getCaps();
     bx::mtxOrtho(proj, -size, size, size*aspectRatio, -size*aspectRatio, 0.0f,
          1000.0f, 0.0f, caps->homogeneousDepth);

@@ -40,10 +40,10 @@ class Glyph {
  public:
     Glyph() {
     }
-    Glyph(const glm::vec4& destRect, const glm::vec4& uvRect, 
+    Glyph(const glm::vec4& destRect, const glm::vec4& uvRect,
         bgfx::TextureHandle Texture,
         float Depth, const ColorRGBA8& color);
-    Glyph(const glm::vec4& destRect, const glm::vec4& uvRect, 
+    Glyph(const glm::vec4& destRect, const glm::vec4& uvRect,
         bgfx::TextureHandle Texture,
         float Depth, const ColorRGBA8& color, float angle);
 
@@ -63,7 +63,7 @@ class Glyph {
 // Each render batch is used for a single draw call
 class RenderBatch {
  public:
-    RenderBatch(unsigned int Offset, unsigned int NumVertices, 
+    RenderBatch(unsigned int Offset, unsigned int NumVertices,
         bgfx::TextureHandle Texture) :
         offset(Offset), numVertices(NumVertices), texture(Texture) {
     }
@@ -129,8 +129,6 @@ class SpriteBatch {
 
     bgfx::ProgramHandle m_program;
     bgfx::UniformHandle m_texColor;
-    bgfx::IndexBufferHandle m_ibh;
-    bgfx::VertexBufferHandle m_vbh;
 };
 }  // namespace CrossEngine
 

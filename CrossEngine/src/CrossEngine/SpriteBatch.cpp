@@ -23,7 +23,7 @@
 namespace CrossEngine {
     bgfx::VertexDecl PosTexcoordVertex::ms_decl;
 
-    static PosTexcoordVertex m_cubeVertices[4] =
+    PosTexcoordVertex m_cubeVertices[4] =
     {
         {-1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  0.0f },
         { 1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  0.0f },
@@ -103,8 +103,6 @@ namespace CrossEngine {
     }
 
     SpriteBatch::~SpriteBatch() {
-        bgfx::destroy(m_ibh);
-        bgfx::destroy(m_vbh);
         if (bgfx::isValid(m_program) )
         {
             bgfx::destroy(m_program);
@@ -170,46 +168,77 @@ namespace CrossEngine {
     }
 
     void SpriteBatch::RenderBatch() {
-        float mtx[16];
+        const uint32_t num = m_glyphs.size();
+
+        bgfx::TransientVertexBuffer tvb;
+        bgfx::TransientIndexBuffer tib;
+
+        const uint32_t numVertices =
+            bgfx::getAvailTransientVertexBuffer(num * 4,
+                PosTexcoordVertex::ms_decl);
+        const uint32_t numIndices = bgfx::getAvailTransientIndexBuffer(num * 6);
+        const uint32_t max = bx::uint32_min(numVertices / 4, numIndices / 6);
+
+        bgfx::allocTransientBuffers(&tvb, PosTexcoordVertex::ms_decl, max * 4,
+            &tib, max * 6);
+
+        PosTexcoordVertex* vertices = (PosTexcoordVertex*)tvb.data;
+
         for (size_t i = 0; i < m_glyphs.size(); i++) {
-            bx::mtxTranslate(mtx,
-                m_glyphs[i].bottomLeft.position.x,
-                m_glyphs[i].bottomLeft.position.y,
-                0.0f);
+            PosTexcoordVertex* vertex = &vertices[i * 4];
 
-            // Set model matrix for rendering.
-            bgfx::setTransform(mtx);
-
-            m_cubeVertices[0] = {
+            vertex->set (
                 m_glyphs[i].topLeft.position.x, m_glyphs[i].topLeft.position.y,
                 1.0f,
-                m_glyphs[i].topLeft.uv.u, m_glyphs[i].topLeft.uv.v, 0.0f };
-            m_cubeVertices[1] = {
+                m_glyphs[i].topLeft.uv.u, m_glyphs[i].topLeft.uv.v, 0.0f);
+            ++vertex;
+
+            vertex->set(
                 m_glyphs[i].topRight.position.x, m_glyphs[i].topRight.position.y,
                 1.0f,
-                m_glyphs[i].topRight.uv.u, m_glyphs[i].topRight.uv.v, 0.0f };
-            m_cubeVertices[2] = {
+                m_glyphs[i].topRight.uv.u, m_glyphs[i].topRight.uv.v, 0.0f);
+            ++vertex;
+
+            vertex->set(
                 m_glyphs[i].bottomLeft.position.x, m_glyphs[i].bottomLeft.position.y,
                 1.0f,
-                m_glyphs[i].bottomLeft.uv.u, m_glyphs[i].bottomLeft.uv.v, 0.0f };
-            m_cubeVertices[3] = {
+                m_glyphs[i].bottomLeft.uv.u, m_glyphs[i].bottomLeft.uv.v, 0.0f);
+            ++vertex;
+
+            vertex->set(
                 m_glyphs[i].bottomRight.position.x, m_glyphs[i].bottomRight.position.y,
                 1.0f,
-                m_glyphs[i].bottomRight.uv.u, m_glyphs[i].bottomRight.uv.v, 0.0f };
-
-            // Set vertex and index buffer.
-            bgfx::setVertexBuffer(0, m_vbh);
-            bgfx::setIndexBuffer(m_ibh);
-
-            // Bind texture.
-            bgfx::setTexture(0, m_texColor, m_glyphs[i].texture);
-
-            // Set render states.
-            bgfx::setState(BGFX_STATE_DEFAULT);
-
-            // Submit primitive for rendering to view 1.
-            bgfx::submit(0, m_program);
+                m_glyphs[i].bottomRight.uv.u, m_glyphs[i].bottomRight.uv.v, 0.0f);
+            ++vertex;
         }
+
+        uint16_t* indices = (uint16_t*)tib.data;
+        for (uint32_t ii = 0; ii < max; ++ii) {
+            uint16_t* index = &indices[ii * 6];
+            index[0] = 0;
+            index[1] = 1;
+            index[2] = 2;
+            index[3] = 1;
+            index[4] = 3;
+            index[5] = 2;
+        }
+
+        // Set render states.
+        bgfx::setState(0
+            | BGFX_STATE_RGB_WRITE
+            | BGFX_STATE_ALPHA_WRITE
+            | BGFX_STATE_DEPTH_TEST_LESS
+            | BGFX_STATE_CULL_CW
+            | BGFX_STATE_BLEND_NORMAL);
+
+        bgfx::setVertexBuffer(0, &tvb);
+        bgfx::setIndexBuffer(&tib);
+
+        // Bind texture.
+        bgfx::setTexture(0, m_texColor, m_glyphs[0].texture);
+
+        // Submit primitive for rendering to view 1.
+        bgfx::submit(0, m_program);
     }
 
     void SpriteBatch::CreateRenderBatches() {
@@ -261,12 +290,6 @@ namespace CrossEngine {
     void SpriteBatch::CreateVertexArray() {
         // Create vertex stream declaration.
         PosTexcoordVertex::init();
-
-        // Create static vertex buffer.
-        m_vbh = bgfx::createVertexBuffer(bgfx::makeRef(m_cubeVertices, sizeof(m_cubeVertices) ), PosTexcoordVertex::ms_decl);
-
-        // Create static index buffer.
-        m_ibh = bgfx::createIndexBuffer(bgfx::makeRef(m_cubeIndices, sizeof(m_cubeIndices) ) );
 
         // Create program from shaders.
         m_program = loadProgram("vs_update", "fs_update_cmp");
