@@ -142,6 +142,8 @@ bool IMainGame::InitSystems(int _argc, char** _argv) {
     m_debug  = BGFX_DEBUG_TEXT;
     m_reset  = BGFX_RESET_VSYNC;
 
+    entry::setWindowSize(entry::WindowHandle(), m_width, m_height);
+
     bgfx::init(args.m_type, args.m_pciId);
     bgfx::reset(m_width, m_height, m_reset);
 
@@ -193,8 +195,6 @@ void IMainGame::Update() {
 }
 
 void IMainGame::Draw() {
-    bgfx::setViewRect(0, 0, 0, uint16_t(m_width), uint16_t(m_height));
-
     // This dummy draw call is here to make sure that view 0 is cleared
     // if no other draw calls are submitted to view 0.
     bgfx::touch(0);

@@ -49,6 +49,8 @@ class Camera2D {
     /// Updates the camera matrix if needed
     void Update();
 
+    void Draw();
+
     /**
      * \brief      Convert screen coordinates to world coordinates.
      *
@@ -145,6 +147,8 @@ class Camera2D {
     int m_screenWidth, m_screenHeight;
     bool m_needsMatrixUpdate;
     float m_scale;
+    float m_near;
+    float m_far;
     glm::vec2 m_position;
     glm::mat4 m_cameraMatrix;
     glm::mat4 m_orthoMatrix;

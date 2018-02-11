@@ -23,21 +23,6 @@
 namespace CrossEngine {
     bgfx::VertexDecl PosTexcoordVertex::ms_decl;
 
-    PosTexcoordVertex m_cubeVertices[4] =
-    {
-        {-1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  0.0f },
-        { 1.0f,  1.0f,  1.0f, -1.0f,  1.0f,  0.0f },
-        {-1.0f, -1.0f,  1.0f, -1.0f, -1.0f,  0.0f },
-        { 1.0f, -1.0f,  1.0f, -1.0f, -1.0f,  0.0f },
-    };
-
-    static const uint16_t m_cubeIndices[6] =
-    {
-        0,  1,  2, // 0
-        1,  3,  2,
-    };
-
-
     Glyph::Glyph(const glm::vec4& destRect, const glm::vec4& uvRect,
         bgfx::TextureHandle Texture, float Depth, const ColorRGBA8& color) :
         texture(Texture), depth(Depth) {

@@ -27,10 +27,14 @@
 
 #include "CrossEngine/Camera2D.h"
 
+#include "../common/common.h"
+#include "../common/bgfx_utils.h"
+
 namespace CrossEngine {
-    Camera2D::Camera2D() : m_position(0.0f, 0.0f), m_cameraMatrix(1.0f),
-        m_orthoMatrix(1.0f), m_scale(1.0f), m_needsMatrixUpdate(true),
-        m_screenWidth(500), m_screenHeight(500) {
+    Camera2D::Camera2D() : m_screenWidth(500), m_screenHeight(500),
+        m_needsMatrixUpdate(true), m_scale(1.0f), m_near(0.0f),
+        m_far(10.0f), m_position(0.0f, 0.0f), m_cameraMatrix(1.0f),
+        m_orthoMatrix(1.0f) {
     }
 
     Camera2D::~Camera2D() {
@@ -41,6 +45,8 @@ namespace CrossEngine {
         m_screenHeight = screenHeight;
         m_orthoMatrix = glm::ortho(0.0f, static_cast<float>(m_screenWidth),
             0.0f, static_cast<float>(m_screenHeight));
+        entry::setWindowSize(entry::WindowHandle(), screenWidth,
+            m_screenHeight);
     }
 
     // Updates the camera matrix if needed
@@ -59,6 +65,26 @@ namespace CrossEngine {
 
             m_needsMatrixUpdate = false;
         }
+    }
+
+    void Camera2D::Draw() {
+        float at[3] = { 0.0f, 0.0f, 0.0f };
+        float eye[3] = { 0.0f, 0.0f, -5.0f };
+
+        float view[16];
+        float proj[16];
+        bx::mtxLookAt(view, eye, at);
+
+        const bgfx::Caps* caps = bgfx::getCaps();
+        bx::mtxOrtho(proj,
+                     0, m_screenWidth,
+                     m_screenHeight, 0.0f,
+                     m_near, m_far, 0.0f, caps->homogeneousDepth);
+
+        // Set view and projection matrix for view 0.
+        bgfx::setViewTransform(0, view, proj);
+        bgfx::setViewRect(0, m_position.x, m_position.y,
+            m_screenWidth, m_screenHeight);
     }
 
     glm::vec2 Camera2D::ConvertScreenToWorld(glm::vec2 screenCoords) {
