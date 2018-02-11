@@ -20,7 +20,7 @@
 #include "Vertex.h"
 #include "CrossTexture.h"
 
-#include "../../bgfx_utils.h"
+#include "../../common/bgfx_utils.h"
 
 #include <glm/glm.hpp>
 #include <vector>
@@ -62,14 +62,15 @@ class Glyph {
 
 // Each render batch is used for a single draw call
 class RenderBatch {
- public:
-    RenderBatch(unsigned int Offset, unsigned int NumVertices,
+public:
+    RenderBatch(uint32_t Offset, uint32_t NumVertices, uint32_t NumIndices,
         bgfx::TextureHandle Texture) :
-        offset(Offset), numVertices(NumVertices), texture(Texture) {
-    }
+    offset(Offset), numVertices(NumVertices), numIndices(NumIndices),
+    texture(Texture) {}
 
-    unsigned int offset;
-    unsigned int numVertices;
+    uint32_t offset;
+    uint32_t numVertices;
+    uint32_t numIndices;
     bgfx::TextureHandle texture;
 };
 
@@ -127,6 +128,8 @@ class SpriteBatch {
     std::vector<Glyph> m_glyphs;  ///< These are the actual glyphs
     std::vector<CrossEngine::RenderBatch> m_renderBatches;
 
+    bgfx::TransientVertexBuffer m_tvb;
+    bgfx::TransientIndexBuffer m_tib;
     bgfx::ProgramHandle m_program;
     bgfx::UniformHandle m_texColor;
 };

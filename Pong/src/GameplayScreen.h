@@ -57,12 +57,6 @@ private:
 
     bool onExitClicked();
 
-    bgfx::ProgramHandle m_program;
-    bgfx::UniformHandle s_texColor;
-    bgfx::TextureHandle m_textures[9];
-    bgfx::IndexBufferHandle m_ibh;
-    bgfx::VertexBufferHandle m_vbh;
-
     CrossEngine::SpriteBatch m_spriteBatch;
     CrossEngine::Camera2D m_camera;
     CrossEngine::CrossTexture m_texture;

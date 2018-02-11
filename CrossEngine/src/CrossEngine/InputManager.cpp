@@ -16,7 +16,7 @@
 
 #include "CrossEngine/InputManager.h"
 
-#include "../entry/input.h"
+#include "../common/entry/input.h"
 
 namespace CrossEngine {
     InputManager::InputManager() : m_mouseCoords(0.0f) {

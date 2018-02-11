@@ -20,10 +20,10 @@
 #include <SDL/SDL.h>
 #include <iostream>
 
-#include <common.h>
-#include <bgfx_utils.h>
-#include <entry/entry.h>
-#include <entry/input.h>
+#include <common/common.h>
+#include <common/bgfx_utils.h>
+#include <common/entry/entry.h>
+#include <common/entry/input.h>
 
 const float MAX_VELOCITY = 5.0f;
 
@@ -80,10 +80,10 @@ void Player::Draw(CrossEngine::SpriteBatch& spriteBatch) {
     spriteBatch.Draw(destRect, uvRect, m_texture.texture.texture, 0.0f,
         m_color);
     destRect.y = m_position.y + m_drawDims.y / 2;
-    spriteBatch.Draw(destRect, uvRectBottom, m_texture.texture.texture, 0.0f,
+    spriteBatch.Draw(destRect, uvRectTop, m_texture.texture.texture, 0.0f,
         m_color);
     destRect.y = m_position.y - m_drawDims.y * 1.5;
-    spriteBatch.Draw(destRect, uvRectTop, m_texture.texture.texture, 0.0f,
+    spriteBatch.Draw(destRect, uvRectBottom, m_texture.texture.texture, 0.0f,
         m_color);
 }
 

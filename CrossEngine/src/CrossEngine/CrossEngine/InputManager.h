@@ -17,7 +17,7 @@
 #ifndef _INPUTMANAGER_H_
 #define _INPUTMANAGER_H_
 
-#include "../../common.h"
+#include "../../common/common.h"
 
 #include <glm/glm.hpp>
 #include <unordered_map>

@@ -103,11 +103,6 @@ namespace CrossEngine {
     }
 
     SpriteBatch::~SpriteBatch() {
-        if (bgfx::isValid(m_program) )
-        {
-            bgfx::destroy(m_program);
-        }
-        bgfx::destroy(m_texColor);
     }
 
     void SpriteBatch::Init() {
@@ -115,23 +110,21 @@ namespace CrossEngine {
     }
 
     void SpriteBatch::Dispose() {
-        if (m_vao != 0) {
-            //glDeleteVertexArrays(1, &m_vao);
-            m_vao = 0;
+        if (bgfx::isValid(m_program) )
+        {
+            bgfx::destroy(m_program);
         }
-        if (m_vbo != 0) {
-            //glDeleteBuffers(1, &m_vbo);
-            m_vbo = 0;
-        }
+        bgfx::destroy(m_texColor);
     }
 
     void SpriteBatch::Begin(GlyphSortType sortType) {
         m_sortType = sortType;
         m_renderBatches.clear();
 
-        // Makes m_glpyhs.size() == 0, however it does not free internal memory.
-        // So when we later call emplace_back it doesn't need to internally call
-        // new.
+        // Makes m_glpyhs.size() == 0, however it does not free
+        // internal memory.
+        // So when we later call emplace_back it doesn't need to
+        // internally call new.
         m_glyphs.clear();
     }
 
@@ -168,61 +161,6 @@ namespace CrossEngine {
     }
 
     void SpriteBatch::RenderBatch() {
-        const uint32_t num = m_glyphs.size();
-
-        bgfx::TransientVertexBuffer tvb;
-        bgfx::TransientIndexBuffer tib;
-
-        const uint32_t numVertices =
-            bgfx::getAvailTransientVertexBuffer(num * 4,
-                PosTexcoordVertex::ms_decl);
-        const uint32_t numIndices = bgfx::getAvailTransientIndexBuffer(num * 6);
-        const uint32_t max = bx::uint32_min(numVertices / 4, numIndices / 6);
-
-        bgfx::allocTransientBuffers(&tvb, PosTexcoordVertex::ms_decl, max * 4,
-            &tib, max * 6);
-
-        PosTexcoordVertex* vertices = (PosTexcoordVertex*)tvb.data;
-
-        for (size_t i = 0; i < m_glyphs.size(); i++) {
-            PosTexcoordVertex* vertex = &vertices[i * 4];
-
-            vertex->set (
-                m_glyphs[i].topLeft.position.x, m_glyphs[i].topLeft.position.y,
-                1.0f,
-                m_glyphs[i].topLeft.uv.u, m_glyphs[i].topLeft.uv.v, 0.0f);
-            ++vertex;
-
-            vertex->set(
-                m_glyphs[i].topRight.position.x, m_glyphs[i].topRight.position.y,
-                1.0f,
-                m_glyphs[i].topRight.uv.u, m_glyphs[i].topRight.uv.v, 0.0f);
-            ++vertex;
-
-            vertex->set(
-                m_glyphs[i].bottomLeft.position.x, m_glyphs[i].bottomLeft.position.y,
-                1.0f,
-                m_glyphs[i].bottomLeft.uv.u, m_glyphs[i].bottomLeft.uv.v, 0.0f);
-            ++vertex;
-
-            vertex->set(
-                m_glyphs[i].bottomRight.position.x, m_glyphs[i].bottomRight.position.y,
-                1.0f,
-                m_glyphs[i].bottomRight.uv.u, m_glyphs[i].bottomRight.uv.v, 0.0f);
-            ++vertex;
-        }
-
-        uint16_t* indices = (uint16_t*)tib.data;
-        for (uint32_t ii = 0; ii < max; ++ii) {
-            uint16_t* index = &indices[ii * 6];
-            index[0] = 0;
-            index[1] = 1;
-            index[2] = 2;
-            index[3] = 1;
-            index[4] = 3;
-            index[5] = 2;
-        }
-
         // Set render states.
         bgfx::setState(0
             | BGFX_STATE_RGB_WRITE
@@ -231,39 +169,67 @@ namespace CrossEngine {
             | BGFX_STATE_CULL_CW
             | BGFX_STATE_BLEND_NORMAL);
 
-        bgfx::setVertexBuffer(0, &tvb);
-        bgfx::setIndexBuffer(&tib);
+        for (size_t i = 0; i < m_renderBatches.size(); i++) {
+            bgfx::setVertexBuffer(0, &m_tvb, m_renderBatches[i].offset,
+                m_renderBatches[i].numVertices);
+            bgfx::setIndexBuffer(&m_tib, m_renderBatches[i].offset,
+                m_renderBatches[i].numIndices);
 
-        // Bind texture.
-        bgfx::setTexture(0, m_texColor, m_glyphs[0].texture);
+            // Bind texture.
+            bgfx::setTexture(0, m_texColor,
+                m_renderBatches[i].texture);
+        }
 
         // Submit primitive for rendering to view 1.
         bgfx::submit(0, m_program);
     }
 
     void SpriteBatch::CreateRenderBatches() {
-        // This will store all the vertices that we need to upload
-        std::vector <Vertex> vertices;
-        // Resize the buffer to the exact size we need so we can treat
-        // it like an array
-        vertices.resize(m_glyphPointers.size() * 6);
-
         if (m_glyphPointers.empty()) {
             return;
         }
 
+        const uint32_t num = m_glyphs.size();
+
+        const uint32_t numVertices =
+        bgfx::getAvailTransientVertexBuffer(num * 4,
+            PosTexcoordVertex::ms_decl);
+        const uint32_t numIndices = bgfx::getAvailTransientIndexBuffer(num * 6);
+        const uint32_t max = bx::uint32_min(numVertices / 4, numIndices / 6);
+
+        bgfx::allocTransientBuffers(
+            &m_tvb, PosTexcoordVertex::ms_decl, max * 4,
+            &m_tib, max * 6);
+
+        PosTexcoordVertex* vertices = (PosTexcoordVertex*)m_tvb.data;
+        PosTexcoordVertex* vertex = &vertices[0];
+        Glyph* g = m_glyphPointers[0];
+
         int offset = 0;  // current offset
-        int cv = 0;  // current vertex
 
         // Add the first batch
-        m_renderBatches.emplace_back(offset, 6, m_glyphPointers[0]->texture);
-        vertices[cv++] = m_glyphPointers[0]->topLeft;
-        vertices[cv++] = m_glyphPointers[0]->bottomLeft;
-        vertices[cv++] = m_glyphPointers[0]->bottomRight;
-        vertices[cv++] = m_glyphPointers[0]->bottomRight;
-        vertices[cv++] = m_glyphPointers[0]->topRight;
-        vertices[cv++] = m_glyphPointers[0]->topLeft;
-        offset += 6;
+        m_renderBatches.emplace_back(offset, 4, 6,
+            m_glyphPointers[0]->texture);
+        vertex->set (
+             g->topLeft.position.x, g->topLeft.position.y, 1.0f,
+             g->topLeft.uv.u, g->topLeft.uv.v, 0.0f);
+        ++vertex;
+
+        vertex->set(
+            g->topRight.position.x, g->topRight.position.y, 1.0f,
+            g->topRight.uv.u, g->topRight.uv.v, 0.0f);
+        ++vertex;
+
+        vertex->set(
+            g->bottomLeft.position.x, g->bottomLeft.position.y, 1.0f,
+            g->bottomLeft.uv.u, g->bottomLeft.uv.v, 0.0f);
+        ++vertex;
+
+        vertex->set(
+            g->bottomRight.position.x, g->bottomRight.position.y, 1.0f,
+            g->bottomRight.uv.u, g->bottomRight.uv.v, 0.0f);
+        ++vertex;
+        offset += 4;
 
         // Add all the rest of the glyphs
         for (size_t cg = 1; cg < m_glyphPointers.size(); cg++) {
@@ -271,19 +237,48 @@ namespace CrossEngine {
             if (m_glyphPointers[cg]->texture.idx !=
                 m_glyphPointers[cg - 1]->texture.idx) {
                 // Make a new batch
-                m_renderBatches.emplace_back(offset, 6,
+                m_renderBatches.emplace_back(offset, 4, 6,
                     m_glyphPointers[cg]->texture);
             } else {
-                // If its part of the current batch, just increase numVertices
-                m_renderBatches.back().numVertices += 6;
+                // If its part of the current batch increase numVertices
+                m_renderBatches.back().numVertices += 4;
+                m_renderBatches.back().numIndices += 6;
             }
-            vertices[cv++] = m_glyphPointers[cg]->topLeft;
-            vertices[cv++] = m_glyphPointers[cg]->bottomLeft;
-            vertices[cv++] = m_glyphPointers[cg]->bottomRight;
-            vertices[cv++] = m_glyphPointers[cg]->bottomRight;
-            vertices[cv++] = m_glyphPointers[cg]->topRight;
-            vertices[cv++] = m_glyphPointers[cg]->topLeft;
-            offset += 6;
+            vertex = &vertices[cg * 4];
+            g = m_glyphPointers[cg];
+
+            vertex->set (
+                g->topLeft.position.x, g->topLeft.position.y, 1.0f,
+                g->topLeft.uv.u, g->topLeft.uv.v, 0.0f);
+            ++vertex;
+
+            vertex->set(
+                g->topRight.position.x, g->topRight.position.y, 1.0f,
+                g->topRight.uv.u, g->topRight.uv.v, 0.0f);
+            ++vertex;
+
+            vertex->set(
+                g->bottomLeft.position.x, g->bottomLeft.position.y, 1.0f,
+                g->bottomLeft.uv.u, g->bottomLeft.uv.v, 0.0f);
+            ++vertex;
+
+            vertex->set(
+                g->bottomRight.position.x, g->bottomRight.position.y, 1.0f,
+                g->bottomRight.uv.u, g->bottomRight.uv.v, 0.0f);
+            ++vertex;
+
+            offset += 4;
+        }
+
+        uint16_t* indices = (uint16_t*)m_tib.data;
+        for (uint32_t ii = 0; ii < num; ++ii) {
+            uint16_t* index = &indices[ii * 6];
+            index[0] = ii*4+0;
+            index[1] = ii*4+1;
+            index[2] = ii*4+2;
+            index[3] = ii*4+1;
+            index[4] = ii*4+3;
+            index[5] = ii*4+2;
         }
     }
 

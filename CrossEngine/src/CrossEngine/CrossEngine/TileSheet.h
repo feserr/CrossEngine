@@ -19,7 +19,7 @@
 
 #include "CrossTexture.h"
 
-#include "../../bgfx_utils.h"
+#include "../../common/bgfx_utils.h"
 #include <glm/glm.hpp>
 
 namespace CrossEngine {

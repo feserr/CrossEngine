@@ -18,7 +18,7 @@
 #include "CrossEngine/Vertex.h"
 #include "CrossEngine/ResourceManager.h"
 
-#include "../bgfx_utils.h"
+#include "../common/bgfx_utils.h"
 
 #include <string>
 #include <cstddef>

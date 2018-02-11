@@ -50,13 +50,6 @@ void GameplayScreen::Build() {
 
 void GameplayScreen::Destroy() {
     // Cleanup.
-    if (bgfx::isValid(m_program) ) {
-        bgfx::destroy(m_program);
-    }
-
-    bgfx::destroy(m_ibh);
-    bgfx::destroy(m_vbh);
-    bgfx::destroy(s_texColor);
 }
 
 void GameplayScreen::OnEntry() {

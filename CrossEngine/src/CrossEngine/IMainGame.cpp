@@ -19,10 +19,10 @@
 #include "CrossEngine/IGameScreen.h"
 #include "CrossEngine/CppUtils.h"
 
-#include "../common.h"
-#include "../bgfx_utils.h"
-#include "../entry/entry.h"
-#include "../entry/input.h"
+#include "../common/common.h"
+#include "../common/bgfx_utils.h"
+#include "../common/entry/entry.h"
+#include "../common/entry/input.h"
 
 #include <memory>
 
@@ -64,6 +64,10 @@ void IMainGame::Run(int _argc, char** _argv) {
                 // process submitted rendering primitives.
                 bgfx::frame();
             }
+        } else {
+            m_isRunning = false;
+            bgfx::frame();
+            ExitGame();
         }
     }
 }

@@ -17,7 +17,7 @@
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
 
-#include "../../bgfx_utils.h"
+#include "../../common/bgfx_utils.h"
 
 #include <string>
 
