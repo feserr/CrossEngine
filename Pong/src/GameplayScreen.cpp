@@ -63,12 +63,32 @@ void GameplayScreen::OnEntry() {
     m_camera.SetScale(1.0f);
 
     // Init players
-    //glm::vec2 position(32.0f, m_window->GetScreenHeight() / 2);
-    glm::vec2 position(1.9f, 1.0f);
+    glm::vec2 position(32.0f, m_window->GetScreenHeight() / 2);
     glm::vec2 drawDims(32.0f, 32.0f);
     glm::vec2 collisionDims(32.0f, 48.0f);
     m_playerOne.Init(position, drawDims, collisionDims,
         CrossEngine::ColorRGBA8(255, 255, 255, 255), PlayerType::PLAYERONE);
+
+    position = glm::vec2(m_window->GetScreenWidth() - 32.0f,
+                         m_window->GetScreenHeight() / 2);
+    m_playerTwo.Init(position, drawDims, collisionDims,
+        CrossEngine::ColorRGBA8(255, 255, 255, 255), PlayerType::PLAYERTWO);
+
+    // Init the ball
+    position = glm::vec2(m_window->GetScreenWidth() / 2,
+                         m_window->GetScreenHeight() / 2);
+    glm::vec2 vel(-6.0f, 0.0f);
+    m_ball.Init(8.0f, 0.0f, position, vel);
+
+    // Init the environment
+    position = glm::vec2(m_window->GetScreenWidth() / 2, 0.0f);
+    for(int i = 16; i <= m_window->GetScreenHeight(); i += 64) {
+        Environment environment;
+        position.y = i;
+        environment.Init(position, drawDims,
+            CrossEngine::ColorRGBA8(255, 255, 255, 130));
+        m_enviroment.push_back(environment);
+    }
 
     m_windowSize = glm::vec2(m_window->GetScreenWidth(),
         m_window->GetScreenHeight());
@@ -96,9 +116,11 @@ void GameplayScreen::Update() {
         float deltaTime = std::min(totalDeltaTime, MAX_DELTA_TIME);
         // Update all physics here and pass in deltaTime
 
-        int t_goal = 0;
-        //int t_goal = m_ball.Update(deltaTime, m_windowSize);
-        m_playerOne.Update(deltaTime, m_game->inputManager, m_windowSize);
+        int t_goal = m_ball.Update(deltaTime, m_windowSize);
+        m_playerOne.Update(deltaTime, m_game->inputManager, m_windowSize,
+            m_ball);
+        m_playerTwo.Update(deltaTime, m_game->inputManager, m_windowSize,
+            m_ball);
 
         // Since we just took a step that is length deltaTime, subtract from
         // totalDeltaTime
@@ -131,12 +153,16 @@ void GameplayScreen::Draw() {
     bx::mtxLookAt(view, eye, at);
 
     // Set view and projection matrix for view 1.
+    /*
     const float aspectRatio = float(m_window->GetScreenHeight()) /
         float(m_window->GetScreenWidth());
     const float size = 1000.0f;
+    */
     const bgfx::Caps* caps = bgfx::getCaps();
-    bx::mtxOrtho(proj, -size, size, size*aspectRatio, -size*aspectRatio, 0.0f,
-         1000.0f, 0.0f, caps->homogeneousDepth);
+    bx::mtxOrtho(proj,
+        0, m_window->GetScreenWidth(),
+        m_window->GetScreenHeight(), 0.0f,
+        0.0f, 1000.0f, 0.0f, caps->homogeneousDepth);
 
     // Set view and projection matrix for view 0.
     bgfx::setViewTransform(0, view, proj);
@@ -144,6 +170,12 @@ void GameplayScreen::Draw() {
     m_spriteBatch.Begin();
 
     m_playerOne.Draw(m_spriteBatch);
+    m_playerTwo.Draw(m_spriteBatch);
+    m_ball.Draw(m_spriteBatch);
+
+    for(Environment environment : m_enviroment) {
+        environment.Draw(m_spriteBatch);
+    }
 
     m_spriteBatch.End();
     m_spriteBatch.RenderBatch();

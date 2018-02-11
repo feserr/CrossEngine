@@ -18,6 +18,8 @@
 #define GameplayScreen_h
 
 #include "Player.h"
+#include "Ball.h"
+#include "Environment.h"
 
 #include <CrossEngine/IGameScreen.h>
 #include <CrossEngine/SpriteBatch.h>
@@ -64,8 +66,8 @@ private:
 
     Player m_playerOne;
     Player m_playerTwo;
-    //Ball m_ball;
-    //std::vector<Environment> m_enviroment;
+    Ball m_ball;
+    std::vector<Environment> m_enviroment;
 
     int m_iScorePlayerOne = 0, m_iScorePlayerTwo = 0;
 
