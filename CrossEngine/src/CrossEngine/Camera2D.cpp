@@ -68,8 +68,10 @@ namespace CrossEngine {
     }
 
     void Camera2D::Draw() {
-        float at[3] = { 0.0f, 0.0f, 0.0f };
-        float eye[3] = { 0.0f, 0.0f, -5.0f };
+        bgfx::setViewRect(0, 0, 0, m_screenWidth, m_screenHeight);
+
+        const bx::Vec3 at = { 0.0f, 0.0f, 0.0f };
+        const bx::Vec3 eye = { 0.0f, 0.0f, -5.0f };
 
         float view[16];
         float proj[16];
@@ -83,8 +85,6 @@ namespace CrossEngine {
 
         // Set view and projection matrix for view 0.
         bgfx::setViewTransform(0, view, proj);
-        bgfx::setViewRect(0, m_position.x, m_position.y,
-            m_screenWidth, m_screenHeight);
     }
 
     glm::vec2 Camera2D::ConvertScreenToWorld(glm::vec2 screenCoords) {

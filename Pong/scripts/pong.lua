@@ -28,11 +28,7 @@ removefiles {
 }
 
 flags {
---    "FatalWarnings",
-}
-
-removeflags {
-    "NoExceptions",
+    "FatalWarnings",
 }
 
 links {
@@ -48,51 +44,6 @@ links {
 }
 
 libdirs { path.join(CROSSENGINE_DIR, "deps/lib/SDL") }
-
-if _OPTIONS["with-sdl"] then
-    defines { "ENTRY_CONFIG_USE_SDL=1" }
-    links   { "SDL2", "SDL2_ttf", "SDL2_mixer" }
-
-    configuration { "osx" }
-        libdirs { path.join(CROSSENGINE_DIR, "deps/lib/SDL") }
-
-    configuration {}
-end
-
-if _OPTIONS["with-glfw"] then
-    defines { "ENTRY_CONFIG_USE_GLFW=1" }
-    links   { "glfw3" }
-
-    configuration { "linux or freebsd" }
-        links {
-            "Xrandr",
-            "Xinerama",
-            "Xi",
-            "Xxf86vm",
-            "Xcursor",
-        }
-
-    configuration { "osx" }
-        linkoptions {
-            "-framework CoreVideo",
-            "-framework IOKit",
-        }
-
-    configuration {}
-end
-
-if _OPTIONS["with-ovr"] then
-    configuration { "x32" }
-        libdirs { path.join("$(OVR_DIR)/LibOVR/Lib/Windows/Win32/Release", _ACTION) }
-
-    configuration { "x64" }
-        libdirs { path.join("$(OVR_DIR)/LibOVR/Lib/Windows/x64/Release", _ACTION) }
-
-    configuration { "x32 or x64" }
-        links { "libovr" }
-
-    configuration {}
-end
 
 configuration { "vs*", "x32 or x64" }
     linkoptions {
@@ -137,6 +88,7 @@ configuration { "winphone8* or winstore8*" }
     }
     links {
         "d3d11",
+        "d3d12",
         "dxgi"
     }
     linkoptions {
@@ -168,24 +120,6 @@ configuration { "android*" }
     links {
         "EGL",
         "GLESv2",
-    }
-
-configuration { "nacl*" }
-    kind "ConsoleApp"
-    targetextension ".nexe"
-    links {
-        "ppapi",
-        "ppapi_gles2",
-        "pthread",
-    }
-
-configuration { "pnacl" }
-    kind "ConsoleApp"
-    targetextension ".pexe"
-    links {
-        "ppapi",
-        "ppapi_gles2",
-        "pthread",
     }
 
 configuration { "asmjs" }

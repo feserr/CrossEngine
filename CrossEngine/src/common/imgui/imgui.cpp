@@ -8,7 +8,7 @@
 #include <bx/allocator.h>
 #include <bx/math.h>
 #include <bx/timer.h>
-#include <ocornut-imgui/imgui.h>
+#include <dear-imgui/imgui.h>
 
 #include "imgui.h"
 #include "../bgfx_utils.h"
@@ -70,8 +70,6 @@ static void memFree(void* _ptr, void* _userData);
 
 struct OcornutImguiContext
 {
-	static void renderDrawLists(ImDrawData* _drawData);
-
 	void render(ImDrawData* _drawData)
 	{
 		const ImGuiIO& io = ImGui::GetIO();
@@ -81,29 +79,7 @@ struct OcornutImguiContext
 		bgfx::setViewName(m_viewId, "ImGui");
 		bgfx::setViewMode(m_viewId, bgfx::ViewMode::Sequential);
 
-		const bgfx::HMD*  hmd  = bgfx::getHMD();
 		const bgfx::Caps* caps = bgfx::getCaps();
-		if (NULL != hmd && 0 != (hmd->flags & BGFX_HMD_RENDERING) )
-		{
-			float proj[16];
-			bx::mtxProj(proj, hmd->eye[0].fov, 0.1f, 100.0f, bgfx::getCaps()->homogeneousDepth);
-
-			static float time = 0.0f;
-			time += 0.05f;
-
-			const float dist = 10.0f;
-			const float offset0 = -proj[8] + (hmd->eye[0].viewOffset[0] / dist * proj[0]);
-			const float offset1 = -proj[8] + (hmd->eye[1].viewOffset[0] / dist * proj[0]);
-
-			float ortho[2][16];
-			const float viewOffset = width/4.0f;
-			const float viewWidth  = width/2.0f;
-			bx::mtxOrtho(ortho[0], viewOffset, viewOffset + viewWidth, height, 0.0f, 0.0f, 1000.0f, offset0, caps->homogeneousDepth);
-			bx::mtxOrtho(ortho[1], viewOffset, viewOffset + viewWidth, height, 0.0f, 0.0f, 1000.0f, offset1, caps->homogeneousDepth);
-			bgfx::setViewTransform(m_viewId, NULL, ortho[0], BGFX_VIEW_STEREO, ortho[1]);
-			bgfx::setViewRect(m_viewId, 0, 0, hmd->width, hmd->height);
-		}
-		else
 		{
 			float ortho[16];
 			bx::mtxOrtho(ortho, 0.0f, width, height, 0.0f, 0.0f, 1000.0f, 0.0f, caps->homogeneousDepth);
@@ -146,8 +122,8 @@ struct OcornutImguiContext
 				else if (0 != cmd->ElemCount)
 				{
 					uint64_t state = 0
-						| BGFX_STATE_RGB_WRITE
-						| BGFX_STATE_ALPHA_WRITE
+						| BGFX_STATE_WRITE_RGB
+						| BGFX_STATE_WRITE_A
 						| BGFX_STATE_MSAA
 						;
 
@@ -185,7 +161,7 @@ struct OcornutImguiContext
 					bgfx::setTexture(0, s_tex, th);
 					bgfx::setVertexBuffer(0, &tvb, 0, numVertices);
 					bgfx::setIndexBuffer(&tib, offset, cmd->ElemCount);
-					bgfx::submit(cmd->ViewId, program);
+					bgfx::submit(m_viewId, program);
 				}
 
 				offset += cmd->ElemCount;
@@ -212,7 +188,6 @@ struct OcornutImguiContext
 		m_imgui = ImGui::CreateContext();
 
 		ImGuiIO& io = ImGui::GetIO();
-		io.RenderDrawListsFn = renderDrawLists;
 
 		io.DisplaySize = ImVec2(1280.0f, 720.0f);
 		io.DeltaTime   = 1.0f / 60.0f;
@@ -243,10 +218,11 @@ struct OcornutImguiContext
 		io.KeyMap[ImGuiKey_Y]          = (int)entry::Key::KeyY;
 		io.KeyMap[ImGuiKey_Z]          = (int)entry::Key::KeyZ;
 
-		io.NavFlags |= 0
-			| ImGuiNavFlags_EnableGamepad
-			| ImGuiNavFlags_EnableKeyboard
+		io.ConfigFlags |= 0
+			| ImGuiConfigFlags_NavEnableGamepad
+			| ImGuiConfigFlags_NavEnableKeyboard
 			;
+
 		io.NavInputs[ImGuiNavInput_Activate]    = (int)entry::Key::GamepadA;
 		io.NavInputs[ImGuiNavInput_Cancel]      = (int)entry::Key::GamepadB;
 //		io.NavInputs[ImGuiNavInput_Input]       = (int)entry::Key::;
@@ -286,7 +262,7 @@ struct OcornutImguiContext
 			.add(bgfx::Attrib::Color0,    4, bgfx::AttribType::Uint8, true)
 			.end();
 
-		s_tex = bgfx::createUniform("s_tex", bgfx::UniformType::Int1);
+		s_tex = bgfx::createUniform("s_tex", bgfx::UniformType::Sampler);
 
 		uint8_t* data;
 		int32_t width;
@@ -411,15 +387,14 @@ struct OcornutImguiContext
 #endif // USE_ENTRY
 
 		ImGui::NewFrame();
-		ImGui::PushStyleVar(ImGuiStyleVar_ViewId, (float)_viewId);
 
 		ImGuizmo::BeginFrame();
 	}
 
 	void endFrame()
 	{
-		ImGui::PopStyleVar(1);
 		ImGui::Render();
+		render(ImGui::GetDrawData() );
 	}
 
 	ImGuiContext*       m_imgui;
@@ -448,11 +423,6 @@ static void memFree(void* _ptr, void* _userData)
 {
 	BX_UNUSED(_userData);
 	BX_FREE(s_ctx.m_allocator, _ptr);
-}
-
-void OcornutImguiContext::renderDrawLists(ImDrawData* _drawData)
-{
-	s_ctx.render(_drawData);
 }
 
 void imguiCreate(float _fontSize, bx::AllocatorI* _allocator)

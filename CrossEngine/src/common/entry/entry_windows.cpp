@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -904,6 +904,7 @@ namespace entry
 			HDC hdc = GetDC(_hwnd);
 			SelectObject(hdc, brush);
 			FillRect(hdc, &rect, brush);
+			ReleaseDC(_hwnd, hdc);
 		}
 
 		void adjust(HWND _hwnd, uint32_t _width, uint32_t _height, bool _windowFrame)

@@ -140,6 +140,9 @@ void GameplayScreen::Update() {
         //m_scorePlayerOne->setText(std::to_string(m_iScorePlayerOne));
     }
 
+    glm::vec2 cp = m_camera.GetPosition();
+    cp.x--;
+    m_camera.SetPosition(cp);
     m_camera.Update();
 }
 

@@ -89,7 +89,7 @@ void Sprite::Init(float x, float y, float width, float height,
     // Create program from shaders.
     m_program = loadProgram("vs_update", "fs_update_cmp");
 
-    m_texColor = bgfx::createUniform("s_texColor", bgfx::UniformType::Int1);
+    m_texColor = bgfx::createUniform("s_texColor", bgfx::UniformType::Sampler);
 }
 
 // Draws the sprite to the screen

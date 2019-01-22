@@ -148,8 +148,8 @@ namespace CrossEngine {
     void SpriteBatch::RenderBatch() {
         // Set render states.
         bgfx::setState(0
-            | BGFX_STATE_RGB_WRITE
-            | BGFX_STATE_ALPHA_WRITE
+            | BGFX_STATE_WRITE_RGB
+            | BGFX_STATE_WRITE_A
             | BGFX_STATE_DEPTH_TEST_LESS
             | BGFX_STATE_CULL_CW
             | BGFX_STATE_BLEND_NORMAL);
@@ -174,7 +174,7 @@ namespace CrossEngine {
             return;
         }
 
-        const uint32_t num = m_glyphs.size();
+        const uint32_t num = static_cast<uint32_t>(m_glyphs.size());
 
         const uint32_t numVertices =
         bgfx::getAvailTransientVertexBuffer(num * 4,
@@ -274,7 +274,7 @@ namespace CrossEngine {
         // Create program from shaders.
         m_program = loadProgram("vs_update", "fs_update_cmp");
 
-        m_texColor = bgfx::createUniform("s_texColor", bgfx::UniformType::Int1);
+        m_texColor = bgfx::createUniform("s_texColor", bgfx::UniformType::Sampler);
     }
 
     void SpriteBatch::SortGlyphs() {

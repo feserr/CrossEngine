@@ -1,48 +1,7 @@
-
-newoption {
-	trigger = "with-amalgamated",
-	description = "Enable amalgamated build.",
-}
-
-newoption {
-	trigger = "with-ovr",
-	description = "Enable OculusVR integration.",
-}
-
-newoption {
-	trigger = "with-sdl",
-	description = "Enable SDL entry.",
-}
-
-newoption {
-	trigger = "with-glfw",
-	description = "Enable GLFW entry.",
-}
-
-newoption {
-	trigger = "with-profiler",
-	description = "Enable build with intrusive profiler.",
-}
-
-newoption {
-	trigger = "with-scintilla",
-	description = "Enable building with Scintilla editor.",
-}
-
-newoption {
-	trigger = "with-shared-lib",
-	description = "Enable building shared library.",
-}
-
-newoption {
-	trigger = "with-tools",
-	description = "Enable building tools.",
-}
-
-newoption {
-	trigger = "with-examples",
-	description = "Enable building examples.",
-}
+--
+-- Copyright 2016-2019 feserr. All rights reserved.
+-- License: https://github.com/feserr/crossengine#license-bsd-2-clause
+--
 
 solution "pong"
 	configurations {
@@ -56,10 +15,7 @@ solution "pong"
 		}
 	else
 		platforms {
-			"x32",
 			"x64",
---			"Xbox360",
-			"Native", -- for targets where bitness is not specified
 		}
 	end
 
@@ -92,22 +48,6 @@ end
 function copyLib()
 end
 
-if _OPTIONS["with-sdl"] then
-	if os.is("windows") then
-		if not os.getenv("SDL2_DIR") then
-			print("Set SDL2_DIR enviroment variable.")
-		end
-	end
-end
-
-if _OPTIONS["with-profiler"] then
-	defines {
-		"ENTRY_CONFIG_PROFILER=1",
-		"BGFX_CONFIG_PROFILER_REMOTERY=1",
-        "_WINSOCKAPI_"
-	}
-end
-
 dofile(path.join(BGFX_DIR, "scripts/bgfx.lua"))
 
 group "libs"
@@ -127,8 +67,3 @@ end
 
 group "pong"
 dofile(path.join(MODULE_DIR, "scripts/pong.lua"))
-
-if _OPTIONS["with-shared-lib"] then
-	group "libs"
-	bgfxProject("-shared-lib", "SharedLib", {})
-end

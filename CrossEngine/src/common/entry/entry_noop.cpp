@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -71,7 +71,7 @@ namespace entry
 
 int main(int _argc, const char* const* _argv)
 {
-	entry::main(_argc, _argv);
+	return entry::main(_argc, _argv);
 }
 
 #endif // ENTRY_CONFIG_USE_NOOP

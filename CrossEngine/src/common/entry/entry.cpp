@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -284,9 +284,6 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 		{
 			if (setOrToggle(s_reset, "vsync",       BGFX_RESET_VSYNC,              1, _argc, _argv)
 			||  setOrToggle(s_reset, "maxaniso",    BGFX_RESET_MAXANISOTROPY,      1, _argc, _argv)
-			||  setOrToggle(s_reset, "hmd",         BGFX_RESET_HMD,                1, _argc, _argv)
-			||  setOrToggle(s_reset, "hmddbg",      BGFX_RESET_HMD_DEBUG,          1, _argc, _argv)
-			||  setOrToggle(s_reset, "hmdrecenter", BGFX_RESET_HMD_RECENTER,       1, _argc, _argv)
 			||  setOrToggle(s_reset, "msaa",        BGFX_RESET_MSAA_X16,           1, _argc, _argv)
 			||  setOrToggle(s_reset, "flush",       BGFX_RESET_FLUSH_AFTER_RENDER, 1, _argc, _argv)
 			||  setOrToggle(s_reset, "flip",        BGFX_RESET_FLIP_AFTER_RENDER,  1, _argc, _argv)
@@ -606,7 +603,7 @@ restart:
 		for (AppI* app = getFirstApp(); NULL != app; app = app->getNext() )
 		{
 			if (NULL == selected
-			&&  bx::strFindI(app->getName(), find) )
+			&&  !bx::strFindI(app->getName(), find).isEmpty() )
 			{
 				selected = app;
 			}

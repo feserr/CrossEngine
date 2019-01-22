@@ -34,7 +34,7 @@ namespace CrossEngine {
 
         // Decode the .png format into an array of pixels
         crossTexture.texture = loadTexture(filePath.data(),
-            BGFX_TEXTURE_MIN_POINT | BGFX_TEXTURE_MAG_POINT,
+            BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT,
             0, &info);
         if (!bgfx::isValid(crossTexture.texture)) {
             FatalError("Failed to load texture: " + filePath);

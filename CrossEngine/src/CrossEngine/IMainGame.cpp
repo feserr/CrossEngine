@@ -60,6 +60,7 @@ void IMainGame::Run(int _argc, char** _argv) {
                 Draw();
 
                 m_fps = limiter.End();
+
                 // Advance to next frame. Rendering thread will be kicked to
                 // process submitted rendering primitives.
                 bgfx::frame();
@@ -144,7 +145,13 @@ bool IMainGame::InitSystems(int _argc, char** _argv) {
 
     entry::setWindowSize(entry::WindowHandle(), m_width, m_height);
 
-    bgfx::init(args.m_type, args.m_pciId);
+    bgfx::Init init;
+    init.type = args.m_type;
+    init.vendorId = args.m_pciId;
+    init.resolution.width = m_width;
+    init.resolution.height = m_height;
+    init.resolution.reset = m_reset;
+    bgfx::init(init);
     bgfx::reset(m_width, m_height, m_reset);
 
     // Enable debug text.

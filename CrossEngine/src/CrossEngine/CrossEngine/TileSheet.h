@@ -25,8 +25,8 @@
 namespace CrossEngine {
 class TileSheet {
  public:
-    void Init(const CrossTexture& texture, const glm::ivec2& tileDims) {
-        this->texture = texture;
+    void Init(const CrossTexture& inTexture, const glm::ivec2& tileDims) {
+        this->texture = inTexture;
         this->dims = tileDims;
     }
 

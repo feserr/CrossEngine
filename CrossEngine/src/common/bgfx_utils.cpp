@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -207,7 +207,7 @@ bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath,
 					, mem
 					);
 			}
-			else
+			else if (bgfx::isTextureValid(0, false, imageContainer->m_numLayers, bgfx::TextureFormat::Enum(imageContainer->m_format), _flags) )
 			{
 				handle = bgfx::createTexture2D(
 					  uint16_t(imageContainer->m_width)
@@ -220,7 +220,10 @@ bgfx::TextureHandle loadTexture(bx::FileReaderI* _reader, const char* _filePath,
 					);
 			}
 
-			bgfx::setName(handle, _filePath);
+			if (bgfx::isValid(handle) )
+			{
+				bgfx::setName(handle, _filePath);
+			}
 
 			if (NULL != _info)
 			{
@@ -282,13 +285,13 @@ void calcTangents(void* _vertices, uint16_t _numVertices, bgfx::VertexDecl _decl
 		uint32_t i1 = indices[1];
 		uint32_t i2 = indices[2];
 
-		bgfx::vertexUnpack(&v0.m_x, bgfx::Attrib::Position,  _decl, _vertices, i0);
+		bgfx::vertexUnpack(&v0.m_x, bgfx::Attrib::Position, _decl, _vertices, i0);
 		bgfx::vertexUnpack(&v0.m_u, bgfx::Attrib::TexCoord0, _decl, _vertices, i0);
 
-		bgfx::vertexUnpack(&v1.m_x, bgfx::Attrib::Position,  _decl, _vertices, i1);
+		bgfx::vertexUnpack(&v1.m_x, bgfx::Attrib::Position, _decl, _vertices, i1);
 		bgfx::vertexUnpack(&v1.m_u, bgfx::Attrib::TexCoord0, _decl, _vertices, i1);
 
-		bgfx::vertexUnpack(&v2.m_x, bgfx::Attrib::Position,  _decl, _vertices, i2);
+		bgfx::vertexUnpack(&v2.m_x, bgfx::Attrib::Position, _decl, _vertices, i2);
 		bgfx::vertexUnpack(&v2.m_u, bgfx::Attrib::TexCoord0, _decl, _vertices, i2);
 
 		const float bax = v1.m_x - v0.m_x;
@@ -330,25 +333,21 @@ void calcTangents(void* _vertices, uint16_t _numVertices, bgfx::VertexDecl _decl
 
 	for (uint32_t ii = 0; ii < _numVertices; ++ii)
 	{
-		const float* tanu = &tangents[ii*6];
-		const float* tanv = &tangents[ii*6 + 3];
+		const bx::Vec3 tanu = bx::load<bx::Vec3>(&tangents[ii*6]);
+		const bx::Vec3 tanv = bx::load<bx::Vec3>(&tangents[ii*6 + 3]);
 
-		float normal[4];
-		bgfx::vertexUnpack(normal, bgfx::Attrib::Normal, _decl, _vertices, ii);
-		float ndt = bx::vec3Dot(normal, tanu);
+		float nxyzw[4];
+		bgfx::vertexUnpack(nxyzw, bgfx::Attrib::Normal, _decl, _vertices, ii);
 
-		float nxt[3];
-		bx::vec3Cross(nxt, normal, tanu);
-
-		float tmp[3];
-		tmp[0] = tanu[0] - normal[0] * ndt;
-		tmp[1] = tanu[1] - normal[1] * ndt;
-		tmp[2] = tanu[2] - normal[2] * ndt;
+		const bx::Vec3 normal  = bx::load<bx::Vec3>(nxyzw);
+		const float    ndt     = bx::dot(normal, tanu);
+		const bx::Vec3 nxt     = bx::cross(normal, tanu);
+		const bx::Vec3 tmp     = bx::sub(tanu, bx::mul(normal, ndt) );
 
 		float tangent[4];
-		bx::vec3Norm(tangent, tmp);
+		bx::store(tangent, bx::normalize(tmp) );
+		tangent[3] = bx::dot(nxt, tanv) < 0.0f ? -1.0f : 1.0f;
 
-		tangent[3] = bx::vec3Dot(nxt, tanv) < 0.0f ? -1.0f : 1.0f;
 		bgfx::vertexPack(tangent, true, bgfx::Attrib::Tangent, _decl, _vertices, ii);
 	}
 
@@ -552,9 +551,9 @@ struct Mesh
 		if (BGFX_STATE_MASK == _state)
 		{
 			_state = 0
-				| BGFX_STATE_RGB_WRITE
-				| BGFX_STATE_ALPHA_WRITE
-				| BGFX_STATE_DEPTH_WRITE
+				| BGFX_STATE_WRITE_RGB
+				| BGFX_STATE_WRITE_A
+				| BGFX_STATE_WRITE_Z
 				| BGFX_STATE_DEPTH_TEST_LESS
 				| BGFX_STATE_CULL_CCW
 				| BGFX_STATE_MSAA

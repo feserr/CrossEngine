@@ -3,6 +3,8 @@
 
 #include "ScreenIndexs.h"
 
+#include "../common/entry/input.h"
+
 #include <CrossEngine/CrossEngine.h>
 #include <CrossEngine/ResourceManager.h>
 #include <CrossEngine/CppUtils.h>
@@ -11,6 +13,7 @@
 #include <ctime>
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 
 // Some helpful constants.
 const float DESIRED_FPS = 60.0f; // FPS the game is designed to run at
@@ -19,7 +22,7 @@ const float MS_PER_SECOND = 1000; // Number of milliseconds in a second
 const float DESIRED_FRAMETIME = MS_PER_SECOND / DESIRED_FPS; // The desired frame time per frame
 const float MAX_DELTA_TIME = 1.0f; // Maximum size of deltaTime
 
-MainGame::MainGame(CrossEngine::Window* window) : m_window(*window){
+MainGame::MainGame(CrossEngine::Window* window) : m_window(*window) {
     m_screenIndex = SCREEN_INDEX_GAMEPLAY;
 }
 
@@ -47,11 +50,11 @@ void MainGame::Destroy() {
 
 void MainGame::Update() {
     // Start our previousTicks variable
-    Uint32 previousTicks = SDL_GetTicks();
+    static Uint32 previousTicks = SDL_GetTicks();
 
     // Game loop
     //while (m_gameState == GameState::RUNNING) {
-        //processInput();
+        processInput();
 
         // Calculate the frameTime in milliseconds
         Uint32 newTicks = SDL_GetTicks();
@@ -121,7 +124,8 @@ struct BallSpawn {
     float probability;
     std::uniform_real_distribution<float> randSpeed;
 };
-#include <iostream>
+
+
 void MainGame::initBalls() {
 
     // Initialize the grid
@@ -132,7 +136,7 @@ void MainGame::initBalls() {
     possibleBalls.emplace_back(__VA_ARGS__);
 
     // Number of balls to spawn
-    const int NUM_BALLS = 20000;
+    const int NUM_BALLS = 10000;
 
     // Random engine stuff
     std::mt19937 randomEngine((unsigned int)time(nullptr));
@@ -251,7 +255,7 @@ void MainGame::drawHud() {
 
 void MainGame::processInput() {
     // Update input manager
-    m_inputManager.Update();
+    //m_inputManager.Update();
 
     /*
     SDL_Event evnt;
@@ -281,29 +285,28 @@ void MainGame::processInput() {
                 break;
         }
     }
-
-    if (m_inputManager.IsKeyPressed(SDLK_ESCAPE)) {
+    */
+    if (m_inputManager.IsKeyDown(entry::Key::Esc)) {
         m_gameState = GameState::EXIT;
     }
     // Handle gravity changes
-    if (m_inputManager.IsKeyPressed(SDLK_LEFT)) {
+    if (m_inputManager.IsKeyDown(entry::Key::Left)) {
         m_ballController.setGravityDirection(GravityDirection::LEFT);
-    } else if (m_inputManager.IsKeyPressed(SDLK_RIGHT)) {
+    } else if (m_inputManager.IsKeyDown(entry::Key::Right)) {
         m_ballController.setGravityDirection(GravityDirection::RIGHT);
-    } else if (m_inputManager.IsKeyPressed(SDLK_UP)) {
-        m_ballController.setGravityDirection(GravityDirection::UP);
-    } else if (m_inputManager.IsKeyPressed(SDLK_DOWN)) {
+    } else if (m_inputManager.IsKeyDown(entry::Key::Up)) {
         m_ballController.setGravityDirection(GravityDirection::DOWN);
-    } else if (m_inputManager.IsKeyPressed(SDLK_SPACE)) {
+    } else if (m_inputManager.IsKeyDown(entry::Key::Down)) {
+        m_ballController.setGravityDirection(GravityDirection::UP);
+    } else if (m_inputManager.IsKeyDown(entry::Key::Space)) {
         m_ballController.setGravityDirection(GravityDirection::NONE);
     }
 
     // Switch renderers
-    if (m_inputManager.IsKeyPressed(SDLK_1)) {
+    if (m_inputManager.IsKeyDown(entry::Key::Key1)) {
         m_currentRenderer++;
         if (m_currentRenderer >= m_ballRenderers.size()) {
             m_currentRenderer = 0;
         }
     }
-    */
 }

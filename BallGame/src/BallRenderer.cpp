@@ -2,6 +2,8 @@
 
 #include <CrossEngine/CppUtils.h>
 
+BallRenderer::~BallRenderer() {}
+
 void BallRenderer::renderBalls(CrossEngine::SpriteBatch& spriteBatch,
     const std::vector<Ball>& balls,
     const glm::mat4& projectionMatrix) {

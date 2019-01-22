@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bgfx#license-bsd-2-clause
  */
 
@@ -561,7 +561,7 @@ namespace entry
 								m_eventQueue.postMouseEvent(handle
 									, mev.x
 									, mev.y
-									, 0
+									, m_mz
 									, button
 									, mev.type == SDL_MOUSEBUTTONDOWN
 									);
