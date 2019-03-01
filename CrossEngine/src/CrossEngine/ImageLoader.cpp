@@ -15,15 +15,12 @@
 */
 
 #include "CrossEngine/ImageLoader.h"
-#include "CrossEngine/PicoPNG.h"
-#include "CrossEngine/IOManager.h"
-#include "CrossEngine/CrossErrors.h"
-
-#include <bgfx/bgfx.h>
-#include "../common/bgfx_utils.h"
 
 #include <string>
 #include <vector>
+#include "CrossEngine/PicoPNG.h"
+#include "CrossEngine/IOManager.h"
+#include "CrossEngine/CrossErrors.h"
 
 namespace CrossEngine {
     CrossTexture ImageLoader::LoadPNG(std::string &filePath, bool linear) {

@@ -17,10 +17,9 @@
 #ifndef _SPRITE_H_
 #define _SPRITE_H_
 
+#include <string>
 #include "CrossTexture.h"
 #include "TileSheet.h"
-
-#include <string>
 
 namespace CrossEngine {
 

@@ -17,14 +17,10 @@
 #ifndef _SPRITEBATCH_H_
 #define _SPRITEBATCH_H_
 
+#include <vector>
+#include <glm/glm.hpp>
 #include "Vertex.h"
 #include "CrossTexture.h"
-
-#include "../../common/bgfx_utils.h"
-
-#include <glm/glm.hpp>
-#include <vector>
-
 
 namespace CrossEngine {
 // Determines how we should sort the glyphs

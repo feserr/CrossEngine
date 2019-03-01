@@ -15,13 +15,12 @@
 */
 
 #include "CrossEngine/Sprite.h"
-#include "CrossEngine/Vertex.h"
-#include "CrossEngine/ResourceManager.h"
-
-#include "../common/bgfx_utils.h"
 
 #include <string>
 #include <cstddef>
+#include "CrossEngine/Vertex.h"
+#include "CrossEngine/ResourceManager.h"
+
 
 namespace CrossEngine {
 

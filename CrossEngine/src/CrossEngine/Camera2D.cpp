@@ -27,8 +27,9 @@
 
 #include "CrossEngine/Camera2D.h"
 
-#include "../common/common.h"
-#include "../common/bgfx_utils.h"
+#include <bgfx/bgfx.h>
+#include <bx/math.h>
+#include "../common/entry/entry.h"
 
 namespace CrossEngine {
     Camera2D::Camera2D() : m_screenWidth(500), m_screenHeight(500),

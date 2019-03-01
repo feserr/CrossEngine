@@ -15,14 +15,12 @@
 */
 
 #include "CrossEngine/IMainGame.h"
+
+#include "../common/bgfx_utils.h"
+#include "../common/entry/entry.h"
 #include "CrossEngine/ScreenList.h"
 #include "CrossEngine/IGameScreen.h"
 #include "CrossEngine/CppUtils.h"
-
-#include "../common/common.h"
-#include "../common/bgfx_utils.h"
-#include "../common/entry/entry.h"
-#include "../common/entry/input.h"
 
 #include <memory>
 

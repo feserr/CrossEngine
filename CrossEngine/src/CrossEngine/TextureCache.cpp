@@ -15,10 +15,10 @@
 */
 
 #include "CrossEngine/TextureCache.h"
-#include "CrossEngine/ImageLoader.h"
 
 #include <string>
 #include <iostream>
+#include "CrossEngine/ImageLoader.h"
 
 namespace CrossEngine {
     TextureCache::TextureCache() {

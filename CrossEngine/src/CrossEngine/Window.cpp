@@ -15,9 +15,9 @@
 */
 
 #include "CrossEngine/Window.h"
-#include "CrossEngine/CrossErrors.h"
 
 #include <string>
+#include "CrossEngine/CrossErrors.h"
 
 namespace CrossEngine {
     Window::Window() {

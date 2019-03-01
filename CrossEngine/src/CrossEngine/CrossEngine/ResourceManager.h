@@ -18,7 +18,6 @@
 #define _RESOURCEMANAGER_H_
 
 #include <string>
-
 #include "TextureCache.h"
 
 namespace CrossEngine {

@@ -1,6 +1,6 @@
 
 project ("pong")
-    uuid (os.uuid("spaceinvaers"))
+    uuid (os.uuid("pong"))
     kind "WindowedApp"
 
 configuration {}
