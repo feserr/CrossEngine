@@ -286,6 +286,8 @@ void MainGame::processInput() {
         }
     }
     */
+  
+    /*
     if (m_inputManager.IsKeyDown(entry::Key::Esc)) {
         m_gameState = GameState::EXIT;
     }
@@ -309,4 +311,5 @@ void MainGame::processInput() {
             m_currentRenderer = 0;
         }
     }
+    */
 }
