@@ -2,7 +2,7 @@ CrossEngine
 =======
 
 [![Twitter URL](https://img.shields.io/badge/tweet-feserr-blue.svg?longCache=true&style=for-the-badge)](https://twitter.com/feserr_)
-[![GitHub issue last update](https://img.shields.io/badge/updated-january%202019-red.svg?longCache=true&style=for-the-badge)](https://github.com/feserr/Khengine)
+[![GitHub issue last update](https://img.shields.io/badge/updated-march%202019-red.svg?longCache=true&style=for-the-badge)](https://github.com/feserr/Khengine)
 
 # Index
 
@@ -23,7 +23,7 @@ CrossEngine
 
 CrossEngine is an open source cross-platform game framework.
 
-Version: 0.0.0.2.3 - Released: 22th January 2019
+Version: 0.0.0.2.3 - Released: 22th March 2019
 
 <a name="whats-new"></a>
 ## What's new in 0.0.0.2.3?
