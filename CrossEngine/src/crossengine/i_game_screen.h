@@ -101,6 +101,13 @@ class IGameScreen {
    * @return The state.
    */
   ScreenState GetState() const { return current_state_; }
+  
+  /**
+   * @brief Set the state.
+   *
+   * @param[in] state The new state.
+   */
+  void SetState(ScreenState state) { current_state_ = state; }
 
   /**
    * @brief Sets the parent game.

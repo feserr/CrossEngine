@@ -3,31 +3,46 @@
  * License: https://github.com/feserr/crossengine#license
  */
 
-#ifndef App_h
-#define App_h
+#ifndef BALLGAME_SRC_APP_H_
+#define BALLGAME_SRC_APP_H_
 
-#include "MainGame.h"
-//#include "MainMenuScreen.h"
+#include "main_game.h"
 
-#include <CrossEngine/IMainGame.h>
+#include <crossengine/i_main_game.h>
+#include <memory>
 
 // Our custom app that inherits from IMainGame
-class App : public CrossEngine::IMainGame{
+class App : public CrossEngine::IMainGame {
  public:
-    App();
-    ~App();
+ /**
+  * @brief Construct a new App object.
+  */
+  App();
 
-    // Called on initialization
-    virtual void OnInit() override;
-    // For adding all screens
-    virtual void AddScreens() override;
-    // Called when exiting
-    virtual void OnExit() override;
+  /**
+   * @brief Destroy the App object.
+   */
+  ~App();
+
+  /**
+   * @brief Called on initialization.
+   */
+  void OnInit() override;
+
+  /**
+   * @brief For adding all screens.
+   */
+  void AddScreens() override;
+
+  /**
+   * @brief Called when exiting.
+   */
+  void OnExit() override;
+
  private:
-    std::unique_ptr<MainGame> m_gameplayScreen = nullptr;
-    //std::unique_ptr<MainMenuScreen> m_mainMenuScreen = nullptr;
+  std::unique_ptr<MainGame> gameplay_screen_;
 
-    CrossEngine::Window m_window;
+  CrossEngine::Window window_;
 };
 
-#endif /* App_h */
+#endif  // BALLGAME_SRC_APP_H_

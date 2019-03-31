@@ -10,6 +10,7 @@
 #include "crossengine/cpp_utils.h"
 #include "crossengine/i_game_screen.h"
 #include "crossengine/screen_list.h"
+#include "crossengine/input_manager.h"
 #include "entry/entry.h"
 
 namespace CrossEngine {
@@ -28,12 +29,12 @@ void IMainGame::Run(int _argc, char** _argv) {
   // Game loop
   is_running_ = true;
   while (is_running_) {
-    if (!entry::processEvents(width_, height_, debug_, reset_)) {
+    if (!entry::processEvents(width_, height_, debug_, reset_,
+                              InputManager::instance().GetMouseState())) {
       limiter.Begin();
 
       bgfx::touch(0);
 
-      inputManager.Update();
       // Call the custom update and draw method
       Update();
       if (is_running_) {
@@ -68,30 +69,6 @@ int IMainGame::ExitGame() {
   bgfx::shutdown();
 
   return 0;
-}
-
-void IMainGame::OnSDLEvent(const SDL_Event& event) {
-  switch (event.type) {
-    case SDL_QUIT:
-      ExitGame();
-      break;
-    case SDL_MOUSEMOTION:
-      inputManager.SetMouseCoords(static_cast<float>(event.motion.x),
-                                  static_cast<float>(event.motion.y));
-      break;
-    case SDL_KEYDOWN:
-      inputManager.PressKey(event.key.keysym.sym);
-      break;
-    case SDL_KEYUP:
-      inputManager.ReleaseKey(event.key.keysym.sym);
-      break;
-    case SDL_MOUSEBUTTONDOWN:
-      inputManager.PressKey(event.button.button);
-      break;
-    case SDL_MOUSEBUTTONUP:
-      inputManager.ReleaseKey(event.button.button);
-      break;
-  }
 }
 
 bool IMainGame::Init(int _argc, char** _argv) {

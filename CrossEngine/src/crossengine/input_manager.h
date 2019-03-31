@@ -19,14 +19,42 @@ namespace CrossEngine {
 class InputManager {
  public:
   /**
-   * @brief Construct a new InputManager object.
+   * @brief Copy constructor.
+   * Deleted.
    */
-  InputManager();
+  InputManager(InputManager const&) = delete;
 
   /**
-   * @brief Destroy the InputManager object.
+   * @brief Move constructor.
+   * Deleted.
    */
-  ~InputManager();
+  InputManager(InputManager&&) = delete;
+
+  /**
+   * @brief Copy assign.
+   * Deleted.
+   *
+   * @return InputManager& Nothing.
+   */
+  InputManager& operator=(InputManager const&) = delete;
+
+  /**
+   * @brief Move assign.
+   * Deleted.
+   *
+   * @return InputManager& Nothing.
+   */
+  InputManager& operator=(InputManager&&) = delete;
+
+  /**
+   * @brief Instanciate the singleton.
+   *
+   * @return InputManager& The input manager singleton.
+   */
+  static InputManager& instance() {
+    static InputManager* instance = new InputManager();
+    return *instance;
+  }
 
   /**
    * @brief Update the state of the inputs.
@@ -89,7 +117,24 @@ class InputManager {
    */
   glm::vec2 GetMouseCoords() const { return mouse_coords_; }
 
+  /**
+   * @brief Get the mouse state.
+   *
+   * @return entry::MouseState The mouse state.
+   */
+  entry::MouseState* GetMouseState() { return &mouse_state_; }
+
  private:
+  /**
+   * @brief Construct a new InputManager object.
+   */
+  InputManager();
+
+  /**
+   * @brief Destroy the InputManager object.
+   */
+  ~InputManager();
+
   /**
    * @brief Check the past state of the key.
    *
@@ -102,6 +147,9 @@ class InputManager {
   std::unordered_map<unsigned int, bool> key_map_;
   std::unordered_map<unsigned int, bool> previous_key_map_;
   glm::vec2 mouse_coords_;
+  entry::MouseState mouse_state_;
+
+  static InputManager* instance_;
 };
 }  // namespace CrossEngine
 

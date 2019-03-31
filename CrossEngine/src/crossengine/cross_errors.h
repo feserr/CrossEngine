@@ -7,14 +7,15 @@
 #define CROSSENGINE_CROSSERRORS_H_
 
 #include <string>
+#include "cross_errors.inl"
 
 namespace CrossEngine {
 /**
- * @brief Prints the erros and shudown the app.
+ * @brief Prints the message and shutdown the app.
  *
  * @param[in] error_string The error message.
  */
-extern void FatalError(const std::string& error_string);
+void FatalError(const std::string &error_string);
 }  // namespace CrossEngine
 
 #endif  // CROSSENGINE_CROSSERRORS_H_

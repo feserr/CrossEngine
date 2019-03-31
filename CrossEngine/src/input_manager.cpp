@@ -5,8 +5,6 @@
 
 #include "crossengine/input_manager.h"
 
-// #include "../common/entry/input.h"
-
 namespace CrossEngine {
 InputManager::InputManager() : mouse_coords_(0.0f) {}
 

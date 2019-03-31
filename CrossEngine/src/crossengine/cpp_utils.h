@@ -3,8 +3,8 @@
  * License: https://github.com/feserr/crossengine#license
  */
 
-#ifndef CROSSENGINE_CPPUTILS_H_
-#define CROSSENGINE_CPPUTILS_H_
+#ifndef CROSSENGINE_CPP_UTILS_H_
+#define CROSSENGINE_CPP_UTILS_H_
 
 #if __cplusplus < 201103L
 
@@ -46,4 +46,4 @@ typename _Unique_if<T>::_Known_bound make_unique(Args&&...) = delete;
 
 #endif
 
-#endif  // CROSSENGINE_CPPUTILS_H_
+#endif  // CROSSENGINE_CPP_UTILS_H_

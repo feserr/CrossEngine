@@ -8,7 +8,6 @@
 
 #include <memory>
 #include "cross_engine.h"
-#include "input_manager.h"
 #include "timing.h"
 #include "window.h"
 
@@ -62,23 +61,11 @@ class IMainGame {
   virtual void OnExit() = 0;
 
   /**
-   * @brief Handle SDL events.
-   *
-   * @param[in] event The event.
-   */
-  void OnSDLEvent(const SDL_Event& event);
-
-  /**
    * @brief Gets the FPS.
    *
    * @return The FPS.
    */
   const float GetFps() const { return fps_; }
-
-  /**
-   * @brief The input manager.
-   */
-  InputManager inputManager;
 
  protected:
   /**

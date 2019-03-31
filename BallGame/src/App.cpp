@@ -3,41 +3,29 @@
  * License: https://github.com/feserr/crossengine#license
  */
 
-#include "App.h"
+#include "app.h"
 
-#include <CrossEngine/ScreenList.h>
-#include <CrossEngine/CppUtils.h>
+#include <crossengine/cpp_utils.h>
+#include <crossengine/screen_list.h>
 
 #if __cplusplus > 199711L
 #else
 #include <memory>
 #endif
 
-App::App() {
-}
+App::App() : gameplay_screen_(nullptr) {}
 
-App::~App() {
-}
+App::~App() {}
 
 void App::OnInit() {
-    m_window.SetWindowName("BallGame");
-    m_window.SetWindowSize(1280, 720);
+  window_.SetWindowName("BallGame");
+  window_.SetWindowSize(1280, 720);
 }
 
 void App::AddScreens() {
-    //m_mainMenuScreen = std::make_unique<MainMenuScreen>(&m_window);
-#if __cplusplus > 199711L
-    m_gameplayScreen = CrossEngine::make_unique<MainGame>(&m_window);
-#else
-    m_gameplayScreen = std::make_unique<GameplayScreen>(&m_window);
-#endif
-
-    //m_screenList->AddScreen(m_mainMenuScreen.get());
-    m_screenList->AddScreen(m_gameplayScreen.get());
-
-    m_screenList->SetScreen(m_gameplayScreen->GetScreenIndex());
+  gameplay_screen_ = std::make_unique<MainGame>(&window_);
+  screen_list_->AddScreen(gameplay_screen_.get());
+  screen_list_->SetScreen(gameplay_screen_->GetScreenIndex());
 }
 
-void App::OnExit() {
-
-}
+void App::OnExit() {}

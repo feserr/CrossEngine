@@ -1,12 +1,14 @@
+/*
+ * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * License: https://github.com/feserr/crossengine#license
+ */
 
-#include "App.h"
-
-#include <common/common.h>
-#include <common/bgfx_utils.h>
+#include <crossengine/common.h>
+#include "app.h"
 
 int _main_(int _argc, char** _argv) {
-    App app;
-    app.Run(_argc, _argv);
+  App app;
+  app.Run(_argc, _argv);
 
-    return 0;
+  return 0;
 }
