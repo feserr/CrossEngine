@@ -18,8 +18,8 @@ App::App() : gameplay_screen_(nullptr) {}
 App::~App() {}
 
 void App::OnInit() {
-  window_.SetWindowName("BallGame");
-  window_.SetWindowSize(1280, 720);
+  window_.screen_width = 1280;
+  window_.screen_height = 720;
 }
 
 void App::AddScreens() {

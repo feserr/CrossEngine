@@ -19,16 +19,16 @@ CrossEngine
 - [License](#license)
 
 <a name="about"></a>
-# CrossEngine 0.0.0.2.3
+# CrossEngine 0.0.0.2.4
 
 CrossEngine is an open source cross-platform game framework.
 
-Version: 0.0.0.2.3 - Released: 22th March 2019
+Version: 0.0.0.2.4 - Released: 3rd April 2019
 
 <a name="whats-new"></a>
-## What's new in 0.0.0.2.3?
+## What's new in 0.0.0.2.4?
 
-* Refactor most of the code.
+* Remove the window class.
 
 <a name="how-to-build"></a>
 ## How to Build

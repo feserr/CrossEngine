@@ -91,7 +91,7 @@ void MainGame::OnEntry() {
   screen_height_ = 720;
 
   // Init camera
-  camera_.Init(window_.GetScreenWidth(), window_.GetScreenHeight());
+  camera_.Init(window_.screen_width, window_.screen_height);
   camera_.SetPosition(glm::vec2(0.0f));
   camera_.SetScale(1.0f);
 

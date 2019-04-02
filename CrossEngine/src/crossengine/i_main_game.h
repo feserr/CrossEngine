@@ -104,6 +104,7 @@ class IMainGame {
   float fps_ = 0.0f;
 
  private:
+  Window window_;
   uint32_t width_;
   uint32_t height_;
   uint32_t debug_;
