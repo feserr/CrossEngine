@@ -11,7 +11,7 @@ void BallController::UpdateBalls(std::vector<Ball>* balls, Grid* grid,
                                  const float delta_time, const int max_x,
                                  const int max_y) {
   const float FRICTION = 0.01f;
-  // Update our grabbed balls velocity
+  // Update our grabbed balls velocity.
   if (grabbed_ball_ != -1) {
     balls->at(grabbed_ball_).velocity =
         balls->at(grabbed_ball_).position - previous_pos_;
@@ -22,7 +22,7 @@ void BallController::UpdateBalls(std::vector<Ball>* balls, Grid* grid,
   for (size_t i = 0; i < balls->size(); i++) {
     // get handle for less typing
     Ball& ball = balls->at(i);
-    // Update motion if its not grabbed
+    // Update motion if its not grabbed.
     if (i != grabbed_ball_) {
       ball.position += ball.velocity * delta_time;
       // Apply friction
@@ -38,7 +38,8 @@ void BallController::UpdateBalls(std::vector<Ball>* balls, Grid* grid,
       // Apply gravity
       ball.velocity += gravity * delta_time;
     }
-    // Check wall collision
+
+    // Check wall collision.
     if (ball.position.x < ball.radius) {
       ball.position.x = ball.radius;
       if (ball.velocity.x < 0) ball.velocity.x *= -1;
@@ -46,6 +47,7 @@ void BallController::UpdateBalls(std::vector<Ball>* balls, Grid* grid,
       ball.position.x = max_x - ball.radius - 1;
       if (ball.velocity.x > 0) ball.velocity.x *= -1;
     }
+
     if (ball.position.y < ball.radius) {
       ball.position.y = ball.radius;
       if (ball.velocity.y < 0) ball.velocity.y *= -1;
@@ -54,19 +56,19 @@ void BallController::UpdateBalls(std::vector<Ball>* balls, Grid* grid,
       if (ball.velocity.y > 0) ball.velocity.y *= -1;
     }
 
-    // Check to see if the ball moved
+    // Check to see if the ball moved.
     Cell* newCell = grid->GetCell(ball.position);
     if (newCell != ball.ownerCell) {
       grid->RemoveBallFromCell(&balls->at(i));
       grid->AddBall(&balls->at(i), newCell);
     }
   }
-  // Updates all collisions using the spatial partitioning
+  // Updates all collisions using the spatial partitioning.
   UpdateCollision(grid);
 
-  //// Update our grabbed ball
+  // Update our grabbed ball
   if (grabbed_ball_ != -1) {
-    // Update the velocity again, in case it got changed by collision
+    // Update the velocity again, in case it got changed by collision.
     balls->at(grabbed_ball_).velocity =
         balls->at(grabbed_ball_).position - previous_pos_;
     previous_pos_ = balls->at(grabbed_ball_).position;
@@ -75,11 +77,11 @@ void BallController::UpdateBalls(std::vector<Ball>* balls, Grid* grid,
 
 void BallController::OnMouseDown(std::vector<Ball>* balls, const float mouse_x,
                                  const float mouse_y) {
-  for (size_t i = 0; i < balls->size(); i++) {
-    // Check if the mouse is hovering over a ball
+  for (int i = 0; i < balls->size(); i++) {
+    // Check if the mouse is hovering over a ball.
     if (IsMouseOnBall(&balls->at(i), mouse_x, mouse_y)) {
       grabbed_ball_ = i;  // BE AWARE, if you change the order of the balls in
-                          // the vector, this becomes invalid!
+                          // the vector, this becomes invalid.
       grab_offset_ = glm::vec2(mouse_x, mouse_y) - balls->at(i).position;
       previous_pos_ = balls->at(i).position;
       balls->at(i).velocity = glm::vec2(0.0f);
@@ -89,7 +91,7 @@ void BallController::OnMouseDown(std::vector<Ball>* balls, const float mouse_x,
 
 void BallController::OnMouseUp(std::vector<Ball>* balls) {
   if (grabbed_ball_ != -1) {
-    // Throw the ball!
+    // Throw the ball.
     balls->at(grabbed_ball_).velocity =
         balls->at(grabbed_ball_).position - previous_pos_;
     grabbed_ball_ = -1;

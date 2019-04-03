@@ -18,13 +18,19 @@
 #include <random>
 #include "screen_indexs.h"
 
-// Some helpful constants.
-const float DESIRED_FPS = 60.0f;   // FPS the game is designed to run at
-const int MAX_PHYSICS_STEPS = 6;   // Max number of physics steps per frame
-const float MS_PER_SECOND = 1000;  // Number of milliseconds in a second
-const float DESIRED_FRAMETIME =
-    MS_PER_SECOND / DESIRED_FPS;    // The desired frame time per frame
-const float MAX_DELTA_TIME = 1.0f;  // Maximum size of deltaTime
+// FPS the game is designed to run at.
+const float kDesiredFps = 60.0f;
+// Max number of physics steps per frame
+const int kMaxPhysicsSteps = 6;
+// Number of milliseconds in a second
+const float kMsPerSecond = 1000;
+// The desired frame time per frame
+const float kDesiredFrametime = kMsPerSecond / kDesiredFps;
+// Maximum size of deltaTime
+const float kMaxDeltaTime = 1.0f;
+
+// Number of balls to spawn.
+const int kNumBalls = 10000;
 
 MainGame::MainGame(CrossEngine::Window* window) : window_(*window) {
   screen_index_ = SCREEN_INDEX_GAMEPLAY;
@@ -52,34 +58,37 @@ void MainGame::Update() {
     SetState(CrossEngine::ScreenState::EXIT_APPLICATION);
   }
 
-  // Start our previousTicks variable
+  // Start our previousTicks variable.
   static Uint32 previousTicks = SDL_GetTicks();
 
   // Game loop
   ProcessInput();
 
-  // Calculate the frameTime in milliseconds
+  // Calculate the frameTime in milliseconds.
   Uint32 newTicks = SDL_GetTicks();
   Uint32 frameTime = newTicks - previousTicks;
-  previousTicks =
-      newTicks;  // Store newTicks in previousTicks so we can use it next frame
+
+  // Store newTicks in previousTicks so we can use it next frame.
+  previousTicks = newTicks;
   // Get the total delta time
-  float totalDeltaTime = static_cast<float>(frameTime) / DESIRED_FRAMETIME;
+  float totalDeltaTime = static_cast<float>(frameTime) / kDesiredFrametime;
 
-  int i = 0;  // This counter makes sure we don't spiral to death!
+  // This counter makes sure we don't spiral to death.
+  int i = 0;
   // Loop while we still have steps to process.
-  while (totalDeltaTime > 0.0f && i < MAX_PHYSICS_STEPS) {
+  while (totalDeltaTime > 0.0f && i < kMaxPhysicsSteps) {
     // The deltaTime should be the the smaller of the totalDeltaTime and
-    // MAX_DELTA_TIME
-    float deltaTime = std::min(totalDeltaTime, MAX_DELTA_TIME);
-    // Update all physics here and pass in deltaTime
+    // kMaxDeltaTime.
+    float deltaTime = std::min(totalDeltaTime, kMaxDeltaTime);
 
+    // Update all physics here and pass in deltaTime.
     Update(deltaTime);
 
     // Since we just took a step that is length deltaTime, subtract from
-    // totalDeltaTime
+    // totalDeltaTime.
     totalDeltaTime -= deltaTime;
-    // Increment our frame counter so we can limit steps to MAX_PHYSICS_STEPS
+
+    // Increment our frame counter so we can limit steps to kMaxPhysicsSteps
     i++;
   }
 
@@ -90,7 +99,7 @@ void MainGame::OnEntry() {
   screen_width_ = 1280;
   screen_height_ = 720;
 
-  // Init camera
+  // Init camera.
   camera_.Init(window_.screen_width, window_.screen_height);
   camera_.SetPosition(glm::vec2(0.0f));
   camera_.SetScale(1.0f);
@@ -131,9 +140,6 @@ void MainGame::InitBalls() {
 #define ADD_BALL(p, ...) \
   totalProbability += p; \
   possibleBalls.emplace_back(__VA_ARGS__);
-
-  // Number of balls to spawn
-  const int NUM_BALLS = 10000;
 
   // Random engine stuff
   std::mt19937 randomEngine(static_cast<unsigned int>(time(nullptr)));
@@ -177,11 +183,11 @@ void MainGame::InitBalls() {
 
   // Small optimization that sets the size of the internal array to prevent
   // extra allocations.
-  balls_.reserve(NUM_BALLS);
+  balls_.reserve(kNumBalls);
 
   // Set up ball to spawn with default value
   BallSpawn* ballToSpawn = &possibleBalls[0];
-  for (int i = 0; i < NUM_BALLS; i++) {
+  for (int i = 0; i < kNumBalls; i++) {
     // Get the ball spawn roll
     float spawnVal = spawn(randomEngine);
     // Figure out which ball we picked

@@ -64,7 +64,7 @@ void Grid::RemoveBallFromCell(Ball* ball) {
   if (ball->cellVectorIndex < balls.size()) {
     balls[ball->cellVectorIndex]->cellVectorIndex = ball->cellVectorIndex;
   }
-  // Set the index of ball to -1
+  // Set the index of ball to -1.
   ball->cellVectorIndex = -1;
   ball->ownerCell = nullptr;
 }

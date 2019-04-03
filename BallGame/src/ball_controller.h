@@ -108,11 +108,14 @@ class BallController {
    */
   glm::vec2 GetGravityAccel();
 
-  int grabbed_ball_ = -1;  ///< The ball we are currently grabbing on to
-  glm::vec2 previous_pos_ =
-      glm::vec2(0.0f);  ///< Previous position of the grabbed ball
-  glm::vec2 grab_offset_ =
-      glm::vec2(0.0f);  ///< Offset of the cursor on the selected ball
+  // The ball we are currently grabbing on to.
+  int grabbed_ball_ = -1;
+
+  // Previous position of the grabbed ball.
+  glm::vec2 previous_pos_ = glm::vec2(0.0f);
+
+  // Offset of the cursor on the selected ball.
+  glm::vec2 grab_offset_ = glm::vec2(0.0f);
 
   GravityDirection gravity_direction_ = GravityDirection::NONE;
 };
