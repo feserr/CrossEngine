@@ -9,10 +9,10 @@
 
 BallRenderer::~BallRenderer() {}
 
-void BallRenderer::RenderBalls(CrossEngine::SpriteBatch& sprite_batch,
+void BallRenderer::RenderBalls(CrossEngine::SpriteBatch* sprite_batch,
                                const std::vector<Ball>& balls,
                                const glm::mat4& projection_matrix) {
-  sprite_batch.Begin();
+  sprite_batch->Begin();
 
   // Make sure the shader uses texture 0
   // glActiveTexture(GL_TEXTURE0);
@@ -29,11 +29,12 @@ void BallRenderer::RenderBalls(CrossEngine::SpriteBatch& sprite_batch,
     const glm::vec4 destRect(ball.position.x - ball.radius,
                              ball.position.y - ball.radius, ball.radius * 2.0f,
                              ball.radius * 2.0f);
-    sprite_batch.Draw(destRect, uvRect, ball.texture.texture, 0.0f, ball.color);
+    sprite_batch->Draw(destRect, uvRect, ball.texture.texture, 0.0f,
+                       ball.color);
   }
 
-  sprite_batch.End();
-  sprite_batch.RenderBatch();
+  sprite_batch->End();
+  sprite_batch->RenderBatch();
 
   // m_program->Unuse();
 }

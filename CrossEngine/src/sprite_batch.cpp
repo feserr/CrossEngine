@@ -78,7 +78,7 @@ glm::vec2 Glyph::RotatePoint(const glm::vec2& pos, float angle) {
   return newv;
 }
 
-SpriteBatch::SpriteBatch() : vbo_(0), vao_(0) {}
+SpriteBatch::SpriteBatch() /* : vbo_(0), vao_(0) */ {}
 
 SpriteBatch::~SpriteBatch() {}
 

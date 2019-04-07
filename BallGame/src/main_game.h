@@ -41,27 +41,55 @@ class MainGame : public CrossEngine::IGameScreen {
    */
   ~MainGame();
 
+  /**
+   * @brief Get the next screen index.
+   *
+   * @return int The screen index.
+   */
   int GetNextScreenIndex() const override;
 
+  /**
+   * @brief Get the previous screen index.
+   *
+   * @return int The screen index.
+   */
   int GetPreviousScreenIndex() const override;
 
+  /**
+   * @brief Build the game.
+   */
   void Build() override;
 
+  /**
+   * @brief Destroy the game.
+   */
   void Destroy() override;
 
+  /**
+   * @brief On entry callback.
+   */
   void OnEntry() override;
 
+  /**
+   * @brief On exit callback.
+   */
   void OnExit() override;
 
+  /**
+   * @brief Main game loop.
+   */
   void Update() override;
 
+  /**
+   * @brief Main game draw loop.
+   */
   void Draw() override;
 
  private:
   void Init();
   void InitRenderers();
   void InitBalls();
-  void Update(const float deltaTime);
+  void Update(const float delta_time);
   void DrawHud();
   void ProcessInput();
 

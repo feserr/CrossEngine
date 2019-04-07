@@ -7,7 +7,7 @@
 #define BALLGAME_SRC_GRID_H_
 
 #include <vector>
-#include "Ball.h"
+#include "ball.h"
 
 struct Cell {
   std::vector<Ball*> balls;

@@ -9,7 +9,7 @@
 #include <crossengine/sprite_batch.h>
 #include <memory>
 #include <vector>
-#include "Ball.h"
+#include "ball.h"
 
 // Ball renderer interface
 class BallRenderer {
@@ -26,7 +26,7 @@ class BallRenderer {
    * @param[in] balls The collection of balls.
    * @param[in] projection_matrix The projection matrix.
    */
-  virtual void RenderBalls(CrossEngine::SpriteBatch& sprite_batch,
+  virtual void RenderBalls(CrossEngine::SpriteBatch* sprite_batch,
                            const std::vector<Ball>& balls,
                            const glm::mat4& projection_matrix);
 

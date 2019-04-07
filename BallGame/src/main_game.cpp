@@ -122,8 +122,8 @@ struct BallSpawn {
       : color(colr),
         radius(rad),
         mass(m),
-        randSpeed(minSpeed, maxSpeed),
-        probability(prob) {
+        probability(prob),
+        randSpeed(minSpeed, maxSpeed) {
     // Empty
   }
   CrossEngine::ColorRGBA8 color;
@@ -223,8 +223,8 @@ void MainGame::InitBalls() {
   }
 }
 
-void MainGame::Update(const float deltaTime) {
-  ball_controller_.UpdateBalls(&balls_, grid_.get(), deltaTime, screen_width_,
+void MainGame::Update(const float delta_time) {
+  ball_controller_.UpdateBalls(&balls_, grid_.get(), delta_time, screen_width_,
                                screen_height_);
 }
 
@@ -234,7 +234,7 @@ void MainGame::Draw() {
   // Grab the camera matrix
   glm::mat4 projectionMatrix = camera_.GetCameraMatrix();
 
-  ball_renderers_[current_renderer_]->RenderBalls(sprite_batch_, balls_,
+  ball_renderers_[current_renderer_]->RenderBalls(&sprite_batch_, balls_,
                                                   projectionMatrix);
 
   DrawHud();

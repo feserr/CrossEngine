@@ -9,7 +9,7 @@
 #include <cstdlib>
 
 Grid::Grid(const int width, const int height, const int cell_size)
-    : width_(width), height_(height), cell_size_(cell_size) {
+    : cell_size_(cell_size), width_(width), height_(height) {
   num_x_cells_ = ceil(static_cast<float>(width_) / cell_size_);
   num_y_cells_ = ceil(static_cast<float>(height_) / cell_size_);
 
@@ -27,13 +27,13 @@ void Grid::AddBall(Ball* ball) {
   Cell* cell = GetCell(ball->position);
   cell->balls.push_back(ball);
   ball->ownerCell = cell;
-  ball->cellVectorIndex = cell->balls.size() - 1;
+  ball->cellVectorIndex = static_cast<int>(cell->balls.size()) - 1;
 }
 
 void Grid::AddBall(Ball* ball, Cell* cell) {
   cell->balls.push_back(ball);
   ball->ownerCell = cell;
-  ball->cellVectorIndex = cell->balls.size() - 1;
+  ball->cellVectorIndex = static_cast<int>(cell->balls.size()) - 1;
 }
 
 Cell* Grid::GetCell(const int x, const int y) {

@@ -8,7 +8,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include "Vertex.h"
+#include "vertex.h"
 #include "cross_texture.h"
 
 namespace CrossEngine {
@@ -227,8 +227,8 @@ class SpriteBatch {
    */
   static bool CompareTexture(Glyph* a, Glyph* b);
 
-  unsigned int vbo_;
-  unsigned int vao_;
+  // unsigned int vbo_;
+  // unsigned int vao_;
 
   GlyphSortType sort_type_;
 
