@@ -3,32 +3,30 @@
  * License: https://github.com/feserr/crossengine#license
  */
 
-#include "Environment.h"
+#include "environment.h"
 
-#include <CrossEngine/ResourceManager.h>
+#include <crossengine/resource_manager.h>
 
-void Environment::Init(const glm::vec2& position,
-    const glm::vec2& dimension, CrossEngine::ColorRGBA8 color) {
-    CrossEngine::CrossTexture texture =
-        CrossEngine::ResourceManager::GetTexture("images/Pong.png");
-    m_color = color;
-    m_dimension = dimension;
-    m_position = position;
-    m_texture.Init(texture, glm::ivec2(8, 1));
+void Environment::Init(const glm::vec2& position, const glm::vec2& dimension,
+                       const CrossEngine::ColorRGBA8 color) {
+  position_ = position;
+  dimension_ = dimension;
+  color_ = color;
+  CrossEngine::CrossTexture texture =
+      CrossEngine::ResourceManager::GetTexture("images/Pong.png");
+  texture_.Init(texture, glm::ivec2(8, 1));
 }
 
-void Environment::Destroy() {
-}
+void Environment::Destroy() {}
 
-void Environment::Draw(CrossEngine::SpriteBatch& spriteBatch) {
-    glm::vec4 destRect;
-    destRect.x = m_position.x - m_dimension.x / 2.0f;
-    destRect.y = m_position.y - m_dimension.y / 2.0f;
-    destRect.z = m_dimension.x;
-    destRect.w = m_dimension.y;
+void Environment::Draw(CrossEngine::SpriteBatch* sprite_batch) {
+  glm::vec4 destRect;
+  destRect.x = position_.x - dimension_.x / 2.0f;
+  destRect.y = position_.y - dimension_.y / 2.0f;
+  destRect.z = dimension_.x;
+  destRect.w = dimension_.y;
 
-    glm::vec4 uvRect = m_texture.GetUVs(7);
+  glm::vec4 uvRect = texture_.GetUVs(7);
 
-    spriteBatch.Draw(destRect, uvRect, m_texture.texture.texture, 0.0f,
-        m_color);
+  sprite_batch->Draw(destRect, uvRect, texture_.texture.texture, 0.0f, color_);
 }

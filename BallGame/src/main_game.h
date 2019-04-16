@@ -104,9 +104,9 @@ class MainGame : public CrossEngine::IGameScreen {
 
   BallController ball_controller_;  ///< Controls balls
 
-  CrossEngine::Window window_;            ///< The main window
+  CrossEngine::Window window_;             ///< The main window
   CrossEngine::SpriteBatch sprite_batch_;  ///< Renders all the balls
-  CrossEngine::Camera2D camera_;          ///< Renders the scene
+  CrossEngine::Camera2D camera_;           ///< Renders the scene
   // CrossEngine::GLSLProgram m_textureProgram; ///< Shader for textures
 
   CrossEngine::FpsLimiter fps_limiter_;  ///< Limits and calculates fps

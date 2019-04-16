@@ -1,79 +1,88 @@
 /*
-    Copyright 2017-2018 Elías Serrano. All rights reserved.
-
-    Redistribution and use in source and binary forms, with or without
-    modification, are permitted provided that the following conditions
-    are met:
-
-    1. Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-
-    2. Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-
-    THIS SOFTWARE IS PROVIDED BY COPYRIGHT HOLDER ``AS IS'' AND ANY
-    EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-    PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL COPYRIGHT HOLDER OR
-    CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
-    OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-    OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * License: https://github.com/feserr/crossengine#license
  */
 
-#ifndef _PLAYER_H_
-#define _PLAYER_H_
+#ifndef PONG_SRC_PLAYER_H_
+#define PONG_SRC_PLAYER_H_
 
-#include "Ball.h"
+#include <crossengine/sprite.h>
+#include <crossengine/sprite_batch.h>
+#include <crossengine/tile_sheet.h>
+#include <crossengine/vertex.h>
+#include "ball.h"
 
-#include <CrossEngine/InputManager.h>
-#include <CrossEngine/Sprite.h>
-#include <CrossEngine/Vertex.h>
-#include <CrossEngine/TileSheet.h>
-#include <CrossEngine/SpriteBatch.h>
-
-enum class PlayerMoveState {STANDING, MOVING};
-enum class PlayerType { PLAYERONE, PLAYERTWO, BOT};
+enum class PlayerMoveState { STANDING, MOVING };
+enum class PlayerType { PLAYERONE, PLAYERTWO, BOT };
 
 class Player {
-public:
-    void Init(const glm::vec2& position, const glm::vec2& drawDims,
-        glm::vec2& collisionDims, CrossEngine::ColorRGBA8 color,
-        PlayerType playerType);
+ public:
+  /**
+   * @brief Initialize the player.
+   *
+   * @param[in] position The position.
+   * @param[in] draw_dimensions The image dimensions.
+   * @param[in] collision_dimensions The collision dimensions.
+   * @param[in] color The color.
+   * @param[in] player_type The player type: player or bot.
+   */
+  void Init(const glm::vec2& position, const glm::vec2& draw_dimensions,
+            const glm::vec2& collision_dimensions,
+            const CrossEngine::ColorRGBA8 color, const PlayerType player_type);
 
-    void Destroy();
+  /**
+   * @brief Destroy the player.
+   */
+  void Destroy();
 
-    void Draw(CrossEngine::SpriteBatch& spriteBatch);
-    
-    void Update(float deltaTime, CrossEngine::InputManager& inputManager,
-        const glm::vec2 &windowSize, Ball &ball);
+  /**
+   * @brief Render the player in the sprite batch.
+   *
+   * @param sprite_batch The main sprite batch.
+   */
+  void Draw(CrossEngine::SpriteBatch* sprite_batch);
 
-    glm::vec2 GetPosition() const {
-        glm::vec2 rv;
-        rv.x = m_position.x;
-        rv.y = m_position.y;
-        return rv;
-    }
+  /**
+   * @brief Main loop of the player.
+   *
+   * @param delta_time The delta time.
+   * @param window_size The size of the window.
+   * @param ball The ball.
+   */
+  void Update(const float delta_time, const glm::vec2& window_size, Ball* ball);
 
-    const glm::vec2& GetDrawDims() const { return m_drawDims; }
-    const glm::vec2& GetCollisionDims() const { return m_collisionDims; }
-    const CrossEngine::ColorRGBA8& GetColor() const { return m_color; }
+  /**
+   * @brief Get the position object.
+   *
+   * @return const glm::vec2 The position of the player.
+   */
+  const glm::vec2 GetPosition() const {
+    glm::vec2 rv;
+    rv.x = position_.x;
+    rv.y = position_.y;
+    return rv;
+  }
 
-private:
-    glm::vec2 m_drawDims;
-    glm::vec2 m_collisionDims;
-    CrossEngine::ColorRGBA8 m_color;
-    CrossEngine::TileSheet m_texture;
-    PlayerMoveState m_moveState = PlayerMoveState::STANDING;
-    glm::vec2 m_position;
-    glm::vec2 m_velocity;
-    PlayerType m_playerType;
+  /**
+   * @brief Get the draw dimensions object.
+   *
+   * @return const glm::vec2& The draw dimensions.
+   */
+  const glm::vec2& GetDrawDims() const { return draw_dimensions_; }
+
+  const glm::vec2& GetCollisionDims() const { return collision_dimensions_; }
+
+  const CrossEngine::ColorRGBA8& GetColor() const { return color_; }
+
+ private:
+  glm::vec2 position_;
+  glm::vec2 draw_dimensions_;
+  glm::vec2 collision_dimensions_;
+  CrossEngine::ColorRGBA8 color_;
+  CrossEngine::TileSheet texture_;
+  PlayerMoveState move_state_ = PlayerMoveState::STANDING;
+  glm::vec2 velocity_;
+  PlayerType player_type_;
 };
 
-
-
-#endif  // _PLAYER_H_
+#endif  // PONG_SRC_PLAYER_H_

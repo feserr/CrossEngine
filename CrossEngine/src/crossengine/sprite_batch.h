@@ -8,8 +8,8 @@
 
 #include <glm/glm.hpp>
 #include <vector>
-#include "vertex.h"
 #include "cross_texture.h"
+#include "vertex.h"
 
 namespace CrossEngine {
 /**
@@ -146,7 +146,8 @@ class SpriteBatch {
    * @param[in] color The color.
    */
   void Draw(const glm::vec4& destination_rect, const glm::vec4& uv_rect,
-            bgfx::TextureHandle texture, float depth, const ColorRGBA8& color);
+            const bgfx::TextureHandle& texture, const float depth,
+            const ColorRGBA8& color);
 
   /**
    * @brief Adds a glyph to the spritebatch with rotation.
@@ -159,8 +160,8 @@ class SpriteBatch {
    * @param angle The angle.
    */
   void Draw(const glm::vec4& destination_rect, const glm::vec4& uv_rect,
-            bgfx::TextureHandle texture, float depth, const ColorRGBA8& color,
-            float angle);
+            const bgfx::TextureHandle& texture, const float depth,
+            const ColorRGBA8& color, const float angle);
 
   /**
    * @brief Adds a glyph to the spritebatch with rotation.
@@ -173,7 +174,7 @@ class SpriteBatch {
    * @param direction The direction.
    */
   void Draw(const glm::vec4& destination_rect, const glm::vec4& uv_rect,
-            bgfx::TextureHandle texture, float depth, const ColorRGBA8& color,
+            const bgfx::TextureHandle& texture, const float depth, const ColorRGBA8& color,
             const glm::vec2& direction);
 
   /**

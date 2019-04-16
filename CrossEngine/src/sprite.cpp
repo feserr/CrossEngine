@@ -79,7 +79,8 @@ void Sprite::Init(float x, float y, float width, float height,
   // Create program from shaders.
   program_ = loadProgram("vs_update", "fs_update_cmp");
 
-  texture_color_ = bgfx::createUniform("s_texColor", bgfx::UniformType::Sampler);
+  texture_color_ =
+      bgfx::createUniform("s_texColor", bgfx::UniformType::Sampler);
 }
 
 // Draws the sprite to the screen

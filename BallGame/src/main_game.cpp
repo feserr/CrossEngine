@@ -30,7 +30,7 @@ const float kDesiredFrametime = kMsPerSecond / kDesiredFps;
 const float kMaxDeltaTime = 1.0f;
 
 // Number of balls to spawn.
-const int kNumBalls = 10000;
+const int kNumBalls = 1000;
 
 MainGame::MainGame(CrossEngine::Window* window) : window_(*window) {
   screen_index_ = SCREEN_INDEX_GAMEPLAY;

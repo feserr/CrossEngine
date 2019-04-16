@@ -114,19 +114,19 @@ void SpriteBatch::End() {
 }
 
 void SpriteBatch::Draw(const glm::vec4& dest_rect, const glm::vec4& uv_rect,
-                       bgfx::TextureHandle texture, float depth,
+                       const bgfx::TextureHandle& texture, const float depth,
                        const ColorRGBA8& color) {
   glyphs_.emplace_back(dest_rect, uv_rect, texture, depth, color);
 }
 
 void SpriteBatch::Draw(const glm::vec4& dest_rect, const glm::vec4& uv_rect,
-                       bgfx::TextureHandle texture, float depth,
-                       const ColorRGBA8& color, float angle) {
+                       const bgfx::TextureHandle& texture, const float depth,
+                       const ColorRGBA8& color, const float angle) {
   glyphs_.emplace_back(dest_rect, uv_rect, texture, depth, color, angle);
 }
 
 void SpriteBatch::Draw(const glm::vec4& dest_rect, const glm::vec4& uv_rect,
-                       bgfx::TextureHandle texture, float depth,
+                       const bgfx::TextureHandle& texture, const float depth,
                        const ColorRGBA8& color, const glm::vec2& dir) {
   const glm::vec2 right(1.0f, 0.0f);
   float angle = acos(glm::dot(right, dir));
@@ -179,19 +179,21 @@ void SpriteBatch::CreateRenderBatches() {
   // Add the first batch
   render_batches_.emplace_back(offset, 4, 6, glyph_pointers_[0]->texture);
   vertex->Set(g->top_left.position.x, g->top_left.position.y, 1.0f,
-              g->top_left.uv.u, g->top_left.uv.v, 0.0f);
+              g->top_left.uv.u, g->top_left.uv.v, 0.0f, g->top_left.color);
   ++vertex;
 
   vertex->Set(g->top_right.position.x, g->top_right.position.y, 1.0f,
-              g->top_right.uv.u, g->top_right.uv.v, 0.0f);
+              g->top_right.uv.u, g->top_right.uv.v, 0.0f, g->top_right.color);
   ++vertex;
 
   vertex->Set(g->bottom_left.position.x, g->bottom_left.position.y, 1.0f,
-              g->bottom_left.uv.u, g->bottom_left.uv.v, 0.0f);
+              g->bottom_left.uv.u, g->bottom_left.uv.v, 0.0f,
+              g->bottom_left.color);
   ++vertex;
 
   vertex->Set(g->bottom_right.position.x, g->bottom_right.position.y, 1.0f,
-              g->bottom_right.uv.u, g->bottom_right.uv.v, 0.0f);
+              g->bottom_right.uv.u, g->bottom_right.uv.v, 0.0f,
+              g->bottom_right.color);
   ++vertex;
   offset += 4;
 
@@ -211,19 +213,21 @@ void SpriteBatch::CreateRenderBatches() {
     g = glyph_pointers_[cg];
 
     vertex->Set(g->top_left.position.x, g->top_left.position.y, 1.0f,
-                g->top_left.uv.u, g->top_left.uv.v, 0.0f);
+                g->top_left.uv.u, g->top_left.uv.v, 0.0f, g->top_left.color);
     ++vertex;
 
     vertex->Set(g->top_right.position.x, g->top_right.position.y, 1.0f,
-                g->top_right.uv.u, g->top_right.uv.v, 0.0f);
+                g->top_right.uv.u, g->top_right.uv.v, 0.0f, g->top_right.color);
     ++vertex;
 
     vertex->Set(g->bottom_left.position.x, g->bottom_left.position.y, 1.0f,
-                g->bottom_left.uv.u, g->bottom_left.uv.v, 0.0f);
+                g->bottom_left.uv.u, g->bottom_left.uv.v, 0.0f,
+                g->bottom_left.color);
     ++vertex;
 
     vertex->Set(g->bottom_right.position.x, g->bottom_right.position.y, 1.0f,
-                g->bottom_right.uv.u, g->bottom_right.uv.v, 0.0f);
+                g->bottom_right.uv.u, g->bottom_right.uv.v, 0.0f,
+                g->bottom_right.color);
     ++vertex;
 
     offset += 4;
@@ -246,7 +250,8 @@ void SpriteBatch::CreateVertexArray() {
   PosTexcoordVertex::Init();
 
   // Create program from shaders.
-  program_ = loadProgram("vs_update", "fs_update_cmp");
+  // program_ = loadProgram("vs_update", "fs_update_cmp");
+  program_ = loadProgram("vs_texture_shading", "fs_texture_shading");
 
   texture_color_ =
       bgfx::createUniform("s_texColor", bgfx::UniformType::Sampler);

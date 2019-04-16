@@ -14,13 +14,15 @@ includedirs {
     path.join(BGFX_DIR, "3rdparty"),
     path.join(CROSSENGINE_DIR, "deps/include"),
     path.join(CROSSENGINE_DIR, "src"),
-    path.join(CROSSENGINE_DIR, "src/CrossEngine"),
+    path.join(CROSSENGINE_DIR, "src/crossengine"),
 }
 
 files {
     path.join(MODULE_DIR, "**.c"),
     path.join(MODULE_DIR, "**.cpp"),
     path.join(MODULE_DIR, "**.h"),
+    path.join(MODULE_DIR, "runtime/images"),
+    path.join(MODULE_DIR, "runtime/shaders"),
 }
 
 removefiles {
@@ -28,7 +30,11 @@ removefiles {
 }
 
 flags {
-    "FatalWarnings",
+--    "FatalWarnings",
+}
+
+removeflags {
+    "NoExceptions",
 }
 
 links {

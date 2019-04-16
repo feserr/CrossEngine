@@ -29,9 +29,26 @@ class BallRenderer {
   virtual void RenderBalls(CrossEngine::SpriteBatch* sprite_batch,
                            const std::vector<Ball>& balls,
                            const glm::mat4& projection_matrix);
+};
 
- protected:
-  // std::unique_ptr<CrossEngine::GLSLProgram> m_program = nullptr;
+// Momentum ball renderer interface
+class MomentumBallRenderer : public BallRenderer {
+ public:
+  /**
+   * @brief Destroy the MomentumBallRenderer object.
+   */
+  virtual ~MomentumBallRenderer();
+
+  /**
+   * @brief Render the balls using selected shader.
+   *
+   * @param[in] sprite_batch The SpriteBatch.
+   * @param[in] balls The collection of balls.
+   * @param[in] projection_matrix The projection matrix.
+   */
+  virtual void RenderBalls(CrossEngine::SpriteBatch* sprite_batch,
+                           const std::vector<Ball>& balls,
+                           const glm::mat4& projection_matrix);
 };
 
 #endif  // BALLGAME_SRC_BALL_RENDERER_H_
