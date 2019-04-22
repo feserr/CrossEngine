@@ -37,7 +37,8 @@ class Glyph {
    * @param[in] color The color.
    */
   Glyph(const glm::vec4& dest_rect, const glm::vec4& uv_rect,
-        bgfx::TextureHandle texture, float depth, const ColorRGBA8& color);
+        const bgfx::TextureHandle& texture, const float depth,
+        const ColorRGBA8& color);
 
   /**
    * @brief Construct a new Glyph object.
@@ -50,8 +51,8 @@ class Glyph {
    * @param[in] angle The angle.
    */
   Glyph(const glm::vec4& dest_rect, const glm::vec4& uv_rect,
-        bgfx::TextureHandle texture, float depth, const ColorRGBA8& color,
-        float angle);
+        const bgfx::TextureHandle& texture, const float depth,
+        const ColorRGBA8& color, float angle);
 
   bgfx::TextureHandle texture;
   float depth;
@@ -87,7 +88,7 @@ class RenderBatch {
    * @param[in] texture The texture.
    */
   RenderBatch(uint32_t offset, uint32_t num_vertices, uint32_t num_indices,
-              bgfx::TextureHandle texture)
+              const bgfx::TextureHandle& texture)
       : offset(offset),
         num_vertices(num_vertices),
         num_indices(num_indices),
@@ -174,8 +175,8 @@ class SpriteBatch {
    * @param direction The direction.
    */
   void Draw(const glm::vec4& destination_rect, const glm::vec4& uv_rect,
-            const bgfx::TextureHandle& texture, const float depth, const ColorRGBA8& color,
-            const glm::vec2& direction);
+            const bgfx::TextureHandle& texture, const float depth,
+            const ColorRGBA8& color, const glm::vec2& direction);
 
   /**
    * @brief Renders the entire SpriteBatch to the screen

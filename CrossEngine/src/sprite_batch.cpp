@@ -17,7 +17,8 @@ bgfx::VertexDecl PosTexcoordVertex::ms_decl;
 // TODO(feserr): Add emtpy constructor.
 
 Glyph::Glyph(const glm::vec4& dest_rect, const glm::vec4& uv_rect,
-             bgfx::TextureHandle texture, float depth, const ColorRGBA8& color)
+             const bgfx::TextureHandle& texture, const float depth,
+             const ColorRGBA8& color)
     : texture(texture), depth(depth) {
   top_left.color = color;
   top_left.SetPosition(dest_rect.x, dest_rect.y + dest_rect.w);
@@ -37,8 +38,8 @@ Glyph::Glyph(const glm::vec4& dest_rect, const glm::vec4& uv_rect,
 }
 
 Glyph::Glyph(const glm::vec4& dest_rect, const glm::vec4& uv_rect,
-             bgfx::TextureHandle texture, float depth, const ColorRGBA8& color,
-             float angle)
+             const bgfx::TextureHandle& texture, const float depth,
+             const ColorRGBA8& color, float angle)
     : texture(texture), depth(depth) {
   glm::vec2 halfDims(dest_rect.z / 2.0f, dest_rect.w / 2.0f);
 
@@ -236,12 +237,12 @@ void SpriteBatch::CreateRenderBatches() {
   uint16_t* indices = reinterpret_cast<uint16_t*>(tib_.data);
   for (uint32_t ii = 0; ii < num; ++ii) {
     uint16_t* index = &indices[ii * 6];
-    index[0] = ii * 4 + 0;
-    index[1] = ii * 4 + 1;
-    index[2] = ii * 4 + 2;
-    index[3] = ii * 4 + 1;
-    index[4] = ii * 4 + 3;
-    index[5] = ii * 4 + 2;
+    index[0] = ii * 4 + 0;  // 0
+    index[1] = ii * 4 + 1;  // 1
+    index[2] = ii * 4 + 2;  // 2
+    index[3] = ii * 4 + 1;  // 1
+    index[4] = ii * 4 + 3;  // 3
+    index[5] = ii * 4 + 2;  // 2
   }
 }
 
@@ -250,7 +251,6 @@ void SpriteBatch::CreateVertexArray() {
   PosTexcoordVertex::Init();
 
   // Create program from shaders.
-  // program_ = loadProgram("vs_update", "fs_update_cmp");
   program_ = loadProgram("vs_texture_shading", "fs_texture_shading");
 
   texture_color_ =

@@ -66,14 +66,14 @@ class InputManager {
    *
    * @param[in] key_id The key.
    */
-  void PressKey(unsigned int key_id);
+  void PressKey(entry::Key::Enum key_id);
 
   /**
    * @brief Release the key.
    *
    * @param[in] key_id The key.
    */
-  void ReleaseKey(unsigned int key_id);
+  void ReleaseKey(entry::Key::Enum key_id);
 
   /**
    * @brief Set the mouse coordinates.
@@ -90,7 +90,7 @@ class InputManager {
    * @return true If the key is pressed.
    * @return false If the key is release.
    */
-  bool IsKeyDown(unsigned int key_id);
+  bool IsKeyDown(entry::Key::Enum key_id);
 
   /**
    * @brief Check if the key is pressed.
@@ -99,7 +99,7 @@ class InputManager {
    * @return true If the key is pressed.
    * @return false If the key is release.
    */
-  bool IsKeyDown(entry::Key::Enum key_id);
+  // bool IsKeyDown(entry::Key::Enum key_id);
 
   /**
    * @brief Check if the key is down.
@@ -108,7 +108,7 @@ class InputManager {
    * @return true If the key is down.
    * @return false If the key is down.
    */
-  bool IsKeyPressed(unsigned int key_id);
+  bool IsKeyPressed(entry::Key::Enum key_id);
 
   /**
    * @brief Get the mouse coordinates.
@@ -142,10 +142,10 @@ class InputManager {
    * @return true If the key was down.
    * @return false If the key was not down.
    */
-  bool WasKeyDown(unsigned int keyID);
+  bool WasKeyDown(entry::Key::Enum key_id);
 
-  std::unordered_map<unsigned int, bool> key_map_;
-  std::unordered_map<unsigned int, bool> previous_key_map_;
+  std::unordered_map<entry::Key::Enum, bool> key_map_;
+  std::unordered_map<entry::Key::Enum, bool> previous_key_map_;
   glm::vec2 mouse_coords_;
   entry::MouseState mouse_state_;
 

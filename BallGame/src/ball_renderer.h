@@ -51,4 +51,67 @@ class MomentumBallRenderer : public BallRenderer {
                            const glm::mat4& projection_matrix);
 };
 
+// Velocity ball renderer interface
+class VelocityBallRenderer : public BallRenderer {
+ public:
+  /**
+   * @brief Construct a new VelocityBallRenderer object.
+   *
+   * @param screen_width Width of the screen.
+   * @param screen_height Height if the screen.
+   */
+  explicit VelocityBallRenderer(int screen_width, int screen_height);
+
+  /**
+   * @brief Destroy the VelocityBallRenderer object.
+   */
+  virtual ~VelocityBallRenderer();
+
+  /**
+   * @brief Render the balls using selected shader.
+   *
+   * @param[in] sprite_batch The SpriteBatch.
+   * @param[in] balls The collection of balls.
+   * @param[in] projection_matrix The projection matrix.
+   */
+  virtual void RenderBalls(CrossEngine::SpriteBatch* sprite_batch,
+                           const std::vector<Ball>& balls,
+                           const glm::mat4& projection_matrix);
+
+ private:
+  int screen_width_, screen_height_;
+};
+
+// Trippy ball renderer interface
+class TrippyBallRenderer : public BallRenderer {
+ public:
+  /**
+   * @brief Construct a new TrippyBallRenderer object.
+   *
+   * @param screen_width Width of the screen.
+   * @param screen_height Height if the screen.
+   */
+  explicit TrippyBallRenderer(int screen_width, int screen_height);
+
+  /**
+   * @brief Destroy the TrippyBallRenderer object.
+   */
+  virtual ~TrippyBallRenderer();
+
+  /**
+   * @brief Render the balls using selected shader.
+   *
+   * @param[in] sprite_batch The SpriteBatch.
+   * @param[in] balls The collection of balls.
+   * @param[in] projection_matrix The projection matrix.
+   */
+  virtual void RenderBalls(CrossEngine::SpriteBatch* sprite_batch,
+                           const std::vector<Ball>& balls,
+                           const glm::mat4& projection_matrix);
+
+ private:
+  int screen_width_, screen_height_;
+  float time_;
+};
+
 #endif  // BALLGAME_SRC_BALL_RENDERER_H_

@@ -12,10 +12,7 @@ SAMPLER2D(s_texColor, 0);
 
 void main()
 {
-	vec4 color = toLinear(texture2D(s_texColor, v_texcoord0) );
+	vec4 color = toLinear(texture2D(s_texColor, v_texcoord0.xy*0.5+0.5) );
 
-	gl_FragColor.xyz = v_color0.xyz * color.xyz;
-	gl_FragColor.w = 1.0;
-	//gl_FragColor = toGamma(gl_FragColor);
-	//gl_FragColor = texture2D(s_texColor, v_texcoord0.xy*0.5+0.5);
+	gl_FragColor = v_color0 * color;
 }

@@ -12,7 +12,7 @@
 namespace CrossEngine {
 TextureCache::TextureCache() {}
 
-TextureCache::~TextureCache() {}
+TextureCache::~TextureCache() { texture_map_.clear(); }
 
 CrossTexture TextureCache::GetTexture(std::string texture_path) {
   // Lookup the texture and see if its in the map

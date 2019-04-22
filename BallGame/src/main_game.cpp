@@ -30,7 +30,7 @@ const float kDesiredFrametime = kMsPerSecond / kDesiredFps;
 const float kMaxDeltaTime = 1.0f;
 
 // Number of balls to spawn.
-const int kNumBalls = 1000;
+const int kNumBalls = 10000;
 
 MainGame::MainGame(CrossEngine::Window* window) : window_(*window) {
   screen_index_ = SCREEN_INDEX_GAMEPLAY;
@@ -112,9 +112,16 @@ void MainGame::OnEntry() {
   InitBalls();
 }
 
-void MainGame::OnExit() {}
+void MainGame::OnExit() { sprite_batch_.Dispose(); }
 
-void MainGame::InitRenderers() { ball_renderers_.push_back(new BallRenderer); }
+void MainGame::InitRenderers() {
+  ball_renderers_.push_back(new BallRenderer);
+  ball_renderers_.push_back(new MomentumBallRenderer);
+  ball_renderers_.push_back(
+      new VelocityBallRenderer(screen_width_, screen_height_));
+  ball_renderers_.push_back(
+      new TrippyBallRenderer(screen_width_, screen_height_));
+}
 
 struct BallSpawn {
   BallSpawn(const CrossEngine::ColorRGBA8& colr, float rad, float m,
@@ -259,21 +266,24 @@ void MainGame::DrawHud() {
 }
 
 void MainGame::ProcessInput() {
-  if (CrossEngine::InputManager::instance().IsKeyDown(entry::Key::Esc)) {
+  CrossEngine::InputManager::instance().Update();
+
+  if (CrossEngine::InputManager::instance().IsKeyPressed(entry::Key::Esc)) {
     game_state_ = GameState::EXIT;
   }
   // Handle gravity changes
-  if (CrossEngine::InputManager::instance().IsKeyDown(entry::Key::Left)) {
+  if (CrossEngine::InputManager::instance().IsKeyPressed(entry::Key::Left)) {
     ball_controller_.SetGravityDirection(GravityDirection::LEFT);
-  } else if (CrossEngine::InputManager::instance().IsKeyDown(
+  } else if (CrossEngine::InputManager::instance().IsKeyPressed(
                  entry::Key::Right)) {
     ball_controller_.SetGravityDirection(GravityDirection::RIGHT);
-  } else if (CrossEngine::InputManager::instance().IsKeyDown(entry::Key::Up)) {
+  } else if (CrossEngine::InputManager::instance().IsKeyPressed(
+                 entry::Key::Up)) {
     ball_controller_.SetGravityDirection(GravityDirection::DOWN);
-  } else if (CrossEngine::InputManager::instance().IsKeyDown(
+  } else if (CrossEngine::InputManager::instance().IsKeyPressed(
                  entry::Key::Down)) {
     ball_controller_.SetGravityDirection(GravityDirection::UP);
-  } else if (CrossEngine::InputManager::instance().IsKeyDown(
+  } else if (CrossEngine::InputManager::instance().IsKeyPressed(
                  entry::Key::Space)) {
     ball_controller_.SetGravityDirection(GravityDirection::NONE);
   }
@@ -291,7 +301,7 @@ void MainGame::ProcessInput() {
   }
 
   // Switch renderers
-  if (CrossEngine::InputManager::instance().IsKeyDown(entry::Key::Key1)) {
+  if (CrossEngine::InputManager::instance().IsKeyPressed(entry::Key::Key1)) {
     current_renderer_++;
     if (current_renderer_ >= ball_renderers_.size()) {
       current_renderer_ = 0;
