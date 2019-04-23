@@ -7,6 +7,12 @@ configuration {}
 
 debugdir (path.join(MODULE_DIR, "runtime"))
 
+files {
+    path.join(MODULE_DIR, "runtime/shaders"),
+    path.join(MODULE_DIR, "runtime/images"),
+    path.join(MODULE_DIR, "runtime/font"),
+}
+
 includedirs {
     path.join(BX_DIR,   "include"),
     path.join(BIMG_DIR, "include"),
@@ -14,7 +20,7 @@ includedirs {
     path.join(BGFX_DIR, "3rdparty"),
     path.join(CROSSENGINE_DIR, "deps/include"),
     path.join(CROSSENGINE_DIR, "src"),
-    path.join(CROSSENGINE_DIR, "src/CrossEngine"),
+    path.join(CROSSENGINE_DIR, "src/crossengine"),
 }
 
 files {

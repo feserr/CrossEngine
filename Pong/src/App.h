@@ -1,43 +1,49 @@
 /*
-    Copyright [2016] [Elías Serrano]
+ * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * License: https://github.com/feserr/crossengine#license
+ */
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+#ifndef PONG_SRC_APP_H_
+#define PONG_SRC_APP_H_
 
-    http://www.apache.org/licenses/LICENSE-2.0
+#include <crossengine/i_main_game.h>
+#include <memory>
+#include "gameplay_screen.h"
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
-
-#ifndef App_h
-#define App_h
-
-#include "GameplayScreen.h"
-//#include "MainMenuScreen.h"
-
-#include <CrossEngine/IMainGame.h>
-
-// Our custom app that inherits from IMainGame
-class App : public CrossEngine::IMainGame{
+/**
+ * @brief Our custom app that inherits from IMainGame.
+ */
+class App : public CrossEngine::IMainGame {
  public:
-    App();
-    ~App();
+  /**
+   * @brief Construct a new App object.
+   */
+  App();
 
-    // Called on initialization
-    virtual void OnInit() override;
-    // For adding all screens
-    virtual void AddScreens() override;
-    // Called when exiting
-    virtual void OnExit() override;
+  /**
+   * @brief Destroy the App object.
+   */
+  ~App();
+
+  /**
+   * @brief Called on initialization.
+   */
+  void OnInit() override;
+
+  /**
+   * @brief For adding all screens.
+   */
+  void AddScreens() override;
+
+  /**
+   * @brief Called when exiting.
+   */
+  void OnExit() override;
+
  private:
-    std::unique_ptr<GameplayScreen> m_gameplayScreen = nullptr;
+  std::unique_ptr<GameplayScreen> gameplay_screen_;
 
-    CrossEngine::Window m_window;
+  CrossEngine::Window window_;
 };
 
-#endif /* App_h */
+#endif  // PONG_SRC_APP_H_

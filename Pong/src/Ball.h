@@ -1,53 +1,85 @@
 /*
-    Copyright [2016] [Elías Serrano]
+ * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * License: https://github.com/feserr/crossengine#license
+ */
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+#ifndef PONG_SRC_BALL_H_
+#define PONG_SRC_BALL_H_
 
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
-
-#ifndef _BALL_H
-#define _BALL_H
-
-#include <CrossEngine/Vertex.h>
-#include <CrossEngine/InputManager.h>
-#include <CrossEngine/SpriteBatch.h>
-#include <CrossEngine/TileSheet.h>
+#include <crossengine/input_manager.h>
+#include <crossengine/sprite_batch.h>
+#include <crossengine/tile_sheet.h>
+#include <crossengine/vertex.h>
 
 class Ball {
-  public:
-    void Init(float radius, float mass, const glm::vec2& pos,
-         const glm::vec2& vel);
+ public:
+  /**
+   * @brief Initialize the ball.
+   *
+   * @param[in] position The starting position.
+   * @param[in] velocity The starting velocity.
+   * @param[in] radious The radious.
+   * @param[in] mass The mass.
+   */
+  void Init(const glm::vec2& position, const glm::vec2& velocity,
+            const float radious, const float mass);
 
-    void Destroy();
+  /**
+   * @brief Destroy the ball.
+   */
+  void Destroy();
 
-    /// Update the ball
-    int Update(float deltaTime, glm::vec2 &windowSize);
+  /**
+   * @brief Main loop of the ball.
+   *
+   * @param[in] delta_time The delta time.
+   * @param[in] window_size The size of the window.
+   * @return int
+   */
+  int Update(const float delta_time, const glm::vec2& window_size);
 
-    void Draw(CrossEngine::SpriteBatch& spriteBatch);
+  /**
+   * @brief Render the ball in the sprite batch.
+   *
+   * @param[in] sprite_batch The main sprite batch.
+   */
+  void Draw(CrossEngine::SpriteBatch* sprite_batch);
 
-    void RestartPosition(glm::vec2 &windowSize);
+  /**
+   * @brief Restart the position of the ball.
+   *
+   * @param[in] window_size The size of the window.
+   */
+  void RestartPosition(const glm::vec2& window_size);
 
-    const glm::vec2& GetPosition() { return m_position; }
-    const float GetRadius() {return m_radius; }
+  /**
+   * @brief Get the position object.
+   *
+   * @return const glm::vec2& The position of the ball.
+   */
+  const glm::vec2& GetPosition() const { return position_; }
 
-    void SetVelocity(glm::vec2 &vel) { m_velocity = vel; }
+  /**
+   * @brief Get the radius object.
+   *
+   * @return const float The radious of the ball.
+   */
+  const float GetRadious() const { return radious_; }
 
-  private:
-    glm::vec2 m_position;
-    glm::vec2 m_velocity;
-    CrossEngine::ColorRGBA8 m_color;
-    CrossEngine::TileSheet m_texture;
-    float m_radius;
-    float m_mass;
+  /**
+   * @brief Set the velocity of the ball.
+   *
+   * @param[in] velocity The new velocity.
+   */
+  void SetVelocity(const glm::vec2& velocity) { velocity_ = velocity; }
+
+ private:
+  glm::vec2 position_;
+  glm::vec2 velocity_;
+  CrossEngine::ColorRGBA8 color_;
+  CrossEngine::TileSheet texture_;
+  float radious_;
+  float mass_;
 };
 
-#endif  // _BALL_H
+#endif  // PONG_SRC_BALL_H_
