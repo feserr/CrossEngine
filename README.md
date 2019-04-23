@@ -19,15 +19,18 @@ CrossEngine
 - [License](#license)
 
 <a name="about"></a>
-# CrossEngine 0.0.0.2.5
+# CrossEngine 0.0.0.3
 
 CrossEngine is an open source cross-platform game framework.
 
-Version: 0.0.0.2.5 - Released: 23rd April 2019
+Version: 0.0.0.3 - Released: 24rd April 2019
 
 <a name="whats-new"></a>
-## What's new in 0.0.0.2.5?
+## What's new in 0.0.0.3?
 
+* Code refactor.
+* Remove unused bgfx common files in cross engine.
+* Remove the window class.
 * Add new shader for the sprite batch.
 * Add renderers to ball game.
 
@@ -49,7 +52,11 @@ Coming soon..
 <a name="demos"></a>
 ## Demos
 
-Coming soon..
+### Pong
+![Pong](https://github.com/feserr/CrossEngine/raw/master/Pong/sample.gif)
+
+### Render performance (Ball game)
+![Ball](https://github.com/feserr/CrossEngine/raw/master/BallGame/sample.gif)
 
 <a name="future"></a>
 ## Future features
@@ -74,6 +81,7 @@ Please add them to the [Issue Tracker][issues] with as much info as possible, es
 ## Honorable mentions
 
 * [Branimir Karadžić](https://github.com/bkaradzic) for the awesome bgfx, genie and all the things he makes.
+* [Benjamin Arnold](https://github.com/Barnold1953) for the awesome 2D game engine tutorial, without it this engine will never exist.
 
 <a name="license"></a>
 ## License
