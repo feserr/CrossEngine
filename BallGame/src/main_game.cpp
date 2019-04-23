@@ -222,7 +222,7 @@ void MainGame::InitBalls() {
     balls_.emplace_back(
         ballToSpawn->radius, ballToSpawn->mass, pos,
         direction * ballToSpawn->randSpeed(randomEngine),
-        CrossEngine::ResourceManager::GetTexture("images/circle.png"),
+        CrossEngine::ResourceManager::GetTexture("images/ball.png"),
         ballToSpawn->color);
     // Add the ball do the grid. IF YOU EVER CALL EMPLACE BACK AFTER INIT BALLS,
     // grid_ will have DANGLING POINTERS!
