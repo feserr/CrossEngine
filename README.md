@@ -2,7 +2,7 @@ CrossEngine
 =======
 
 [![Twitter URL](https://img.shields.io/badge/tweet-feserr-blue.svg?longCache=true&style=for-the-badge)](https://twitter.com/feserr_)
-[![GitHub issue last update](https://img.shields.io/badge/updated-april%202019-red.svg?longCache=true&style=for-the-badge)](https://github.com/feserr/CrossEngine)
+[![GitHub issue last update](https://img.shields.io/badge/updated-september%202020-red.svg?longCache=true&style=for-the-badge)](https://github.com/feserr/CrossEngine)
 
 # Index
 
