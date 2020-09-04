@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -14,10 +14,10 @@
 namespace CrossEngine {
 
 static PosTexcoordVertex m_cubeVertices[4] = {
-    {-1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 0.0f},
-    {1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 0.0f},
-    {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 0.0f},
-    {1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 0.0f},
+    {-1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0x00000000},
+    {1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 0.0f, 0x00000000},
+    {-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0x00000000},
+    {1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 0.0f, 0x00000000},
 };
 
 static const uint16_t m_cubeIndices[6] = {

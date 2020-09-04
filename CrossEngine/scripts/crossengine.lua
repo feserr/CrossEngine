@@ -3,6 +3,7 @@ uuid('C618B9EA-E27B-40FB-B97F-2E737BD35A8C')
 kind 'StaticLib'
 
 includedirs {
+    EIGEN_DIR,
     path.join(BX_DIR, 'include'),
     path.join(BIMG_DIR, 'include'),
     path.join(BGFX_DIR, 'include'),

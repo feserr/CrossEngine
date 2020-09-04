@@ -1,12 +1,14 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
 #include "crossengine/io_manager.h"
 
+#include <bx/file.h>
 #include <filesystem/path.h>
 #include <filesystem/resolver.h>
+
 #include <fstream>
 #include <string>
 #include <vector>
@@ -73,15 +75,15 @@ bool IOManager::GetDirectoryEntries(const char* path,
     rv_entries->emplace_back();
     rv_entries->back().path = it->str();
     if (it->is_directory()) {
-      rv_entries->back().isDirectory = true;
+      rv_entries->back().is_directory = true;
     } else {
-      rv_entries->back().isDirectory = false;
+      rv_entries->back().is_directory = false;
     }
   }
   return true;
 }
 
 bool IOManager::MakeDirectory(const char* path) {
-  return filesystem::create_directory(filesystem::path(path));
+  return bx::make(path);
 }
 }  // namespace CrossEngine

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -30,7 +30,7 @@ class ParticleEngine2D {
   /**
    * @brief Adds a ParticleBatch2D to the engine.
    * After adding a particle batch, the ParticleEngine2D becomes responsible
-   * for deallocation.
+   * of the deallocation.
    *
    * @param[in] particle_batch The ParticleBatch2D.
    */

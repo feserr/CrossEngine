@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -7,6 +7,7 @@
 #define CROSSENGINE_AUDIOENGINE_H_
 
 #include <SDL/SDL_mixer.h>
+
 #include <map>
 #include <string>
 
@@ -21,8 +22,8 @@ class SoundEffect {
   /**
    * @brief Plays the effect file.
    *
-   * @param[in] loops  If loops == -1, loops forever
-   *                   otherwise play it loops+1 times.
+   * @param[in] loops If loops == -1, loops forever
+   *                  otherwise play it loops+1 times.
    */
   void Play(int loops = 0);
 
@@ -38,10 +39,15 @@ class Music {
   friend class AudioEngine;
 
   /**
-   * @brief      Play the music file.
+   * @brief Construct a new Music object.
+   */
+  Music();
+
+  /**
+   * @brief Play the music file.
    *
-   * @param[in]  loops  If loops == -1, loops forever
-   *                    otherwise play it loops times.
+   * @param[in] loops If loops == -1, loops forever
+   *   otherwise play it loops times.
    */
   void Play(int loops = 1);
 
@@ -61,7 +67,7 @@ class Music {
   static void Resume();
 
  private:
-  Mix_Music* music_ = nullptr;
+  Mix_Music* music_;
 };
 
 /// Create and load a song or sound file
@@ -89,19 +95,19 @@ class AudioEngine {
   void Destroy();
 
   /**
-   * @brief      Loads and map a sound file
+   * @brief Loads and map a sound file
    *
-   * @param[in]  file_path  The file path
-   * @return     A SoundEffect object
+   * @param[in] file_path The file path
+   * @return A SoundEffect object
    */
 
   SoundEffect LoadSoundEffect(const std::string& file_path);
 
   /**
-   * @brief      Loads a music.
+   * @brief Loads a music.
    *
-   * @param[in]  file_path  The file path.
-   * @return     A Music object.
+   * @param[in] file_path The file path.
+   * @return A Music object.
    */
   Music LoadMusic(const std::string& file_path);
 
@@ -109,7 +115,7 @@ class AudioEngine {
   std::map<std::string, Mix_Chunk*> effect_map_;
   std::map<std::string, Mix_Music*> music_map_;
 
-  bool is_initialized_ = false;
+  bool is_initialized_;
 };
 }  // namespace CrossEngine
 

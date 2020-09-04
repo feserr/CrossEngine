@@ -1,16 +1,17 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
-#include "Player.h"
+#include "player.h"
 
 #include <SDL/SDL.h>
-#include <crossengine/input_manager.h>
 #include <crossengine/common.h>
+#include <crossengine/input_manager.h>
 #include <crossengine/resource_manager.h>
 #include <entry/entry.h>
 #include <entry/input.h>
+
 #include <iostream>
 
 const float MAX_VELOCITY = 5.0f;
@@ -25,18 +26,16 @@ void Player::Init(const glm::vec2& position, const glm::vec2& draw_dimensions,
   collision_dimensions_ = collision_dimensions;
   velocity_ = glm::vec2(0.0f);
   texture_.Init(CrossEngine::ResourceManager::GetTexture("images/Pong.png"),
-                glm::ivec2(8, 1));
+                CrossEngine::i32Vector2({8, 1}));
   player_type_ = player_type;
 }
 
 void Player::Destroy() {}
 
 void Player::Draw(CrossEngine::SpriteBatch* sprite_batch) {
-  glm::vec4 destRect;
-  destRect.x = position_.x - draw_dimensions_.x / 2.0f;
-  destRect.y = position_.y - draw_dimensions_.y / 2.0f;
-  destRect.z = draw_dimensions_.x;
-  destRect.w = draw_dimensions_.y;
+  CrossEngine::Rect dest_rect = {position_.x - draw_dimensions_.x / 2.0f,
+                                position_.y - draw_dimensions_.y / 2.0f,
+                                draw_dimensions_.x, draw_dimensions_.y};
 
   int tileIndex;
   int numTiles;
@@ -58,19 +57,20 @@ void Player::Draw(CrossEngine::SpriteBatch* sprite_batch) {
   }
 
   // Get the uv coordinates from the tile index
-  glm::vec4 uvRect = texture_.GetUVs(tileIndex);
-  glm::vec4 uvRectBottom = texture_.GetUVs(tileIndex + 1);
-  glm::vec4 uvRectTop = texture_.GetUVs(tileIndex + 2);
+  CrossEngine::Rect uv_rect = texture_.GetUV(tileIndex);
+  CrossEngine::Rect uv_rect_bottom = texture_.GetUV(tileIndex + 1);
+  CrossEngine::Rect uv_rect_top = texture_.GetUV(tileIndex + 2);
 
   // Draw the sprite
   // m_sprite.Draw(&texture_);
   // Draw the sprite
-  sprite_batch->Draw(destRect, uvRect, texture_.texture.texture, 0.0f, color_);
-  destRect.y = position_.y + draw_dimensions_.y / 2;
-  sprite_batch->Draw(destRect, uvRectTop, texture_.texture.texture, 0.0f,
+  sprite_batch->Draw(dest_rect, uv_rect, texture_.texture.texture, 0.0f,
                      color_);
-  destRect.y = position_.y - draw_dimensions_.y * 1.5;
-  sprite_batch->Draw(destRect, uvRectBottom, texture_.texture.texture, 0.0f,
+  dest_rect.y = position_.y + draw_dimensions_.y / 2;
+  sprite_batch->Draw(dest_rect, uv_rect_top, texture_.texture.texture, 0.0f,
+                     color_);
+  dest_rect.y = position_.y - draw_dimensions_.y * 1.5;
+  sprite_batch->Draw(dest_rect, uv_rect_bottom, texture_.texture.texture, 0.0f,
                      color_);
 }
 
@@ -117,13 +117,13 @@ void Player::Update(const float delta_time, const glm::vec2& window_size,
   glm::vec2 newVelocity;
   // Check if they are at the same y position
   if (position_.y - collision_dimensions_.y / 2 <=
-      ballPosition.y + ball->GetRadious() &&
+          ballPosition.y + ball->GetRadious() &&
       position_.y + collision_dimensions_.y / 2 >=
-      ballPosition.y - ball->GetRadious()) {
+          ballPosition.y - ball->GetRadious()) {
     float yCollision = (ballPosition.y - position_.y) / 4;
     if (player_type_ == PlayerType::PLAYERONE &&
         position_.x + collision_dimensions_.x >=
-        ballPosition.x + ball->GetRadious()) {
+            ballPosition.x + ball->GetRadious()) {
       newVelocity = glm::vec2(6.0f, yCollision);
       ball->SetVelocity(newVelocity);
     } else if (player_type_ == PlayerType::PLAYERTWO &&

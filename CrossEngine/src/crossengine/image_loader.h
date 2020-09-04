@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -7,6 +7,7 @@
 #define CROSSENGINE_IMAGELOADER_H_
 
 #include <string>
+
 #include "cross_texture.h"
 
 namespace CrossEngine {
@@ -16,13 +17,10 @@ class ImageLoader {
   /**
    * @brief Loads a png.
    *
-   * @param[in] file_path  The file path
-   * @param[in] linear If linear==true apply linear filter to the texture,
-   *                   if linear==false apply nearest filter
+   * @param[in] file_path The file path.
    * @return An Cross Engine texture of the texture file.
    */
-  static CrossTexture LoadPNG(const std::string& file_path,
-                              bool linear = false);
+  static CrossTexture LoadPNG(const std::string& file_path);
 };
 }  // namespace CrossEngine
 

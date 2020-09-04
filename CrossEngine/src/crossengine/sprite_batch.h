@@ -1,24 +1,26 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
 #ifndef CROSSENGINE_SPRITEBATCH_H_
 #define CROSSENGINE_SPRITEBATCH_H_
 
-#include <glm/glm.hpp>
+#include <bx/math.h>
+
 #include <vector>
+
 #include "cross_texture.h"
 #include "vertex.h"
 
 namespace CrossEngine {
 /**
- * @brief Determines how we should sort the glyphs
+ * @brief Determines how we should sort the glyphs.
  */
 enum class GlyphSortType { NONE, FRONT_TO_BACK, BACK_TO_FRONT, TEXTURE };
 
 /**
- * @brief A glyph is a single quad. These are added via SpriteBatch::draw
+ * @brief A glyph is a single quad. These are added via SpriteBatch::draw.
  */
 class Glyph {
  public:
@@ -36,7 +38,7 @@ class Glyph {
    * @param[in] depth The depth.
    * @param[in] color The color.
    */
-  Glyph(const glm::vec4& dest_rect, const glm::vec4& uv_rect,
+  Glyph(const Rect& dest_rect, const Rect& uv_rect,
         const bgfx::TextureHandle& texture, const float depth,
         const ColorRGBA8& color);
 
@@ -50,7 +52,7 @@ class Glyph {
    * @param[in] color The color.
    * @param[in] angle The angle.
    */
-  Glyph(const glm::vec4& dest_rect, const glm::vec4& uv_rect,
+  Glyph(const Rect& dest_rect, const Rect& uv_rect,
         const bgfx::TextureHandle& texture, const float depth,
         const ColorRGBA8& color, float angle);
 
@@ -68,9 +70,9 @@ class Glyph {
    *
    * @param[in] position The pivot position.
    * @param[in] angle The angle
-   * @return glm::vec2 The result position.
+   * @return bx::Vec3 The result position.
    */
-  glm::vec2 RotatePoint(const glm::vec2& position, float angle);
+  bx::Vec3 RotatePoint(const bx::Vec3& position, float angle);
 };
 
 /**
@@ -146,7 +148,7 @@ class SpriteBatch {
    * @param[in] depth The depth.
    * @param[in] color The color.
    */
-  void Draw(const glm::vec4& destination_rect, const glm::vec4& uv_rect,
+  void Draw(const Rect& destination_rect, const Rect& uv_rect,
             const bgfx::TextureHandle& texture, const float depth,
             const ColorRGBA8& color);
 
@@ -160,7 +162,7 @@ class SpriteBatch {
    * @param color The color.
    * @param angle The angle.
    */
-  void Draw(const glm::vec4& destination_rect, const glm::vec4& uv_rect,
+  void Draw(const Rect& destination_rect, const Rect& uv_rect,
             const bgfx::TextureHandle& texture, const float depth,
             const ColorRGBA8& color, const float angle);
 
@@ -174,12 +176,12 @@ class SpriteBatch {
    * @param color The color.
    * @param direction The direction.
    */
-  void Draw(const glm::vec4& destination_rect, const glm::vec4& uv_rect,
+  void Draw(const Rect& destination_rect, const Rect& uv_rect,
             const bgfx::TextureHandle& texture, const float depth,
-            const ColorRGBA8& color, const glm::vec2& direction);
+            const ColorRGBA8& color, const bx::Vec3& direction);
 
   /**
-   * @brief Renders the entire SpriteBatch to the screen
+   * @brief Renders the entire SpriteBatch to the screen.
    */
   void RenderBatch();
 
@@ -190,7 +192,7 @@ class SpriteBatch {
   void CreateRenderBatches();
 
   /**
-   * @brief Generates our VAO and VBO
+   * @brief Generates our VAO and VBO.
    */
   void CreateVertexArray();
 
@@ -228,9 +230,6 @@ class SpriteBatch {
    * @return false If a texture ID is higher or equal to b depth.
    */
   static bool CompareTexture(Glyph* a, Glyph* b);
-
-  // unsigned int vbo_;
-  // unsigned int vao_;
 
   GlyphSortType sort_type_;
 

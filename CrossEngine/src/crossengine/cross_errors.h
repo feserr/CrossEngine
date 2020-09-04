@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -7,9 +7,13 @@
 #define CROSSENGINE_CROSSERRORS_H_
 
 #include <string>
+
 #include "cross_errors.inl"
 
 namespace CrossEngine {
+
+enum Result { OK = 0, FAIL = 1 };
+
 /**
  * @brief Prints the message and shutdown the app.
  *

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -12,7 +12,7 @@
 #include "crossengine/io_manager.h"
 
 namespace CrossEngine {
-CrossTexture ImageLoader::LoadPNG(const std::string &file_path, bool linear) {
+CrossTexture ImageLoader::LoadPNG(const std::string &file_path) {
   // Create a GLTexture and initialize all its fields to 0
   CrossTexture crossTexture = {};
 

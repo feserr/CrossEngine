@@ -1,16 +1,17 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
 #include "crossengine/screen_list.h"
 
 #include <cstdio>
+
 #include "crossengine/i_game_screen.h"
 
 namespace CrossEngine {
-ScreenList::ScreenList(IMainGame* game) : game_(game) {
-}
+ScreenList::ScreenList(IMainGame* game)
+    : game_(game), screens_(), current_screen_index_(-1) {}
 
 ScreenList::~ScreenList() { Destroy(); }
 
@@ -42,8 +43,8 @@ void CrossEngine::ScreenList::AddScreen(IGameScreen* new_screen) {
 }
 
 void CrossEngine::ScreenList::Destroy() {
-  for (size_t i = 0; i < screens_.size(); i++) {
-    screens_[i]->Destroy();
+  for (const auto& screen : screens_) {
+    screen->Destroy();
   }
   screens_.resize(0);
   current_screen_index_ = SCREEN_INDEX_NO_SCREEN;

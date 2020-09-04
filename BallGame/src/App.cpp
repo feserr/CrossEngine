@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -8,10 +8,7 @@
 #include <crossengine/cpp_utils.h>
 #include <crossengine/screen_list.h>
 
-#if __cplusplus > 199711L
-#else
 #include <memory>
-#endif
 
 App::App() : gameplay_screen_(nullptr) {}
 

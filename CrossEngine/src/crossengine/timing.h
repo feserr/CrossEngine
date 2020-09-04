@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -17,14 +17,14 @@ class FpsLimiter {
 
   /**
    * @brief Initializes the FPS limiter.
-   * For now, this is analogous to setMaxFPS
+   * For now, this is analogous to setMaxFPS.
    *
    * @param[in] max_fps The maximun fps of the game.
    */
   void Init(float max_fps);
 
   /**
-   * @brief Sets the desired max FPS
+   * @brief Sets the desired max FPS.
    *
    * @param[in] max_fps The maximun fps of the game.
    */
@@ -36,7 +36,7 @@ class FpsLimiter {
   void Begin();
 
   /**
-   * @brief Ends counting
+   * @brief Ends counting.
    *
    * @return float The current fps.
    */
@@ -44,7 +44,7 @@ class FpsLimiter {
 
  private:
   /**
-   * @brief Calculates the current FPS
+   * @brief Calculates the current FPS.
    */
   void CalculateFPS();
 

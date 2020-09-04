@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -14,9 +14,9 @@ Grid::Grid(const int width, const int height, const int cell_size)
   num_y_cells_ = ceil(static_cast<float>(height_) / cell_size_);
 
   // Allocate all the cells
-  const int BALLS_TO_RESERVE = 20;
+  const uint8_t BALLS_TO_RESERVE = 20;
   cells_.resize(num_y_cells_ * num_x_cells_);
-  for (int i = 0; i < cells_.size(); i++) {
+  for (uint32_t i = 0; i < cells_.size(); i++) {
     cells_[i].balls.reserve(BALLS_TO_RESERVE);
   }
 }

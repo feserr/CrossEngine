@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -9,17 +9,14 @@
 const int SCREEN_INDEX_NO_SCREEN = -1;
 
 namespace CrossEngine {
-/**
- * @brief Main game interface.
- */
 class IMainGame;
 
-enum class ScreenState {
+enum ScreenState {
   NONE = 0,
   RUNNING = 1,
   EXIT_APPLICATION = 2,
   CHANGE_NEXT = 3,
-  CHANGE_PREVIOUS = 4,
+  CHANGE_PREVIOUS = 4
 };
 
 /**
@@ -101,7 +98,7 @@ class IGameScreen {
    * @return The state.
    */
   ScreenState GetState() const { return current_state_; }
-  
+
   /**
    * @brief Set the state.
    *
@@ -112,7 +109,7 @@ class IGameScreen {
   /**
    * @brief Sets the parent game.
    *
-   * @param[in] game The game
+   * @param[in] game The game.
    */
   void SetParentGame(IMainGame* game) { game_ = game; }
 

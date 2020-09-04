@@ -1,12 +1,11 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
 #ifndef PONG_SRC_GAMEPLAY_SCREEN_H_
 #define PONG_SRC_GAMEPLAY_SCREEN_H_
 
-#include <crossengine/camera_2d.h>
 #include <crossengine/cross_texture.h>
 #include <crossengine/i_game_screen.h>
 #include <crossengine/sprite_batch.h>
@@ -50,7 +49,6 @@ class GameplayScreen : public CrossEngine::IGameScreen {
   bool OnExitClicked();
 
   CrossEngine::SpriteBatch sprite_batch_;
-  CrossEngine::Camera2D camera_;
   CrossEngine::CrossTexture texture_;
   CrossEngine::Window* window_;
 
@@ -63,7 +61,7 @@ class GameplayScreen : public CrossEngine::IGameScreen {
   int score_player_two_;
 
   glm::vec2 window_size_;
-  
+
   GameState game_state_ = GameState::RUNNING;  ///< The state of the game
 };
 

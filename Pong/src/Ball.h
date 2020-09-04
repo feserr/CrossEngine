@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -64,7 +64,7 @@ class Ball {
    *
    * @return const float The radious of the ball.
    */
-  const float GetRadious() const { return radious_; }
+  float GetRadious() const { return radious_; }
 
   /**
    * @brief Set the velocity of the ball.

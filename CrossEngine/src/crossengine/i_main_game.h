@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -7,6 +7,7 @@
 #define CROSSENGINE_I_MAIN_GAME_H_
 
 #include <memory>
+
 #include "cross_engine.h"
 #include "timing.h"
 #include "window.h"
@@ -65,7 +66,7 @@ class IMainGame {
    *
    * @return The FPS.
    */
-  const float GetFps() const { return fps_; }
+  float GetFps() const { return fps_; }
 
  protected:
   /**
@@ -89,19 +90,19 @@ class IMainGame {
   bool Init(int _argc, char** _argv);
 
   /**
-   * @brief
+   * @brief Init the engine systems.
    *
    * @param[in] _argc The number of arguments.
-   * @param[on] _argv The arguments.
+   * @param[in] _argv The arguments.
    * @return true if it initialize the systems correctly.
    * @return false If fail to initialize the systems.
    */
   bool InitSystems(int _argc, char** _argv);
 
   std::unique_ptr<ScreenList> screen_list_;
-  IGameScreen* current_screen_ = nullptr;
-  bool is_running_ = false;
-  float fps_ = 0.0f;
+  IGameScreen* current_screen_;
+  bool is_running_;
+  float fps_;
 
  private:
   // Window window_;

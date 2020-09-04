@@ -71,15 +71,17 @@ solution "spaceinvaders"
 	startproject "spaceinvaders"
 
 MODULE_DIR = path.getabsolute("../")
-BGFX_DIR   = path.getabsolute("../../bgfx")
-BIMG_DIR   = path.getabsolute(path.join(BGFX_DIR, "../bimg"))
+EXTERNAL_DIR = path.getabsolute("../../external/")
+BGFX_DIR   = path.getabsolute(path.join(EXTERNAL_DIR, "bgfx"))
+BIMG_DIR   = path.getabsolute(path.join(EXTERNAL_DIR, "bimg"))
 BX_DIR     = os.getenv("BX_DIR")
+EIGEN_DIR  = path.getabsolute(path.join(EXTERNAL_DIR, "eigen"))
 CROSSENGINE_DIR = path.getabsolute("../")
 
-local BGFX_BUILD_DIR = path.join(MODULE_DIR, ".build")
+local BGFX_BUILD_DIR = path.join(MODULE_DIR, "build")
 local BGFX_THIRD_PARTY_DIR = path.join(BGFX_DIR, "3rdparty")
 if not BX_DIR then
-	BX_DIR = path.getabsolute(path.join(BGFX_DIR, "../bx"))
+	BX_DIR = path.getabsolute(path.join(EXTERNAL_DIR, "bx"))
 end
 
 if not os.isdir(BX_DIR) then

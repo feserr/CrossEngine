@@ -1,38 +1,41 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
 #ifndef CROSSENGINE_PARTICLEBATCH2D_H_
 #define CROSSENGINE_PARTICLEBATCH2D_H_
 
+#include <bx/math.h>
+
 #include <functional>
-#include <glm/glm.hpp>
+
 #include "cross_texture.h"
 #include "sprite_batch.h"
 #include "vertex.h"
 
 namespace CrossEngine {
 /**
- * @brief The public particle 2D class.
+ * @brief Particle 2D class.
  */
 class Particle2D {
  public:
-  glm::vec2 position = glm::vec2(0.0f);
-  glm::vec2 velocity = glm::vec2(0.0f);
+  bx::Vec3 position;
+  bx::Vec3 velocity;
   ColorRGBA8 color;
-  float life = 0.0f;
-  float width = 0.0f;
+  float life;
+  float width;
 };
 
 /**
- * @brief Default function pointer
+ * @brief Default function pointer.
  *
  * @param[in] particle The particle.
  * @param[in] delta_time The delta time.
  */
 inline void DefaultParticleUpdate(Particle2D* particle, float delta_time) {
-  particle->position += particle->velocity * delta_time;
+  particle->position =
+      bx::add(particle->position, bx::mul(particle->velocity, delta_time));
 }
 
 /**
@@ -58,7 +61,7 @@ class ParticleBatch2D {
    * @param[in] texture The CrossEngine texture.
    * @param[in] update_function The update function.
    */
-  void Init(int max_particles, float decay_rate, CrossTexture texture,
+  void Init(int max_particles, float decay_rate, const CrossTexture& texture,
             std::function<void(Particle2D*, float)> update_function =
                 DefaultParticleUpdate);
 
@@ -84,7 +87,7 @@ class ParticleBatch2D {
    * @param[in] color The color.
    * @param[in] width The width.
    */
-  void AddParticle(const glm::vec2& position, const glm::vec2& velocity,
+  void AddParticle(const bx::Vec3& position, const bx::Vec3& velocity,
                    const ColorRGBA8& color, float width);
 
  private:
@@ -92,10 +95,10 @@ class ParticleBatch2D {
 
   std::function<void(Particle2D*, float)> update_function_;
 
-  float decay_rate_ = 0.1f;
-  Particle2D* particles_ = nullptr;
-  int max_particles_ = 0;
-  int last_free_particle_ = 0;
+  float decay_rate_;
+  Particle2D* particles_;
+  int max_particles_;
+  int last_free_particle_;
   CrossTexture texture_;
 };
 }  // namespace CrossEngine

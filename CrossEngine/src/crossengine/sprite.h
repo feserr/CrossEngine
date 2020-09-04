@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -7,13 +7,14 @@
 #define CROSSENGINE_SPRITE_H_
 
 #include <string>
+
 #include "cross_texture.h"
 #include "tile_sheet.h"
 
 namespace CrossEngine {
 
 /**
- * @brief A 2D quad that can be rendered to the screen
+ * @brief A 2D quad that can be rendered to the screen.
  */
 class Sprite {
  public:
@@ -45,8 +46,8 @@ class Sprite {
 
   /**
    * @brief Initializes the sprite.
-   * VBO, x, y, width, and height are in the
-   * normalized device coordinate space. so, [-1, 1]
+   * VBO, x, y, width, and height are in the normalized device coordinate space.
+   * So, [-1, 1].
    *
    * @param[in] x The X axis position.
    * @param[in] y The Y axis position.

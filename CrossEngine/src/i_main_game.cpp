@@ -1,13 +1,15 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
 #include "crossengine/i_main_game.h"
 
-#include <bgfx/bgfx.h>
-#include <memory>
 #include <SDL/SDL_syswm.h>
+#include <bgfx/bgfx.h>
+
+#include <memory>
+
 #include "crossengine/cpp_utils.h"
 #include "crossengine/i_game_screen.h"
 #include "crossengine/input_manager.h"
@@ -15,7 +17,16 @@
 #include "entry/entry.h"
 
 namespace CrossEngine {
-IMainGame::IMainGame() { screen_list_ = std::make_unique<ScreenList>(this); }
+IMainGame::IMainGame()
+    : current_screen_(nullptr),
+      is_running_(false),
+      fps_(60.0f),
+      width_(640),
+      height_(480),
+      debug_(0),
+      reset_(0) {
+  screen_list_ = std::make_unique<ScreenList>(this);
+}
 
 IMainGame::~IMainGame() {
   // Empty
@@ -111,8 +122,7 @@ bool IMainGame::InitSystems(int _argc, char** _argv) {
   bgfx::setDebug(debug_);
 
   // Set view 0 clear state.
-  bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff, 1.0f,
-                     0);
+  bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x303030ff);
   bgfx::setViewRect(0, 0, 0, width_, height_);
 
   return true;
@@ -155,6 +165,9 @@ void IMainGame::Draw() {
   // This dummy draw call is here to make sure that view 0 is cleared
   // if no other draw calls are submitted to view 0.
   bgfx::touch(0);
+
+  bgfx::dbgTextClear();
+  bgfx::dbgTextPrintf(1, 0, 0x0f, "FPS: %.1f", fps_);
 
   if (current_screen_ && current_screen_->GetState() == ScreenState::RUNNING) {
     current_screen_->Draw();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -11,16 +11,12 @@ InputManager::InputManager() : mouse_coords_(0.0f) {}
 InputManager::~InputManager() {}
 
 void InputManager::Update() {
-  // Loop through key_map_ using a for each loop, and copy it over to
-  // previous_key_map_
   for (auto& it : key_map_) {
     previous_key_map_[it.first] = it.second;
   }
 }
 
 void InputManager::PressKey(entry::Key::Enum key_id) {
-  // Here we are treating key_map_ as an associative array.
-  // if key_id doesn't already exist in key_map_, it will get added
   key_map_[key_id] = true;
 }
 
@@ -45,7 +41,6 @@ bool InputManager::IsKeyDown(entry::Key::Enum key_id) {
 }
 
 bool InputManager::IsKeyPressed(entry::Key::Enum key_id) {
-  // Check if it is pressed this frame, and wasn't pressed last frame
   if (IsKeyDown(key_id) == true && WasKeyDown(key_id) == false) {
     return true;
   }

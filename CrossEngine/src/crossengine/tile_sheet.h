@@ -1,12 +1,12 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
 #ifndef CROSSENGINE_TILESHEET_H_
 #define CROSSENGINE_TILESHEET_H_
 
-#include <glm/glm.hpp>
+#include "cross_math.h"
 #include "cross_texture.h"
 
 namespace CrossEngine {
@@ -21,7 +21,7 @@ class TileSheet {
    * @param[in] in_texture The texture for the tile sheet.
    * @param[in] tile_dimensions The dimension of the tile.
    */
-  void Init(const CrossTexture& in_texture, const glm::ivec2& tile_dimensions) {
+  void Init(const CrossTexture& in_texture, const i32Vector2& tile_dimensions) {
     this->texture = in_texture;
     this->dimensions = tile_dimensions;
   }
@@ -32,23 +32,23 @@ class TileSheet {
    * @param index The index of the tile.
    * @return glm::vec4 The texture UV of the tile.
    */
-  glm::vec4 GetUVs(int index) {
+  Rect GetUV(int index) {
     int x_tile = index % dimensions.x;
     int y_tile = index / dimensions.x;
     float w_tile = (1.0f / dimensions.x) * 2;
     float h_tile = (1.0f / dimensions.y) * 2;
 
-    glm::vec4 uvs;
-    uvs.x = -1 + ((x_tile)*w_tile);
-    uvs.y = -1 + ((y_tile)*h_tile);
-    uvs.z = w_tile;
-    uvs.w = h_tile;
+    Rect uv;
+    uv.x = -1 + (x_tile * w_tile);
+    uv.y = -1 + (y_tile * h_tile);
+    uv.w = w_tile;
+    uv.h = h_tile;
 
-    return uvs;
+    return uv;
   }
 
   CrossTexture texture;
-  glm::ivec2 dimensions;
+  i32Vector2 dimensions;
 };
 }  // namespace CrossEngine
 

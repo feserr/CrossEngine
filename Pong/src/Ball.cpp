@@ -1,23 +1,24 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
 #include "ball.h"
 
-#include <crossengine/resource_manager.h>
 #include <SDL/SDL.h>
+#include <crossengine/resource_manager.h>
+
 #include <random>
 
 void Ball::Init(const glm::vec2& position, const glm::vec2& velocity,
                 const float radious, const float mass) {
   position_ = position;
-  velocity_ =velocity;
+  velocity_ = velocity;
   color_ = CrossEngine::ColorRGBA8(255, 255, 255, 255);
   radious_ = radious;
   mass_ = mass;
   texture_.Init(CrossEngine::ResourceManager::GetTexture("images/Pong.png"),
-                glm::ivec2(8, 1));
+                CrossEngine::i32Vector2({8, 1}));
 }
 
 void Ball::Destroy() {}
@@ -75,10 +76,12 @@ int Ball::Update(const float delta_time, const glm::vec2& window_size) {
 
 void Ball::Draw(CrossEngine::SpriteBatch* sprite_batch) {
   // Get the uv coordinates from the tile index
-  glm::vec4 uvRect = texture_.GetUVs(6);
-  const glm::vec4 destRect(position_.x - radious_, position_.y - radious_,
-                           radious_ * 2.0f, radious_ * 2.0f);
-  sprite_batch->Draw(destRect, uvRect, texture_.texture.texture, 0.0f, color_);
+  CrossEngine::Rect uv_rect = texture_.GetUV(6);
+  const CrossEngine::Rect dest_rect = {position_.x - radious_,
+                                       position_.y - radious_, radious_ * 2.0f,
+                                       radious_ * 2.0f};
+  sprite_batch->Draw(dest_rect, uv_rect, texture_.texture.texture, 0.0f,
+                     color_);
 }
 
 void Ball::RestartPosition(const glm::vec2& window_size) {

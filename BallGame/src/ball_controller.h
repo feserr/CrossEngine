@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -7,7 +7,7 @@
 #define BALLGAME_SRC_BALL_CONTROLLER_H_
 
 #include <vector>
-#include "ball.h"
+#include "../src/ball.h"
 
 enum class GravityDirection { NONE, LEFT, UP, RIGHT, DOWN };
 
@@ -112,10 +112,10 @@ class BallController {
   int grabbed_ball_ = -1;
 
   // Previous position of the grabbed ball.
-  glm::vec2 previous_pos_ = glm::vec2(0.0f);
+  glm::vec3 previous_pos_ = glm::vec3(0.0f);
 
   // Offset of the cursor on the selected ball.
-  glm::vec2 grab_offset_ = glm::vec2(0.0f);
+  glm::vec3 grab_offset_ = glm::vec3(0.0f);
 
   GravityDirection gravity_direction_ = GravityDirection::NONE;
 };

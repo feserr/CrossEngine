@@ -1,11 +1,12 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
 #include "crossengine/audio_engine.h"
 
 #include <string>
+
 #include "crossengine/cross_errors.h"
 
 namespace CrossEngine {
@@ -17,6 +18,8 @@ void SoundEffect::Play(int loops /* = 0 */) {
   }
 }
 
+Music::Music() : music_() {}
+
 void Music::Play(int loops /* = -1 */) { Mix_PlayMusic(music_, loops); }
 
 void Music::Pause() { Mix_PauseMusic(); }
@@ -25,8 +28,7 @@ void Music::Stop() { Mix_HaltMusic(); }
 
 void Music::Resume() { Mix_ResumeMusic(); }
 
-AudioEngine::AudioEngine() {
-}
+AudioEngine::AudioEngine() : is_initialized_(false) {}
 
 AudioEngine::~AudioEngine() { Destroy(); }
 

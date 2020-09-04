@@ -16,6 +16,6 @@ def run_command(cmd):
         startupinfo=startupinfo,
         shell=True).communicate()
 
-out, err = run_command('git -C bgfx pull origin master')
-out, err = run_command('git -C bx pull origin master')
-out, err = run_command('git -C bimg pull origin master')
+out, err = run_command('git -C external/bgfx pull origin master')
+out, err = run_command('git -C external/bx pull origin master')
+out, err = run_command('git -C external/bimg pull origin master')

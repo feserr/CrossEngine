@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -28,9 +28,9 @@ class ScreenList {
   IGameScreen* GetCurrent();
 
  protected:
-  IMainGame* game_ = nullptr;
+  IMainGame* game_;
   std::vector<IGameScreen*> screens_;
-  int current_screen_index_ = -1;
+  int current_screen_index_;
 };
 }  // namespace CrossEngine
 

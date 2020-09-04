@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -24,11 +24,9 @@ class BallRenderer {
    *
    * @param[in] sprite_batch The SpriteBatch.
    * @param[in] balls The collection of balls.
-   * @param[in] projection_matrix The projection matrix.
    */
   virtual void RenderBalls(CrossEngine::SpriteBatch* sprite_batch,
-                           const std::vector<Ball>& balls,
-                           const glm::mat4& projection_matrix);
+                           const std::vector<Ball>& balls);
 };
 
 // Momentum ball renderer interface
@@ -44,11 +42,9 @@ class MomentumBallRenderer : public BallRenderer {
    *
    * @param[in] sprite_batch The SpriteBatch.
    * @param[in] balls The collection of balls.
-   * @param[in] projection_matrix The projection matrix.
    */
   virtual void RenderBalls(CrossEngine::SpriteBatch* sprite_batch,
-                           const std::vector<Ball>& balls,
-                           const glm::mat4& projection_matrix);
+                           const std::vector<Ball>& balls);
 };
 
 // Velocity ball renderer interface
@@ -72,11 +68,9 @@ class VelocityBallRenderer : public BallRenderer {
    *
    * @param[in] sprite_batch The SpriteBatch.
    * @param[in] balls The collection of balls.
-   * @param[in] projection_matrix The projection matrix.
    */
   virtual void RenderBalls(CrossEngine::SpriteBatch* sprite_batch,
-                           const std::vector<Ball>& balls,
-                           const glm::mat4& projection_matrix);
+                           const std::vector<Ball>& balls);
 
  private:
   int screen_width_, screen_height_;
@@ -103,11 +97,9 @@ class TrippyBallRenderer : public BallRenderer {
    *
    * @param[in] sprite_batch The SpriteBatch.
    * @param[in] balls The collection of balls.
-   * @param[in] projection_matrix The projection matrix.
    */
   virtual void RenderBalls(CrossEngine::SpriteBatch* sprite_batch,
-                           const std::vector<Ball>& balls,
-                           const glm::mat4& projection_matrix);
+                           const std::vector<Ball>& balls);
 
  private:
   int screen_width_, screen_height_;

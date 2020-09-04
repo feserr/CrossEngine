@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -7,6 +7,7 @@
 #define CROSSENGINE_RESOURCEMANAGER_H_
 
 #include <string>
+
 #include "texture_cache.h"
 
 namespace CrossEngine {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -11,11 +11,11 @@
 
 namespace CrossEngine {
 /**
- * @brief
+ * @brief Directory entry object.
  */
 struct DirEntry {
   std::string path;
-  bool isDirectory;
+  bool is_directory;
 };
 
 /**

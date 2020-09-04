@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -8,11 +8,12 @@
 
 #include <glm/glm.hpp>
 #include <unordered_map>
+
 #include "../entry/input.h"
 
 namespace CrossEngine {
 /**
- * @brief Input manager stores a key map that maps SDL_Keys to booleans.
+ * @brief Input manager stores a key map that maps keys to booleans.
  * If the value in the key map is true, then the key is pressed.
  * Otherwise, it is released.
  */
@@ -58,11 +59,14 @@ class InputManager {
 
   /**
    * @brief Update the state of the inputs.
+   * Loop through the map and copy it over to previous key map.
    */
   void Update();
 
   /**
    * @brief Press the key.
+   * The key map is treated as an associative array.
+   * if id doesn't already exist in map, it will get added.
    *
    * @param[in] key_id The key.
    */
@@ -93,16 +97,8 @@ class InputManager {
   bool IsKeyDown(entry::Key::Enum key_id);
 
   /**
-   * @brief Check if the key is pressed.
-   *
-   * @param[in] key_id The key.
-   * @return true If the key is pressed.
-   * @return false If the key is release.
-   */
-  // bool IsKeyDown(entry::Key::Enum key_id);
-
-  /**
    * @brief Check if the key is down.
+   * Check if it is pressed in this frame, and wasn't pressed last frame.
    *
    * @param[in] key_id The key.
    * @return true If the key is down.
@@ -138,7 +134,7 @@ class InputManager {
   /**
    * @brief Check the past state of the key.
    *
-   * @param[in] keyID The key.
+   * @param[in] key_id The key.
    * @return true If the key was down.
    * @return false If the key was not down.
    */

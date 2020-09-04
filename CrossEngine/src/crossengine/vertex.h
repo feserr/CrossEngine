@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -13,6 +13,7 @@ namespace CrossEngine {
 struct Position {
   float x;
   float y;
+  float z;
 };
 
 /**
@@ -50,6 +51,13 @@ struct UV {
   float v;
 };
 
+struct Rect {
+  float x;
+  float y;
+  float w;
+  float h;
+};
+
 /**
  * @brief Vertex definition.
  */
@@ -71,10 +79,12 @@ struct Vertex {
    *
    * @param[in] x The X axis position.
    * @param[in] y The Y axis position.
+   * @param[in] z The Z axis position.
    */
-  void SetPosition(float x, float y) {
+  void SetPosition(float x, float y, float z) {
     position.x = x;
     position.y = y;
+    position.z = z;
   }
 
   /**

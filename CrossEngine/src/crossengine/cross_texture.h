@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -7,7 +7,9 @@
 #define CROSSENGINE_TEXTURE_H_
 
 #include <bgfx/bgfx.h>
+
 #include <string>
+
 #include "vertex.h"
 
 namespace CrossEngine {
@@ -15,7 +17,7 @@ namespace CrossEngine {
  * @brief A Cross Engine texture info.
  */
 struct CrossTexture {
-  std::string file_path = "";   ///< The filepath to the texture
+  std::string file_path;        ///< The filepath to the texture
   bgfx::TextureHandle texture;  ///< The texture
   int width;                    ///< The width
   int height;                   ///< The height
@@ -26,13 +28,13 @@ struct CrossTexture {
  * for shaders.
  */
 struct PosTexcoordVertex {
-  float x_;
-  float y_;
-  float z_;
-  float u_;
-  float v_;
-  float w_;
-  uint32_t abgr_;
+  float x;
+  float y;
+  float z;
+  float u;
+  float v;
+  float w;
+  uint32_t abgr;
 
   /**
    * @brief Initialize the struct with default values.
@@ -48,25 +50,25 @@ struct PosTexcoordVertex {
   /**
    * @brief Sets the internal values.
    *
-   * @param x The X axis position coordinate.
-   * @param y The Y axis position coordinate.
-   * @param z The Z axis position coordinate.
-   * @param u The U axis texture coordinate.
-   * @param v The V axis texture coordinate.
-   * @param w The W axis texture coordinate.
+   * @param[in] _x The X axis position coordinate.
+   * @param[in] _y The Y axis position coordinate.
+   * @param[in] _z The Z axis position coordinate.
+   * @param[in] _u The U axis texture coordinate.
+   * @param[in] _v The V axis texture coordinate.
+   * @param[in] _w The W axis texture coordinate.
    */
-  void Set(float x, float y, float z, float u, float v, float w,
-           ColorRGBA8 abgr) {
-    x_ = x;
-    y_ = y;
-    z_ = z;
-    u_ = u;
-    v_ = v;
-    w_ = w;
-    abgr_ = 0xff000000 | (abgr.b << 16) | (abgr.g << 8) | abgr.r;
+  void Set(float _x, float _y, float _z, float _u, float _v, float _w,
+           ColorRGBA8 _abgr) {
+    x = _x;
+    y = _y;
+    z = _z;
+    u = _u;
+    v = _v;
+    w = _w;
+    abgr = 0xff000000 | (_abgr.b << 16) | (_abgr.g << 8) | _abgr.r;
   }
 
-  static bgfx::VertexDecl ms_decl;
+  static bgfx::VertexLayout ms_decl;
 };
 }  // namespace CrossEngine
 

@@ -1,13 +1,13 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
 #ifndef CROSSENGINE_CPP_UTILS_H_
 #define CROSSENGINE_CPP_UTILS_H_
 
-#if __cplusplus < 201103L
-
+#if __cplusplus <= 199711L && defined(_WIN32) || \
+    __cplusplus <= 201103L && !defined(_WIN32)
 #include <cstddef>
 #include <memory>
 #include <type_traits>
@@ -43,7 +43,6 @@ typename _Unique_if<T>::_Unknown_bound make_unique(size_t n) {
 template <class T, class... Args>
 typename _Unique_if<T>::_Known_bound make_unique(Args&&...) = delete;
 }  // namespace std
-
 #endif
 
 #endif  // CROSSENGINE_CPP_UTILS_H_

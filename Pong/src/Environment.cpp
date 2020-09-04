@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
@@ -14,19 +14,18 @@ void Environment::Init(const glm::vec2& position, const glm::vec2& dimension,
   color_ = color;
   CrossEngine::CrossTexture texture =
       CrossEngine::ResourceManager::GetTexture("images/Pong.png");
-  texture_.Init(texture, glm::ivec2(8, 1));
+  texture_.Init(texture, CrossEngine::i32Vector2({8, 1}));
 }
 
 void Environment::Destroy() {}
 
 void Environment::Draw(CrossEngine::SpriteBatch* sprite_batch) {
-  glm::vec4 destRect;
-  destRect.x = position_.x - dimension_.x / 2.0f;
-  destRect.y = position_.y - dimension_.y / 2.0f;
-  destRect.z = dimension_.x;
-  destRect.w = dimension_.y;
+  CrossEngine::Rect dest_rect = {position_.x - dimension_.x / 2.0f,
+                                 position_.y - dimension_.y / 2.0f,
+                                 dimension_.x, dimension_.y};
 
-  glm::vec4 uvRect = texture_.GetUVs(7);
+  CrossEngine::Rect uv_rect = texture_.GetUV(7);
 
-  sprite_batch->Draw(destRect, uvRect, texture_.texture.texture, 0.0f, color_);
+  sprite_batch->Draw(dest_rect, uv_rect, texture_.texture.texture, 0.0f,
+                     color_);
 }

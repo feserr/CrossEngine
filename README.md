@@ -2,7 +2,7 @@ CrossEngine
 =======
 
 [![Twitter URL](https://img.shields.io/badge/tweet-feserr-blue.svg?longCache=true&style=for-the-badge)](https://twitter.com/feserr_)
-[![GitHub issue last update](https://img.shields.io/badge/updated-april%202019-red.svg?longCache=true&style=for-the-badge)](https://github.com/feserr/Khengine)
+[![GitHub issue last update](https://img.shields.io/badge/updated-april%202019-red.svg?longCache=true&style=for-the-badge)](https://github.com/feserr/CrossEngine)
 
 # Index
 
@@ -19,18 +19,19 @@ CrossEngine
 - [License](#license)
 
 <a name="about"></a>
-# CrossEngine 0.0.0.3
+# CrossEngine 0.1.0
 
 CrossEngine is an open source cross-platform game framework.
 
-Version: 0.0.0.3 - Released: 24rd April 2019
+Version: 0.1.0 - Released: 5th September 2020
 
 <a name="whats-new"></a>
-## What's new in 0.0.0.3?
+## What's new in 0.1.0?
 
 * Code refactor.
 * Remove unused bgfx common files in cross engine.
 * Remove the window class.
+* New camera class.
 * Add new shader for the sprite batch.
 * Add renderers to ball game.
 
@@ -47,7 +48,9 @@ Coming soon...
 <a name="dependencies"></a>
 ## Dependencies
 
-Coming soon..
+* [bgfx](https://github.com/bkaradzic/bgfx)
+* [bx](https://github.com/bkaradzic/bx)
+* [bimg](https://github.com/bkaradzic/bimg)
 
 <a name="demos"></a>
 ## Demos
@@ -61,7 +64,7 @@ Coming soon..
 <a name="future"></a>
 ## Future features
 
-Refactor the code of the demos to adapt to the new Cross Engine code.
+* CI.
 
 <a name="contributing"></a>
 ## Contributing
@@ -94,7 +97,7 @@ Please add them to the [Issue Tracker][issues] with as much info as possible, es
 
 	BSD 2-Clause License
 
-	Copyright (c) 2017-2019, Elias Serrano
+	Copyright (c) 2020, Elias Serrano
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without

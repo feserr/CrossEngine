@@ -1,11 +1,12 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
-#include "main_game.h"
+#include "../src/main_game.h"
 
 #include <SDL/SDL.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <crossengine/cpp_utils.h>
 #include <crossengine/cross_engine.h>
 #include <crossengine/input_manager.h>
@@ -30,7 +31,7 @@ const float kDesiredFrametime = kMsPerSecond / kDesiredFps;
 const float kMaxDeltaTime = 1.0f;
 
 // Number of balls to spawn.
-const int kNumBalls = 10000;
+const int kNumBalls = 2000;
 
 MainGame::MainGame(CrossEngine::Window* window) : window_(*window) {
   screen_index_ = SCREEN_INDEX_GAMEPLAY;
@@ -38,9 +39,11 @@ MainGame::MainGame(CrossEngine::Window* window) : window_(*window) {
 
 MainGame::~MainGame() {
   // Empty
-  for (int i = 0; i < ball_renderers_.size(); i++) {
+  for (uint32_t i = 0; i < ball_renderers_.size(); i++) {
     delete ball_renderers_[i];
   }
+
+  CrossEngine::CameraDestroy();
 }
 
 int MainGame::GetNextScreenIndex() const { return SCREEN_INDEX_GAMEPLAY; }
@@ -84,29 +87,31 @@ void MainGame::Update() {
     // Update all physics here and pass in deltaTime.
     Update(deltaTime);
 
+    entry::MouseState ms = *CrossEngine::InputManager::instance().GetMouseState();
+    CrossEngine::CameraUpdate(deltaTime, ms);
+
     // Since we just took a step that is length deltaTime, subtract from
     // totalDeltaTime.
     totalDeltaTime -= deltaTime;
 
     // Increment our frame counter so we can limit steps to kMaxPhysicsSteps
-    i++;
+    ++i;
   }
-
-  camera_.Update();
 }
 
 void MainGame::OnEntry() {
   screen_width_ = 1280;
   screen_height_ = 720;
 
-  // Init camera.
-  camera_.Init(window_.screen_width, window_.screen_height);
-  camera_.SetPosition(glm::vec2(0.0f));
-  camera_.SetScale(1.0f);
+  // Set view and projection matrices.
+  viewState_ = ViewState(window_.screen_width, window_.screen_height);
+
+  // Init the camera.
+  CrossEngine::CameraCreate();
+  CrossEngine::CameraSetPosition({ 0.0f, 0.0f, -10.0f });
+  CrossEngine::CameraSetHorizontalAngle(0.0f);
 
   sprite_batch_.Init();
-
-  fps_limiter_.SetMaxFPS(60.0f);
 
   InitRenderers();
   InitBalls();
@@ -151,9 +156,11 @@ void MainGame::InitBalls() {
   // Random engine stuff
   std::mt19937 randomEngine(static_cast<unsigned int>(time(nullptr)));
   std::uniform_real_distribution<float> randX(
-      0.0f, static_cast<float>(screen_width_));
+    0.0f, static_cast<float>(screen_width_));
   std::uniform_real_distribution<float> randY(
-      0.0f, static_cast<float>(screen_height_));
+    0.0f, static_cast<float>(screen_height_));
+  std::uniform_real_distribution<float> randZ(
+    0.0f, 1000.0f);
   std::uniform_real_distribution<float> randDir(-1.0f, 1.0f);
 
   // Add all possible balls
@@ -206,7 +213,7 @@ void MainGame::InitBalls() {
     }
 
     // Get random starting position
-    glm::vec2 pos(randX(randomEngine), randY(randomEngine));
+    glm::vec3 pos(randX(randomEngine), randY(randomEngine), 0.0f);
 
     // Hacky way to get a random direction
     glm::vec2 direction(randDir(randomEngine), randDir(randomEngine));
@@ -236,26 +243,28 @@ void MainGame::Update(const float delta_time) {
 }
 
 void MainGame::Draw() {
-  camera_.Draw();
+  float view[16];
+  CrossEngine::CameraGetViewMtx(view);
 
-  // Grab the camera matrix
-  glm::mat4 projectionMatrix = camera_.GetCameraMatrix();
+  float proj[16];
+  bx::mtxOrtho(proj, 0.0f, float(screen_width_), float(screen_height_), 0.0f,
+    0.1f, 100.0f, 0.0f, bgfx::getCaps()->homogeneousDepth);
 
-  ball_renderers_[current_renderer_]->RenderBalls(&sprite_batch_, balls_,
-                                                  projectionMatrix);
+  // Set view and projection matrix for view 1.
+  bgfx::setViewTransform(0, view, proj);
+
+  bgfx::setViewRect(0, 0, 0, screen_width_, screen_height_);
+
+  ball_renderers_[current_renderer_]->RenderBalls(&sprite_batch_, balls_);
 
   DrawHud();
-
-  // m_textureProgram.Unuse();
-
-  // window_.SwapBuffer();
 }
 
 void MainGame::DrawHud() {
   const CrossEngine::ColorRGBA8 fontColor(255, 0, 0, 255);
   // Convert float to char *
-  char buffer[64];
-  snprintf(buffer, sizeof(buffer), "%.1f", fps_);
+  // char buffer[64];
+  // snprintf(buffer, sizeof(buffer), "%.1f", fps_);
 
   sprite_batch_.Begin();
   // m_spriteFont->Draw(sprite_batch_, buffer, glm::vec2(5.0f, screen_height_
@@ -289,13 +298,14 @@ void MainGame::ProcessInput() {
   }
 
   entry::MouseState mouse_state =
-      *CrossEngine::InputManager::instance().GetMouseState();
-  ball_controller_.OnMouseMove(&balls_, static_cast<float>(mouse_state.m_mx),
-                               static_cast<float>(mouse_state.m_my));
+    *CrossEngine::InputManager::instance().GetMouseState();
+  bx::Vec3 camera_at = CrossEngine::CameraGetAt();
+  float mx = mouse_state.m_mx + camera_at.x;
+  float my = mouse_state.m_my + camera_at.y;
 
+  ball_controller_.OnMouseMove(&balls_, mx, my);
   if (!!mouse_state.m_buttons[entry::MouseButton::Left]) {
-    ball_controller_.OnMouseDown(&balls_, static_cast<float>(mouse_state.m_mx),
-                                 static_cast<float>(mouse_state.m_my));
+    ball_controller_.OnMouseDown(&balls_, mx, my);
   } else {
     ball_controller_.OnMouseUp(&balls_);
   }

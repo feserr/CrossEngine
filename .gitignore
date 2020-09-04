@@ -1,8 +1,3 @@
-## Library folders
-bgfx/*
-bx/*
-bimg/*
-
 ## Library files
 pkgconfig/
 
@@ -251,8 +246,9 @@ xcuserdata
 *.xcuserstate
 *.xcodeproj
 
-# Unix
-#
+# IDEs
+.vscode
 
 ## Other
+.DS_Store
 .history*

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github->com/feserr/crossengine#license
  */
 
@@ -19,12 +19,13 @@ void BallController::UpdateBalls(std::vector<Ball>* balls, Grid* grid,
 
   glm::vec2 gravity = GetGravityAccel();
 
-  for (size_t i = 0; i < balls->size(); i++) {
+  for (int i = 0; i < balls->size(); i++) {
     // get handle for less typing
     Ball& ball = balls->at(i);
     // Update motion if its not grabbed.
     if (i != grabbed_ball_) {
-      ball.position += ball.velocity * delta_time;
+      ball.position.x += ball.velocity.x * delta_time;
+      ball.position.y += ball.velocity.y * delta_time;
       // Apply friction
       glm::vec2 momentumVec = ball.velocity * ball.mass;
       if (momentumVec.x != 0 || momentumVec.y != 0) {
@@ -77,12 +78,12 @@ void BallController::UpdateBalls(std::vector<Ball>* balls, Grid* grid,
 
 void BallController::OnMouseDown(std::vector<Ball>* balls, const float mouse_x,
                                  const float mouse_y) {
-  for (int i = 0; i < balls->size(); i++) {
+  for (uint32_t i = 0; i < balls->size(); i++) {
     // Check if the mouse is hovering over a ball.
     if (IsMouseOnBall(&balls->at(i), mouse_x, mouse_y)) {
       grabbed_ball_ = i;  // BE AWARE, if you change the order of the balls in
                           // the vector, this becomes invalid.
-      grab_offset_ = glm::vec2(mouse_x, mouse_y) - balls->at(i).position;
+      grab_offset_ = glm::vec3(mouse_x, mouse_y, 0.0f) - balls->at(i).position;
       previous_pos_ = balls->at(i).position;
       balls->at(i).velocity = glm::vec2(0.0f);
     }
@@ -102,19 +103,19 @@ void BallController::OnMouseMove(std::vector<Ball>* balls, const float mouse_x,
                                  const float mouse_y) {
   if (grabbed_ball_ != -1) {
     balls->at(grabbed_ball_).position =
-        glm::vec2(mouse_x, mouse_y) - grab_offset_;
+      glm::vec3(mouse_x, mouse_y, 0.0f) - grab_offset_;
   }
 }
 
 void BallController::UpdateCollision(Grid* grid) {
-  for (int i = 0; i < grid->cells_.size(); i++) {
+  for (uint32_t i = 0; i < grid->cells_.size(); i++) {
     int x = i % grid->num_x_cells_;
     int y = i / grid->num_x_cells_;
 
     Cell& cell = grid->cells_.at(i);
 
     // Loop through all balls in a cell
-    for (int j = 0; j < cell.balls.size(); j++) {
+    for (uint32_t j = 0; j < cell.balls.size(); j++) {
       Ball* ball = cell.balls[j];
       /// Update with the residing cell
       CheckCollision(ball, &cell.balls, j + 1);
@@ -143,15 +144,15 @@ void BallController::UpdateCollision(Grid* grid) {
 void BallController::CheckCollision(Ball* ball,
                                     std::vector<Ball*>* balls_to_check,
                                     const int starting_index) {
-  for (int i = starting_index; i < balls_to_check->size(); i++) {
+  for (uint32_t i = starting_index; i < balls_to_check->size(); i++) {
     CheckCollision(ball, balls_to_check->at(i));
   }
 }
 
 void BallController::CheckCollision(Ball* b1, Ball* b2) {
   // We add radius since position is the top left corner
-  glm::vec2 distVec = b2->position - b1->position;
-  glm::vec2 distDir = glm::normalize(distVec);
+  glm::vec3 distVec = b2->position - b1->position;
+  glm::vec3 distDir = glm::normalize(distVec);
   float dist = glm::length(distVec);
   float totalRadius = b1->radius + b2->radius;
 
@@ -167,16 +168,17 @@ void BallController::CheckCollision(Ball* b1, Ball* b2) {
 
     // Calculate deflection. http://stackoverflow.com/a/345863
     // Fixed thanks to youtube user Sketchy502
-    float aci = glm::dot(b1->velocity, distDir);
-    float bci = glm::dot(b2->velocity, distDir);
+    glm::vec2 v2_dist_dir = distDir;
+    float aci = glm::dot(b1->velocity, v2_dist_dir);
+    float bci = glm::dot(b2->velocity, v2_dist_dir);
 
     float acf = (aci * (b1->mass - b2->mass) + 2 * b2->mass * bci) /
                 (b1->mass + b2->mass);
     float bcf = (bci * (b2->mass - b1->mass) + 2 * b1->mass * aci) /
                 (b1->mass + b2->mass);
 
-    b1->velocity += (acf - aci) * distDir;
-    b2->velocity += (bcf - bci) * distDir;
+    b1->velocity += (acf - aci) * v2_dist_dir;
+    b2->velocity += (bcf - bci) * v2_dist_dir;
   }
 }
 

@@ -1,16 +1,19 @@
 /*
- * Copyright 2017-2019 Elías Serrano. All rights reserved.
+ * Copyright 2020 Elías Serrano. All rights reserved.
  * License: https://github.com/feserr/crossengine#license
  */
 
 #include "gameplay_screen.h"
 
 #include <SDL/SDL.h>
+#include <crossengine/camera.h>
 #include <crossengine/i_main_game.h>
 #include <crossengine/resource_manager.h>
+
 #include <algorithm>
 #include <iostream>
 #include <random>
+
 #include "screen_indexs.h"
 
 const float kDesiredFps = 60.0f;  // FPS the game is designed to run at
@@ -37,6 +40,7 @@ void GameplayScreen::Build() {}
 
 void GameplayScreen::Destroy() {
   // Cleanup.
+  CrossEngine::CameraDestroy();
 }
 
 void GameplayScreen::OnEntry() {
@@ -44,9 +48,11 @@ void GameplayScreen::OnEntry() {
   sprite_batch_.Init();
 
   // Init camera
-  camera_.Init(window_->screen_width, window_->screen_height);
-  camera_.SetPosition(glm::vec2(0.0f));
-  camera_.SetScale(1.0f);
+  entry::setWindowSize(entry::WindowHandle(), window_->screen_width,
+                       window_->screen_height);
+  CrossEngine::CameraCreate();
+  CrossEngine::CameraSetPosition({0.0f, 0.0f, -10.0f});
+  CrossEngine::CameraSetHorizontalAngle(0.0f);
 
   // Init players
   glm::vec2 position(32.0f, window_->screen_height / 2);
@@ -56,17 +62,16 @@ void GameplayScreen::OnEntry() {
                    CrossEngine::ColorRGBA8(255, 255, 255, 255),
                    PlayerType::PLAYERONE);
 
-  position = glm::vec2(window_->screen_width - 32.0f,
-                       window_->screen_height / 2);
+  position =
+      glm::vec2(window_->screen_width - 32.0f, window_->screen_height / 2);
   player_two_.Init(position, draw_dims, collision_dims,
                    CrossEngine::ColorRGBA8(255, 255, 255, 255),
                    PlayerType::PLAYERTWO);
 
   // Init the ball
-  position = glm::vec2(window_->screen_width / 2,
-                       window_->screen_height / 2);
+  position = glm::vec2(window_->screen_width / 2, window_->screen_height / 2);
   glm::vec2 vel(-6.0f, 0.0f);
-  ball_.Init(position, vel,8.0f, 0.0f);
+  ball_.Init(position, vel, 8.0f, 0.0f);
 
   // Init the environment
   position = glm::vec2(window_->screen_width / 2, 0.0f);
@@ -78,15 +83,14 @@ void GameplayScreen::OnEntry() {
     enviroment_.push_back(environment);
   }
 
-  window_size_ =
-      glm::vec2(window_->screen_width, window_->screen_height);
+  window_size_ = glm::vec2(window_->screen_width, window_->screen_height);
 }
 
 void GameplayScreen::OnExit() {}
 
 void GameplayScreen::Update() {
   CheckInput();
-  
+
   if (game_state_ == GameState::EXIT) {
     SetState(CrossEngine::ScreenState::EXIT_APPLICATION);
   }
@@ -107,6 +111,10 @@ void GameplayScreen::Update() {
     float deltaTime = std::min(total_delta_time, kMaxDeltaTime);
     // Update all physics here and pass in deltaTime
 
+    entry::MouseState ms =
+        *CrossEngine::InputManager::instance().GetMouseState();
+    CrossEngine::CameraUpdate(deltaTime, ms);
+
     int t_goal = ball_.Update(deltaTime, window_size_);
     player_one_.Update(deltaTime, window_size_, &ball_);
     player_two_.Update(deltaTime, window_size_, &ball_);
@@ -124,20 +132,24 @@ void GameplayScreen::Update() {
 
   if (goal == 1) {
     ++score_player_two_;
-    // m_scorePlayerTwo->setText(std::to_string(m_iScorePlayerTwo));
   } else if (goal == 2) {
     ++score_player_one_;
-    // m_scorePlayerOne->setText(std::to_string(m_iScorePlayerOne));
   }
-
-  glm::vec2 cp = camera_.GetPosition();
-  cp.x--;
-  camera_.SetPosition(cp);
-  camera_.Update();
 }
 
 void GameplayScreen::Draw() {
-  camera_.Draw();
+  float view[16];
+  CrossEngine::CameraGetViewMtx(view);
+
+  float proj[16];
+  bx::mtxOrtho(proj, 0.0f, float(window_->screen_width),
+               float(window_->screen_height), 0.0f, 0.1f, 100.0f, 0.0f,
+               bgfx::getCaps()->homogeneousDepth);
+
+  // Set view and projection matrix for view 1.
+  bgfx::setViewTransform(0, view, proj);
+
+  bgfx::setViewRect(0, 0, 0, window_->screen_width, window_->screen_height);
 
   sprite_batch_.Begin();
 
