@@ -15,9 +15,9 @@
 #include <memory>
 #include <vector>
 
-#include "../src/ball_controller.h"
-#include "../src/ball_renderer.h"
-#include "../src/grid.h"
+#include "ball_controller.h"
+#include "ball_renderer.h"
+#include "grid.h"
 
 struct ViewState {
   ViewState(uint32_t _width = 0, uint32_t _height = 0)

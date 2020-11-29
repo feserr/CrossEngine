@@ -1,0 +1,50 @@
+version: 0.1.1[{build}]
+
+clone_depth: 50
+
+branches:
+  only:
+    - master
+    - dev
+
+cache:
+  - c:\usr
+  - C:\Tools\vcpkg\installed\
+
+image: Visual Studio 2017
+
+platform:
+  - x64
+
+configuration:
+  - Debug
+  - Release
+
+environment:
+  CMAKE_VS_VERSION: "15 2017"
+  ARCH: x64-windows
+  matrix:
+    - project_name: CrossEngine
+      project_file: CrossEngine\build\projects\vs2017\crossengine.sln
+    - project_name: BallGame
+      project_file: BallGame\build\projects\vs2017\ballgame.sln
+    - project_name: Pong
+      project_file: Pong\build\projects\vs2017\pong.sln
+
+before_build:
+  - git submodule -q update --init --recursive
+  - cd C:\Tools\vcpkg
+  - git pull
+  - .\bootstrap-vcpkg.bat
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - vcpkg install sdl2:%ARCH% sdl2-ttf:%ARCH% sdl2-mixer:%ARCH% sdl2-image:%ARCH%
+  - set PATH=%PATH%;C:\Tools\vcpkg\installed\%ARCH%\bin
+  - set INCLUDE=%INCLUDE%;C:\Tools\vcpkg\installed\%ARCH%\include
+  - set LIB=%LIB%;C:\Tools\vcpkg\installed\%ARCH%\lib
+  - vcpkg integrate install
+  - cd %APPVEYOR_BUILD_FOLDER%\%project_name%
+  - start %APPVEYOR_BUILD_FOLDER%\external\bx\tools\bin\windows\genie.exe vs2017
+  - cd %APPVEYOR_BUILD_FOLDER%
+
+build_script:
+  - msbuild %APPVEYOR_BUILD_FOLDER%\%project_file% /t:Build /p:Configuration=%configuration% /p:Platform=%platform%"

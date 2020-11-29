@@ -7,7 +7,8 @@
 #define BALLGAME_SRC_BALL_CONTROLLER_H_
 
 #include <vector>
-#include "../src/ball.h"
+
+#include "ball.h"
 
 enum class GravityDirection { NONE, LEFT, UP, RIGHT, DOWN };
 

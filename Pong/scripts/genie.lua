@@ -1,7 +1,5 @@
---
--- Copyright 2016-2019 feserr. All rights reserved.
--- License: https://github.com/feserr/crossengine#license-bsd-2-clause
---
+-- Copyright 2020 Elías Serrano. All rights reserved.
+-- License: https://github.com/feserr/crossengine#license
 
 solution "pong"
 	configurations {

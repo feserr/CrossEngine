@@ -1,8 +1,10 @@
 CrossEngine
 =======
 
-[![Twitter URL](https://img.shields.io/badge/tweet-feserr-blue.svg?longCache=true&style=for-the-badge)](https://twitter.com/feserr_)
-[![GitHub issue last update](https://img.shields.io/badge/updated-september%202020-red.svg?longCache=true&style=for-the-badge)](https://github.com/feserr/CrossEngine)
+[![Build Status](https://travis-ci.org/feserr/CrossEngine.svg?branch=master)](https://travis-ci.org/feserr/CrossEngine)
+[![Build status](https://ci.appveyor.com/api/projects/status/y359d9y3o0oexe9r?svg=true)](https://ci.appveyor.com/project/feserr/crossengine)
+
+[![Trello URL](https://img.shields.io/badge/trello-crossengine-green.svg?longCache=true&style=for-the-badge)](https://trello.com/b/TvCBM9QC)
 
 # Index
 
@@ -19,21 +21,16 @@ CrossEngine
 - [License](#license)
 
 <a name="about"></a>
-# CrossEngine 0.1.0
+# CrossEngine 0.1.1
 
 CrossEngine is an open source cross-platform game framework.
 
-Version: 0.1.0 - Released: 5th September 2020
+Version: 0.1.1 - Released: 29st November 2020
 
 <a name="whats-new"></a>
-## What's new in 0.1.0?
+## What's new in 0.1.1?
 
-* Code refactor.
-* Remove unused bgfx common files in cross engine.
-* Remove the window class.
-* New camera class.
-* Add new shader for the sprite batch.
-* Add renderers to ball game.
+* CI using Appveyor and Travis.
 
 <a name="how-to-build"></a>
 ## How to Build
@@ -64,7 +61,7 @@ Coming soon...
 <a name="future"></a>
 ## Future features
 
-* CI.
+* Unit tests.
 
 <a name="contributing"></a>
 ## Contributing
@@ -72,8 +69,6 @@ Coming soon...
 - If you find a bug then please report it on [GitHub Issues][issues].
 
 - If you have a feature request, or have written a game or demo that shows CrossEngine in use, then please get in touch. We'd love to hear from you!
-
-- If you issue a Pull Request for CrossEngine, please only do so against the `dev` branch and **not** against the `master` branch.
 
 <a name="bugs"></a>
 ## Bugs?
@@ -84,7 +79,7 @@ Please add them to the [Issue Tracker][issues] with as much info as possible, es
 ## Honorable mentions
 
 * [Branimir Karadžić](https://github.com/bkaradzic) for the awesome bgfx, genie and all the things he makes.
-* [Benjamin Arnold](https://github.com/Barnold1953) for the awesome 2D game engine tutorial, without it this engine will never exist.
+* [Benjamin Arnold](https://github.com/Barnold1953) for the awesome 2D game engine tutorial, without it this engine will have never exist.
 
 <a name="license"></a>
 ## License

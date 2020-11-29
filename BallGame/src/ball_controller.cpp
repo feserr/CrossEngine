@@ -103,7 +103,7 @@ void BallController::OnMouseMove(std::vector<Ball>* balls, const float mouse_x,
                                  const float mouse_y) {
   if (grabbed_ball_ != -1) {
     balls->at(grabbed_ball_).position =
-      glm::vec3(mouse_x, mouse_y, 0.0f) - grab_offset_;
+        glm::vec3(mouse_x, mouse_y, 0.0f) - grab_offset_;
   }
 }
 

@@ -25,7 +25,7 @@ IMainGame::IMainGame()
       height_(480),
       debug_(0),
       reset_(0) {
-  screen_list_ = std::make_unique<ScreenList>(this);
+  screen_list_ = CrossEngine::make_unique<ScreenList>(this);
 }
 
 IMainGame::~IMainGame() {

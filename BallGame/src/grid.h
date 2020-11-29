@@ -7,6 +7,7 @@
 #define BALLGAME_SRC_GRID_H_
 
 #include <vector>
+
 #include "ball.h"
 
 struct Cell {

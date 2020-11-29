@@ -7,8 +7,10 @@
 #define BALLGAME_SRC_BALL_RENDERER_H_
 
 #include <crossengine/sprite_batch.h>
+
 #include <memory>
 #include <vector>
+
 #include "ball.h"
 
 // Ball renderer interface

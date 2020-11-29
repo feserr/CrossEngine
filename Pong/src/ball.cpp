@@ -6,8 +6,10 @@
 #include "ball.h"
 
 #include <SDL/SDL.h>
+#include <bx/timer.h>
 #include <crossengine/resource_manager.h>
 
+#include <chrono>
 #include <random>
 
 void Ball::Init(const glm::vec2& position, const glm::vec2& velocity,
@@ -85,7 +87,9 @@ void Ball::Draw(CrossEngine::SpriteBatch* sprite_batch) {
 }
 
 void Ball::RestartPosition(const glm::vec2& window_size) {
-  std::mt19937 randomEngine((unsigned int)time(nullptr));
+  auto seed =
+      std::chrono::high_resolution_clock::now().time_since_epoch().count();
+  std::mt19937 randomEngine(seed);
   std::uniform_real_distribution<float> r1(-1.0f, 1.0f);
   position_ = glm::vec2(window_size.x / 2, window_size.y / 2);
   velocity_ =

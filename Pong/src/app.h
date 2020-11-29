@@ -7,7 +7,9 @@
 #define PONG_SRC_APP_H_
 
 #include <crossengine/i_main_game.h>
+
 #include <memory>
+
 #include "gameplay_screen.h"
 
 /**

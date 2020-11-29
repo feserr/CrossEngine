@@ -6,17 +6,18 @@
 #ifndef BALLGAME_SRC_APP_H_
 #define BALLGAME_SRC_APP_H_
 
-#include "main_game.h"
-
 #include <crossengine/i_main_game.h>
+
 #include <memory>
+
+#include "main_game.h"
 
 // Our custom app that inherits from IMainGame
 class App : public CrossEngine::IMainGame {
  public:
- /**
-  * @brief Construct a new App object.
-  */
+  /**
+   * @brief Construct a new App object.
+   */
   App();
 
   /**

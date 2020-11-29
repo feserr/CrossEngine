@@ -6,14 +6,14 @@
 #ifndef CROSSENGINE_CPP_UTILS_H_
 #define CROSSENGINE_CPP_UTILS_H_
 
-#if __cplusplus <= 199711L && defined(_WIN32) || \
-    __cplusplus <= 201103L && !defined(_WIN32)
 #include <cstddef>
 #include <memory>
-#include <type_traits>
 #include <utility>
 
-namespace std {
+#if __cplusplus <= 199711L && defined(_WIN32) || \
+    __cplusplus <= 201103L && !defined(_WIN32)
+
+namespace CrossEngine {
 template <class T>
 struct _Unique_if {
   typedef std::unique_ptr<T> _Single_object;
@@ -42,7 +42,14 @@ typename _Unique_if<T>::_Unknown_bound make_unique(size_t n) {
 
 template <class T, class... Args>
 typename _Unique_if<T>::_Known_bound make_unique(Args&&...) = delete;
-}  // namespace std
+}  // namespace CrossEngine
+
+#else
+
+namespace CrossEngine {
+using std::make_unique;
+}  // namespace CrossEngine
+
 #endif
 
 #endif  // CROSSENGINE_CPP_UTILS_H_

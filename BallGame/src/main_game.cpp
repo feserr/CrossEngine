@@ -3,20 +3,22 @@
  * License: https://github.com/feserr/crossengine#license
  */
 
-#include "../src/main_game.h"
+#include "main_game.h"
 
 #include <SDL/SDL.h>
-#include <glm/gtc/type_ptr.hpp>
 #include <crossengine/cpp_utils.h>
 #include <crossengine/cross_engine.h>
 #include <crossengine/input_manager.h>
 #include <crossengine/resource_manager.h>
 #include <entry/input.h>
+
 #include <algorithm>
 #include <cmath>
 #include <ctime>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <random>
+
 #include "screen_indexs.h"
 
 // FPS the game is designed to run at.
@@ -87,7 +89,8 @@ void MainGame::Update() {
     // Update all physics here and pass in deltaTime.
     Update(deltaTime);
 
-    entry::MouseState ms = *CrossEngine::InputManager::instance().GetMouseState();
+    entry::MouseState ms =
+        *CrossEngine::InputManager::instance().GetMouseState();
     CrossEngine::CameraUpdate(deltaTime, ms);
 
     // Since we just took a step that is length deltaTime, subtract from
@@ -108,7 +111,7 @@ void MainGame::OnEntry() {
 
   // Init the camera.
   CrossEngine::CameraCreate();
-  CrossEngine::CameraSetPosition({ 0.0f, 0.0f, -10.0f });
+  CrossEngine::CameraSetPosition({0.0f, 0.0f, -10.0f});
   CrossEngine::CameraSetHorizontalAngle(0.0f);
 
   sprite_batch_.Init();
@@ -147,7 +150,7 @@ struct BallSpawn {
 
 void MainGame::InitBalls() {
   // Initialize the grid
-  grid_ = std::make_unique<Grid>(screen_width_, screen_height_, CELL_SIZE);
+  grid_ = CrossEngine::make_unique<Grid>(screen_width_, screen_height_, CELL_SIZE);
 
 #define ADD_BALL(p, ...) \
   totalProbability += p; \
@@ -156,11 +159,10 @@ void MainGame::InitBalls() {
   // Random engine stuff
   std::mt19937 randomEngine(static_cast<unsigned int>(time(nullptr)));
   std::uniform_real_distribution<float> randX(
-    0.0f, static_cast<float>(screen_width_));
+      0.0f, static_cast<float>(screen_width_));
   std::uniform_real_distribution<float> randY(
-    0.0f, static_cast<float>(screen_height_));
-  std::uniform_real_distribution<float> randZ(
-    0.0f, 1000.0f);
+      0.0f, static_cast<float>(screen_height_));
+  std::uniform_real_distribution<float> randZ(0.0f, 1000.0f);
   std::uniform_real_distribution<float> randDir(-1.0f, 1.0f);
 
   // Add all possible balls
@@ -248,7 +250,7 @@ void MainGame::Draw() {
 
   float proj[16];
   bx::mtxOrtho(proj, 0.0f, float(screen_width_), float(screen_height_), 0.0f,
-    0.1f, 100.0f, 0.0f, bgfx::getCaps()->homogeneousDepth);
+               0.1f, 100.0f, 0.0f, bgfx::getCaps()->homogeneousDepth);
 
   // Set view and projection matrix for view 1.
   bgfx::setViewTransform(0, view, proj);
@@ -298,7 +300,7 @@ void MainGame::ProcessInput() {
   }
 
   entry::MouseState mouse_state =
-    *CrossEngine::InputManager::instance().GetMouseState();
+      *CrossEngine::InputManager::instance().GetMouseState();
   bx::Vec3 camera_at = CrossEngine::CameraGetAt();
   float mx = mouse_state.m_mx + camera_at.x;
   float my = mouse_state.m_my + camera_at.y;

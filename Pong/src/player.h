@@ -10,6 +10,7 @@
 #include <crossengine/sprite_batch.h>
 #include <crossengine/tile_sheet.h>
 #include <crossengine/vertex.h>
+
 #include "ball.h"
 
 enum class PlayerMoveState { STANDING, MOVING };

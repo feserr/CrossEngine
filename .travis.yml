@@ -1,0 +1,105 @@
+sudo: true
+language: cpp
+
+addons:
+  apt:
+    packages:
+      - valgrind
+      - cmake
+      - ninja-build
+      - doxygen
+      - libgl1-mesa-glx
+      - libgl1-mesa-dev
+      - libsdl2-2.0
+      - x11proto-core-dev
+      - libx11-dev
+      - gobjc++
+      - gobjc
+      - libsdl2-dev
+      - libsdl2-image-dev
+      - libsdl2-mixer-dev
+      - libsdl2-ttf-dev
+  homebrew:
+    packages:
+      - git-lfs
+      - doxygen
+      - ninja
+      - sdl2
+      - sdl2_image
+      - sdl2_mixer
+      - sdl2_ttf
+
+env:
+  global:
+    - CTEST_EXT_COLOR_OUTPUT=TRUE
+    - CTEST_BUILD_FLAGS=-j4
+    - BUILD_TYPE="release64"
+
+matrix:
+  include:
+    - os: linux
+      name: Ubuntu Bionic gcc
+      dist: bionic
+      env:
+        - MATRIX_EVAL="CC=gcc && CXX=g++"
+        - OS_NAME="linux"
+        - GENIE_COMPILER="linux-gcc"
+        - BUILD_FILE="linux"
+
+    - os: linux
+      name: Ubuntu Bionic clang
+      dist: bionic
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++"
+        - OS_NAME="linux"
+        - GENIE_COMPILER="linux-clang"
+        - BUILD_FILE="linux-clang"
+
+    - os: osx
+      name: OSX xcode11.2 gcc
+      osx_image: xcode11.2
+      env:
+        - MATRIX_EVAL="CC=gcc && CXX=g++"
+        - OS_NAME="darwin"
+        - GENIE_COMPILER="osx"
+        - BUILD_FILE="osx"
+
+    - os: osx
+      name: OSX xcode11.2 clang
+      osx_image: xcode11.2
+      env:
+        - MATRIX_EVAL="CC=clang && CXX=clang++"
+        - OS_NAME="darwin"
+        - GENIE_COMPILER="osx"
+        - BUILD_FILE="osx"
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+
+before_script:
+  - chmod +x ci/build_unix.sh
+
+script:
+  - workspace=`pwd`
+  - chmod +x ${workspace}/external/bx/tools/bin/${OS_NAME}/genie
+  - cd CrossEngine
+  - ${workspace}/external/bx/tools/bin/${OS_NAME}/genie --gcc=${GENIE_COMPILER} gmake
+  - make -C build/projects/gmake-${BUILD_FILE} -j3 config=${BUILD_TYPE} all
+  - cd ${workspace}
+  - cd BallGame
+  - ${workspace}/external/bx/tools/bin/${OS_NAME}/genie --gcc=${GENIE_COMPILER} gmake
+  - make -C build/projects/gmake-${BUILD_FILE} -j3 config=${BUILD_TYPE} all
+  - cd ${workspace}
+  - cd Pong
+  - ${workspace}/external/bx/tools/bin/${OS_NAME}/genie --gcc=${GENIE_COMPILER} gmake
+  - make -C build/projects/gmake-${BUILD_FILE} -j3 config=${BUILD_TYPE} all
+  - cd ${workspace}
+
+branches:
+  only:
+    - master
+    - dev
+
+notifications:
+  email:
+    on_success: never

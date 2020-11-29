@@ -34,8 +34,8 @@ void Player::Destroy() {}
 
 void Player::Draw(CrossEngine::SpriteBatch* sprite_batch) {
   CrossEngine::Rect dest_rect = {position_.x - draw_dimensions_.x / 2.0f,
-                                position_.y - draw_dimensions_.y / 2.0f,
-                                draw_dimensions_.x, draw_dimensions_.y};
+                                 position_.y - draw_dimensions_.y / 2.0f,
+                                 draw_dimensions_.x, draw_dimensions_.y};
 
   int tileIndex;
   int numTiles;

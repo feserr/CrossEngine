@@ -48,7 +48,7 @@ newoption {
 	description = "Enable building examples.",
 }
 
-solution "spaceinvaders"
+solution "crossengine"
 	configurations {
 		"Debug",
 		"Release",
@@ -62,13 +62,13 @@ solution "spaceinvaders"
 		platforms {
 			"x32",
 			"x64",
---			"Xbox360",
+			-- "Xbox360",
 			"Native", -- for targets where bitness is not specified
 		}
 	end
 
 	language "C++"
-	startproject "spaceinvaders"
+	startproject "crossengine"
 
 MODULE_DIR = path.getabsolute("../")
 EXTERNAL_DIR = path.getabsolute("../../external/")

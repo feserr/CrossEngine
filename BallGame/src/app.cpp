@@ -20,7 +20,7 @@ void App::OnInit() {
 }
 
 void App::AddScreens() {
-  gameplay_screen_ = std::make_unique<MainGame>(&window_);
+  gameplay_screen_ = CrossEngine::make_unique<MainGame>(&window_);
   screen_list_->AddScreen(gameplay_screen_.get());
   screen_list_->SetScreen(gameplay_screen_->GetScreenIndex());
 }

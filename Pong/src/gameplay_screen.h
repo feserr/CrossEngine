@@ -10,7 +10,9 @@
 #include <crossengine/i_game_screen.h>
 #include <crossengine/sprite_batch.h>
 #include <crossengine/window.h>
+
 #include <vector>
+
 #include "ball.h"
 #include "environment.h"
 #include "player.h"
