@@ -94,7 +94,7 @@ script:
   - cmake -DCMAKE_BUILD_TYPE:STRING=Release -H. -B./build -G Ninja
   - cmake --build ./build --config Release --target all -- -j3
   - cd build
-  - ctest -j3 -C Release
+  - ctest -VV -j3
   - cd ${workspace}
   - cd BallGame
   - ${workspace}/external/bx/tools/bin/${OS_NAME}/genie --gcc=${GENIE_COMPILER} gmake
