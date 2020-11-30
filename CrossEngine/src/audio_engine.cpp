@@ -7,32 +7,51 @@
 
 #include <string>
 
-#include "crossengine/cross_errors.h"
-
 namespace CrossEngine {
-void SoundEffect::Play(int loops /* = 0 */) {
+SoundEffect::SoundEffect() : chunk_() {}
+
+SoundEffect::SoundEffect(Mix_Chunk* chunk) : chunk_(chunk) {}
+
+Result SoundEffect::Play(int loops /* = 0 */) {
   if (Mix_PlayChannel(-1, chunk_, loops) == -1) {
     if (Mix_PlayChannel(0, chunk_, loops) == -1) {
       FatalError("Mix_PlayChannel error: " + std::string(Mix_GetError()));
     }
   }
+
+  return Result::OK;
 }
 
 Music::Music() : music_() {}
 
-void Music::Play(int loops /* = -1 */) { Mix_PlayMusic(music_, loops); }
+Music::Music(Mix_Music* music) : music_(music) {}
 
-void Music::Pause() { Mix_PauseMusic(); }
+Result Music::Play(int loops) {
+  if (loops < -1) return Result::FAIL;
+  Mix_PlayMusic(music_, loops);
+  return Result::OK;
+}
 
-void Music::Stop() { Mix_HaltMusic(); }
+Result Music::Pause() {
+  Mix_PauseMusic();
+  return Result::OK;
+}
 
-void Music::Resume() { Mix_ResumeMusic(); }
+Result Music::Stop() {
+  Mix_HaltMusic();
+  return Result::OK;
+}
+
+Result Music::Resume() {
+  Mix_ResumeMusic();
+  return Result::OK;
+}
 
 AudioEngine::AudioEngine() : is_initialized_(false) {}
 
 AudioEngine::~AudioEngine() { Destroy(); }
 
-void AudioEngine::Init() {
+Result AudioEngine::Init() {
   if (is_initialized_) {  // If it is already initialize
     FatalError("Tried to initialize Audio Engine twice!\n");
   }
@@ -48,26 +67,30 @@ void AudioEngine::Init() {
   }
 
   is_initialized_ = true;
+
+  return Result::OK;
 }
 
-void AudioEngine::Destroy() {
-  if (is_initialized_) {  // If it is initialized
-    is_initialized_ = false;
+Result AudioEngine::Destroy() {
+  if (!is_initialized_) return Result::OK;
 
-    for (auto& it : effect_map_) {  // Iterate all the effects
-      Mix_FreeChunk(it.second);
-    }
+  is_initialized_ = false;
 
-    for (auto& it : music_map_) {  // Iterate all the musics
-      Mix_FreeMusic(it.second);
-    }
-
-    effect_map_.clear();
-    music_map_.clear();
-
-    Mix_CloseAudio();
-    Mix_Quit();
+  for (auto& it : effect_map_) {  // Iterate all the effects
+    Mix_FreeChunk(it.second);
   }
+
+  for (auto& it : music_map_) {  // Iterate all the musics
+    Mix_FreeMusic(it.second);
+  }
+
+  effect_map_.clear();
+  music_map_.clear();
+
+  Mix_CloseAudio();
+  Mix_Quit();
+
+  return Result::OK;
 }
 
 SoundEffect AudioEngine::LoadSoundEffect(const std::string& file_path) {
@@ -84,12 +107,12 @@ SoundEffect AudioEngine::LoadSoundEffect(const std::string& file_path) {
       FatalError("Mix_LoadWAV error: " + std::string(Mix_GetError()));
     }
 
-    effect.chunk_ = chunk;
+    effect.SetChunk(chunk);
     effect_map_[file_path] = chunk;
 
   } else {
     // Its already cached
-    effect.chunk_ = it->second;
+    effect.SetChunk(it->second);
   }
 
   return effect;
@@ -109,12 +132,12 @@ Music AudioEngine::LoadMusic(const std::string& file_path) {
       FatalError("Mix_LoadMUS error: " + std::string(Mix_GetError()));
     }
 
-    music.music_ = mixMusic;
+    music.SetMusic(mixMusic);
     music_map_[file_path] = mixMusic;
 
   } else {
     // Its already cached
-    music.music_ = it->second;
+    music.SetMusic(it->second);
   }
 
   return music;

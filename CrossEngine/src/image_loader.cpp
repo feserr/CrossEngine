@@ -7,8 +7,9 @@
 
 #include <string>
 #include <vector>
+
 #include "crossengine/bgfx_utils.h"
-#include "crossengine/cross_errors.h"
+#include "crossengine/error_manager.h"
 #include "crossengine/io_manager.h"
 
 namespace CrossEngine {

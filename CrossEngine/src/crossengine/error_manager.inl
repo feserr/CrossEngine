@@ -6,15 +6,12 @@
 #include <SDL/SDL.h>
 
 #include <iostream>
+#include <stdexcept>
 #include <string>
 
 namespace CrossEngine {
 inline void FatalError(const std::string &error_string) {
-  std::cout << error_string << std::endl;
-  std::cout << "Enter any key to quit...";
-  int tmp;
-  std::cin >> tmp;
   SDL_Quit();
-  exit(123);
+  throw std::runtime_error(error_string);
 }
 }  // namespace CrossEngine

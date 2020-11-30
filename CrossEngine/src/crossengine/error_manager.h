@@ -8,8 +8,6 @@
 
 #include <string>
 
-#include "cross_errors.inl"
-
 namespace CrossEngine {
 
 enum Result { OK = 0, FAIL = 1 };
@@ -21,5 +19,7 @@ enum Result { OK = 0, FAIL = 1 };
  */
 void FatalError(const std::string &error_string);
 }  // namespace CrossEngine
+
+#include "error_manager.inl"
 
 #endif  // CROSSENGINE_CROSSERRORS_H_

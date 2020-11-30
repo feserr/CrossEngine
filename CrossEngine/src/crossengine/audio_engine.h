@@ -8,8 +8,10 @@
 
 #include <SDL/SDL_mixer.h>
 
-#include <map>
 #include <string>
+#include <unordered_map>
+
+#include "error_manager.h"
 
 namespace CrossEngine {
 /**
@@ -17,18 +19,36 @@ namespace CrossEngine {
  */
 class SoundEffect {
  public:
-  friend class AudioEngine;
+  /**
+   * @brief Construct a new SoundEffect object.
+   */
+  SoundEffect();
+
+  /**
+   * @brief Construct a new SoundEffect object
+   *
+   * @param chunk The chunk effect.
+   */
+  explicit SoundEffect(Mix_Chunk* chunk);
+
+  /**
+   * @brief Set the Chunk object.
+   *
+   * @param chunk The chunk effect.
+   */
+  void SetChunk(Mix_Chunk* chunk) { chunk_ = chunk; }
 
   /**
    * @brief Plays the effect file.
    *
    * @param[in] loops If loops == -1, loops forever
    *                  otherwise play it loops+1 times.
+   * @return Result OK if success, otherwise an error code.
    */
-  void Play(int loops = 0);
+  Result Play(int loops = 0);
 
  private:
-  Mix_Chunk* chunk_ = nullptr;
+  Mix_Chunk* chunk_;
 };
 
 /**
@@ -36,35 +56,54 @@ class SoundEffect {
  */
 class Music {
  public:
-  friend class AudioEngine;
-
   /**
    * @brief Construct a new Music object.
    */
   Music();
 
   /**
+   * @brief Construct a new Music object.
+   *
+   * @param music The music.
+   */
+  explicit Music(Mix_Music* music);
+
+  /**
+   * @brief Set the Music object.
+   *
+   * @param music The music.
+   */
+  void SetMusic(Mix_Music* music) { music_ = music; }
+
+  /**
    * @brief Play the music file.
    *
    * @param[in] loops If loops == -1, loops forever
    *   otherwise play it loops times.
+   * @return Result OK if success, otherwise an error code.
    */
-  void Play(int loops = 1);
+  Result Play(int loops = 1);
 
   /**
    * @brief Pauses whatever song is currently playing.
+   *
+   * @return Result OK if success, otherwise an error code.
    */
-  static void Pause();
+  Result Pause();
 
   /**
    * @brief Stops whatever song is currently playing.
+   *
+   * @return Result OK if success, otherwise an error code.
    */
-  static void Stop();
+  Result Stop();
 
   /**
    * @brief Resumes whatever song is currently playing.
+   *
+   * @return Result OK if success, otherwise an error code.
    */
-  static void Resume();
+  Result Resume();
 
  private:
   Mix_Music* music_;
@@ -86,13 +125,16 @@ class AudioEngine {
   /**
    * @brief Initialize the audio engine.
    *
+   * @return Result OK if success, otherwise an error code.
    */
-  void Init();
+  Result Init();
 
   /**
    * @brief Destroy the audio engine
+   *
+   * @return Result OK if success, otherwise an error code.
    */
-  void Destroy();
+  Result Destroy();
 
   /**
    * @brief Loads and map a sound file
@@ -112,8 +154,8 @@ class AudioEngine {
   Music LoadMusic(const std::string& file_path);
 
  private:
-  std::map<std::string, Mix_Chunk*> effect_map_;
-  std::map<std::string, Mix_Music*> music_map_;
+  std::unordered_map<std::string, Mix_Chunk*> effect_map_;
+  std::unordered_map<std::string, Mix_Music*> music_map_;
 
   bool is_initialized_;
 };

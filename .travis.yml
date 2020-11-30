@@ -23,6 +23,7 @@ addons:
     packages:
       - git-lfs
       - doxygen
+      - cmake
       - ninja
       - sdl2
       - sdl2_image
@@ -85,6 +86,11 @@ script:
   - cd CrossEngine
   - ${workspace}/external/bx/tools/bin/${OS_NAME}/genie --gcc=${GENIE_COMPILER} gmake
   - make -C build/projects/gmake-${BUILD_FILE} -j3 config=${BUILD_TYPE} all
+  - mkdir build
+  - cmake -DCMAKE_BUILD_TYPE:STRING=Release -H. -B./build -G Ninja
+  - cmake --build ./build --config Release --target all -- -j3
+  - cd build
+  - ctest -j3 -C Release
   - cd ${workspace}
   - cd BallGame
   - ${workspace}/external/bx/tools/bin/${OS_NAME}/genie --gcc=${GENIE_COMPILER} gmake
