@@ -52,6 +52,8 @@ function(BUILD_UNIT_TEST)
   string(REPLACE ".cpp" "" UNIT_TEST_NAME ${UNIT_TEST_NAME})
   string(REPLACE "_test" "" UNIT_TEST_NAME_TEST ${UNIT_TEST_NAME})
 
+  add_compile_options(-fno-rtti)
+
   add_executable(${UNIT_TEST_NAME} ${BUILD_UNIT_TEST_TEST_SRC} ${BUILD_UNIT_TEST_EXT_SOURCE})
 
   # Bring the headers into the project
